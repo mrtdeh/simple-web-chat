@@ -1,0 +1,79 @@
+syntax = "proto3";
+
+package proto;
+option go_package = ".;proto";
+
+
+// @@@ - client connection request for connect to server
+message Connect {
+  User user = 1;
+}
+
+message User{
+  string username = 1;
+}
+// close response
+message Close {}
+
+// @@@ - server response to client, can be user token or message
+message ServerResponse{
+  oneof data{
+    TokenResponse token_response = 1;
+    MessageResponse msg_response = 2;
+    ErrorResponse error_response = 3;
+  }
+}
+
+// error response
+message ErrorResponse{
+  string error = 1;
+  int32 code = 2;
+}
+// message response
+message MessageResponse{
+  Message msg = 1;
+  string timestamp = 2;
+  string from = 3;
+}
+// token response
+message TokenResponse{
+  string token = 1;
+}
+
+
+// message struct which may be TEXT or FILE
+message Message {
+  oneof data{
+    TextMessage text_msg = 1;
+    FileMessage file_msg = 2;
+  }
+}
+// text message
+message TextMessage {
+  string content = 1;
+}
+// file message
+message FileMessage {
+  oneof data{
+    FileInfo info = 1;
+    bytes chunk_data = 2;
+    bool done = 3;
+  }
+}
+// file info struct
+message FileInfo {
+  string name = 1;
+  uint32 size = 2;
+}
+
+
+message PingRequest{}
+message PingResponse{}
+
+message EmptyRequest{}
+
+
+service ChatService {
+  rpc CreateStream(Connect) returns (stream ServerResponse);
+  rpc Ping(PingRequest) returns (PingResponse);
+}
