@@ -1,22 +1,15 @@
 package server
 
 import (
+	"api-channel/proto"
 	"crypto/sha256"
 	"encoding/hex"
+	"log"
+	"net"
 	"time"
-)
 
-type ServerOptions struct {
-	MaxTimeout           time.Duration
-	MaxConnectTry        int
-	MaxConnectTryTimeout time.Duration
-}
-type Server struct {
-	Id      string
-	Addr    string
-	status  string
-	Options *ServerOptions
-}
+	"google.golang.org/grpc"
+)
 
 func (a *Server) Serve() error {
 	a.setDefaultOptions()
@@ -27,9 +20,27 @@ func (a *Server) Serve() error {
 		a.Id = serverId
 	}
 	a.status = "unknown"
-	chatServer := NewChat(a.Id)
+	chatServer := &Server{
+		Id:          a.Id,
+		Connections: make(map[string]*Connection),
+	}
 
-	return chatServer.Serve(a.Addr)
+	return chatServer.start(a.Addr)
+}
+
+func (s *Server) start(addr string) error {
+	gs := grpc.NewServer()
+	s.grpcServer = gs
+
+	l, err := net.Listen("tcp", addr)
+	if err != nil {
+		log.Fatalf("error creating the server %v", err)
+	}
+	s.listener = l
+
+	proto.RegisterChatServiceServer(gs, s)
+	gs.Serve(l)
+	return nil
 }
 
 func (a *Server) setDefaultOptions() {
