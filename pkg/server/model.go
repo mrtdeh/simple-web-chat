@@ -16,9 +16,9 @@ type Server struct {
 	status  string
 	Options *ServerOptions
 
-	grpcServer  *grpc.Server
-	listener    net.Listener
-	Connections map[string]*Connection
+	grpcServer *grpc.Server
+	listener   net.Listener
+	Sessions   map[string]*Session
 }
 
 type ServerOptions struct {
@@ -27,10 +27,13 @@ type ServerOptions struct {
 	MaxConnectTryTimeout time.Duration
 }
 
-type Connection struct {
-	stream proto.ChatService_CreateStreamServer
-	user   *proto.User
-	active bool
-	status string
-	error  chan error
+type Session struct {
+	stream proto.ChatService_MessageChannelServer
+	// user   *proto.User
+	token   string
+	active  bool
+	status  string
+	receive chan struct{}
+	kill    chan struct{}
+	error   chan error
 }

@@ -9,19 +9,17 @@ import (
 
 func main() {
 
-	port := flag.String("p", "8082", "The port of server")
+	port := flag.Int("p", 8082, "The port of server")
 	flag.Parse()
 
-	hostPort := "localhost:" + *port
-
-	server := &server.Server{
-		Addr: hostPort,
-		Options: &server.ServerOptions{
+	s := server.NewServer(server.Config{
+		Port: *port,
+		Options: server.ServerOptions{
 			MaxTimeout: time.Second * 10,
 		},
-	}
+	})
 
-	if err := server.Serve(); err != nil {
+	if err := s.Serve(); err != nil {
 		log.Fatal(err)
 	}
 }

@@ -4,6 +4,7 @@ import (
 	"api-channel/proto"
 	"crypto/sha256"
 	"encoding/hex"
+	"fmt"
 	"log"
 	"net"
 	"time"
@@ -11,28 +12,34 @@ import (
 	"google.golang.org/grpc"
 )
 
-func (a *Server) Serve() error {
-	a.setDefaultOptions()
-
-	if a.Id == "" {
-		id := sha256.Sum256([]byte(time.Now().String()))
-		serverId := hex.EncodeToString(id[:])
-		a.Id = serverId
-	}
-	a.status = "unknown"
-	chatServer := &Server{
-		Id:          a.Id,
-		Connections: make(map[string]*Connection),
-	}
-
-	return chatServer.start(a.Addr)
+type Config struct {
+	Port    int
+	Options ServerOptions
 }
 
-func (s *Server) start(addr string) error {
+func NewServer(cnf ...Config) *Server {
+	c := cnf[0]
+
+	id := sha256.Sum256([]byte(time.Now().String()))
+	serverId := hex.EncodeToString(id[:])
+
+	chatServer := &Server{
+		Id:       serverId,
+		Addr:     fmt.Sprintf("127.0.0.1:%d", c.Port),
+		status:   "unknown",
+		Options:  &c.Options,
+		Sessions: make(map[string]*Session),
+	}
+
+	chatServer.setDefaultOptions()
+	return chatServer
+}
+
+func (s *Server) Serve() error {
 	gs := grpc.NewServer()
 	s.grpcServer = gs
 
-	l, err := net.Listen("tcp", addr)
+	l, err := net.Listen("tcp", s.Addr)
 	if err != nil {
 		log.Fatalf("error creating the server %v", err)
 	}
@@ -44,6 +51,9 @@ func (s *Server) start(addr string) error {
 }
 
 func (a *Server) setDefaultOptions() {
+	if a.Addr == "" {
+		a.Addr = "127.0.0.1:8082"
+	}
 	if a.Options == nil {
 		a.Options = &ServerOptions{}
 	}

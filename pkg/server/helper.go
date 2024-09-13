@@ -1,22 +1,18 @@
 package server
 
-import (
-	"api-channel/proto"
-)
-
 // func init() {
 // 	grpcLog = glog.NewLoggerV2(os.Stdout, os.Stdout, os.Stdout)
 // }
 
-func errorResponse(err error) *proto.ServerResponse {
-	return &proto.ServerResponse{
-		Data: &proto.ServerResponse_ErrorResponse{
-			ErrorResponse: &proto.ErrorResponse{
-				Error: err.Error(),
-			},
-		},
-	}
-}
+// func errorResponse(err error) *proto.ServerResponse {
+// 	return &proto.ServerResponse{
+// 		Data: &proto.ServerResponse_ErrorResponse{
+// 			ErrorResponse: &proto.ErrorResponse{
+// 				Error: err.Error(),
+// 			},
+// 		},
+// 	}
+// }
 
 // func (s *Server) sendToAll(msg *proto.ServerResponse) {
 // 	wait := sync.WaitGroup{}

@@ -6,27 +6,26 @@ option go_package = ".;proto";
 
 // @@@ - client connection request for connect to server
 message Connect {
-  User user = 1;
+  string token = 1;
 }
 
-message User{
-  string username = 1;
-}
+
 // close response
 message Close {}
 
 // @@@ - server response to client, can be user token or message
-message ServerResponse{
-  oneof data{
-    TokenResponse token_response = 1;
-    MessageResponse msg_response = 2;
-    ErrorResponse error_response = 3;
-  }
-}
+// message ServerResponse{
+//   string status = 1;  
+//   ErrorResponse error = 2;
+//   oneof extra{
+//     TokenResponse token = 3;
+//     MessageResponse message = 4;
+//   }
+// }
 
 // error response
 message ErrorResponse{
-  string error = 1;
+  string message = 1;
   int32 code = 2;
 }
 // message response
@@ -36,9 +35,9 @@ message MessageResponse{
   string from = 3;
 }
 // token response
-message TokenResponse{
-  string token = 1;
-}
+// message TokenResponse{
+//   string token = 1;
+// }
 
 
 // message struct which may be TEXT or FILE
@@ -72,8 +71,17 @@ message PingResponse{}
 
 message EmptyRequest{}
 
+message LoginRequest{
+  string username = 1;
+  string password = 2;
+}
+message LoginResponse{
+  string token = 1;
+}
 
 service ChatService {
-  rpc CreateStream(Connect) returns (stream ServerResponse);
+  rpc MessageChannel(Connect) returns (stream MessageResponse);
+  rpc Login(LoginRequest) returns (LoginResponse);
   rpc Ping(PingRequest) returns (PingResponse);
+  // rpc GetMessages(EmptyRequest) returns (Close);
 }
