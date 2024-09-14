@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"sync"
 	"time"
 
 	"google.golang.org/grpc"
@@ -24,11 +25,14 @@ func NewServer(cnf ...Config) *Server {
 	serverId := hex.EncodeToString(id[:])
 
 	chatServer := &Server{
-		Id:       serverId,
-		Addr:     fmt.Sprintf("127.0.0.1:%d", c.Port),
-		status:   "unknown",
-		Options:  &c.Options,
-		Sessions: make(map[string]*Session),
+		Id:      serverId,
+		Addr:    fmt.Sprintf("127.0.0.1:%d", c.Port),
+		status:  "unknown",
+		Options: &c.Options,
+		Sessions: &SessionManger{
+			l:        &sync.RWMutex{},
+			sessions: make(map[string]*Session),
+		},
 	}
 
 	chatServer.setDefaultOptions()

@@ -40,6 +40,27 @@ message MessageResponse{
 // }
 
 
+
+
+message PingRequest{}
+message PingResponse{}
+
+message EmptyRequest{}
+
+message LoginRequest{
+  string username = 1;
+  string password = 2;
+}
+message LoginResponse{
+  string token = 1;
+}
+
+message SendMessageRequest{
+  Message msg = 1;
+}
+message SendMessageResponse{
+  string msg_id = 1;
+}
 // message struct which may be TEXT or FILE
 message Message {
   oneof data{
@@ -60,28 +81,21 @@ message FileMessage {
   }
 }
 // file info struct
+message ChunkData {
+  uint64 msg_id = 1;
+  bytes data = 2;
+}
 message FileInfo {
   string name = 1;
   uint32 size = 2;
+  string comment = 3;
 }
 
-
-message PingRequest{}
-message PingResponse{}
-
-message EmptyRequest{}
-
-message LoginRequest{
-  string username = 1;
-  string password = 2;
-}
-message LoginResponse{
-  string token = 1;
-}
 
 service ChatService {
   rpc MessageChannel(Connect) returns (stream MessageResponse);
   rpc Login(LoginRequest) returns (LoginResponse);
   rpc Ping(PingRequest) returns (PingResponse);
-  // rpc GetMessages(EmptyRequest) returns (Close);
+
+  rpc SendMessage(SendMessageRequest) returns (SendMessageResponse);
 }
