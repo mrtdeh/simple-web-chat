@@ -9,19 +9,8 @@ message Connect {
   string token = 1;
 }
 
-
 // close response
 message Close {}
-
-// @@@ - server response to client, can be user token or message
-// message ServerResponse{
-//   string status = 1;  
-//   ErrorResponse error = 2;
-//   oneof extra{
-//     TokenResponse token = 3;
-//     MessageResponse message = 4;
-//   }
-// }
 
 // error response
 message ErrorResponse{
@@ -30,16 +19,11 @@ message ErrorResponse{
 }
 // message response
 message MessageResponse{
-  Message msg = 1;
-  string timestamp = 2;
-  string from = 3;
+  string msg_id = 1;
+  Message msg = 2;
+  string timestamp = 3;
+  string from = 4;
 }
-// token response
-// message TokenResponse{
-//   string token = 1;
-// }
-
-
 
 
 message PingRequest{}
@@ -56,7 +40,8 @@ message LoginResponse{
 }
 
 message SendMessageRequest{
-  Message msg = 1;
+  string req_id = 1;
+  Message msg = 2;
 }
 message SendMessageResponse{
   string msg_id = 1;
@@ -64,8 +49,8 @@ message SendMessageResponse{
 // message struct which may be TEXT or FILE
 message Message {
   oneof data{
-    TextMessage text_msg = 1;
-    FileMessage file_msg = 2;
+    TextMessage text_msg = 2;
+    FileMessage file_msg = 3;
   }
 }
 // text message
@@ -79,11 +64,6 @@ message FileMessage {
     bytes chunk_data = 2;
     bool done = 3;
   }
-}
-// file info struct
-message ChunkData {
-  uint64 msg_id = 1;
-  bytes data = 2;
 }
 message FileInfo {
   string name = 1;
