@@ -40,8 +40,10 @@ message LoginResponse{
 }
 
 message SendMessageRequest{
-  string req_id = 1;
-  Message msg = 2;
+  string token = 1;
+  string req_id = 2;
+  Message msg = 3;
+  string to = 4;
 }
 message SendMessageResponse{
   string msg_id = 1;

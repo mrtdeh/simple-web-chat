@@ -3,8 +3,9 @@ package server
 import (
 	"api-channel/proto"
 	"fmt"
-	"time"
 )
+
+var tm = &TokenManager{}
 
 func (s *Server) MessageChannel(pc *proto.Connect, stream proto.ChatService_MessageChannelServer) error {
 	// Check authorize user
@@ -12,13 +13,9 @@ func (s *Server) MessageChannel(pc *proto.Connect, stream proto.ChatService_Mess
 	ctx := stream.Context()
 
 	// Check token is exist
-	tokenData, ok := tokens[token]
-	if !ok {
-		return fmt.Errorf("token is not found")
-	}
-	// Check token expiration
-	if ok && tokenData.ExpireTime.Before(time.Now()) {
-		return fmt.Errorf("token is expired")
+	tokenData, err := checkToken(token)
+	if err != nil {
+		return err
 	}
 
 	// Check for username is registred or not

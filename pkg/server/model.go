@@ -2,6 +2,7 @@ package server
 
 import (
 	"api-channel/proto"
+	"fmt"
 	"net"
 	"sync"
 	"time"
@@ -10,7 +11,38 @@ import (
 )
 
 // var grpcLog glog.LoggerV2
-var tokens = map[string]TokenData{}
+type TokenManager struct {
+	tokens map[string]*TokenData
+	l      sync.RWMutex
+}
+
+func (tm *TokenManager) Create(username string) string {
+	tm.l.Lock()
+	defer tm.l.Unlock()
+	token := tokenGenerator()
+	tm.tokens[token] = &TokenData{
+		Username:   username,
+		ExpireTime: time.Now().Add(time.Minute * 5),
+	}
+	return token
+}
+
+func (tm *TokenManager) Get(key string) (*TokenData, error) {
+	tm.l.RLock()
+	defer tm.l.RUnlock()
+
+	tokenData, ok := tm.tokens[key]
+	if !ok {
+		return nil, fmt.Errorf("token is not found")
+	}
+	return tokenData, nil
+}
+
+func (tm *TokenManager) Delete(key string) {
+	tm.l.Lock()
+	defer tm.l.Unlock()
+	delete(tm.tokens, key)
+}
 
 type Server struct {
 	Id      string
@@ -64,7 +96,7 @@ func (s *SessionManger) Close(key string) {
 
 type Session struct {
 	stream  proto.ChatService_MessageChannelServer
-	token   TokenData
+	token   *TokenData
 	receive chan struct{}
 	close   chan struct{}
 	error   chan error

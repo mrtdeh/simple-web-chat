@@ -4,7 +4,6 @@ import (
 	"api-channel/proto"
 	"context"
 	"fmt"
-	"time"
 )
 
 func (s *Server) Login(ctx context.Context, req *proto.LoginRequest) (*proto.LoginResponse, error) {
@@ -16,11 +15,8 @@ func (s *Server) Login(ctx context.Context, req *proto.LoginRequest) (*proto.Log
 		return nil, fmt.Errorf("username or password incorrect")
 	}
 
-	token := tokenGenerator()
-	tokens[token] = TokenData{
-		Username:   user,
-		ExpireTime: time.Now().Add(time.Minute * 5),
-	}
+	// Create new token
+	token := tm.Create(user)
 
 	return &proto.LoginResponse{
 		Token: token,
