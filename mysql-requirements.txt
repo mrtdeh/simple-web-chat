@@ -1,0 +1,10 @@
+CREATE USER 'apiservices'@'localhost' IDENTIFIED BY 'F@rz@n@2022';
+GRANT ALL PRIVILEGES ON *.* TO 'apiservices'@'localhost' WITH GRANT OPTION;
+FLUSH PRIVILEGES;
+## remote connection - not secure
+CREATE USER 'apiservices'@'%' IDENTIFIED BY 'F@rz@n@2022';
+GRANT ALL PRIVILEGES ON *.* TO 'apiservices'@'%' WITH GRANT OPTION;
+FLUSH PRIVILEGES;
+
+DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1');
+
