@@ -17,13 +17,6 @@ message ErrorResponse{
   string message = 1;
   int32 code = 2;
 }
-// message response
-message MessageResponse{
-  string msg_id = 1;
-  Message msg = 2;
-  string timestamp = 3;
-  string from = 4;
-}
 
 
 message PingRequest{}
@@ -39,45 +32,83 @@ message LoginResponse{
   string token = 1;
 }
 
-message SendMessageRequest{
-  string token = 1;
-  string req_id = 2;
-  Message msg = 3;
-  string to = 4;
-}
-message SendMessageResponse{
+
+
+
+
+
+
+// ======================== Stream Response
+
+
+message MessageStream{
   string msg_id = 1;
+  StreamData data = 2;
 }
-// message struct which may be TEXT or FILE
-message Message {
+
+message StreamData {
   oneof data{
-    TextMessage text_msg = 2;
-    FileMessage file_msg = 3;
+    Header header = 1;
+    Text text = 2;
+    File file = 3;
+  }
+  message Header{
+    string timestamp = 3;
+    string from = 4;
+    string type = 5;
+  }
+  message Text{
+    string content = 1; 
+  }
+  message File{
+    oneof file{
+      FileInfo info = 1;
+      bytes chunk = 2;
+      bool end = 3;
+    }
   }
 }
-// text message
-message TextMessage {
-  string content = 1;
+
+
+
+
+// ======================== Message Request
+
+message MessageRequest{
+  string token = 2;
+  string content = 1; // can be empty
+  string type = 3; // text|file
+  uint64 chat_id = 4;
 }
-// file message
-message FileMessage {
-  oneof data{
-    FileInfo info = 1;
-    bytes chunk_data = 2;
-    bool done = 3;
-  }
+message MessageResponse{
+  string message_id = 1;
 }
+
+// ======================== File Upload Request
+
 message FileInfo {
   string name = 1;
   uint32 size = 2;
-  string comment = 3;
 }
 
+message FileRequest{
+  string request_id = 5;
+  uint64 message_id =  1;
+  oneof data{
+    FileInfo info = 2;
+    bytes chunk = 3;
+    bool done = 4;
+  }
+}
+message FileResponse{
+  string status = 1;
+}
 
 service ChatService {
-  rpc MessageChannel(Connect) returns (stream MessageResponse);
+  rpc MessageChannel(Connect) returns (stream MessageStream);
   rpc Login(LoginRequest) returns (LoginResponse);
   rpc Ping(PingRequest) returns (PingResponse);
 
-  rpc SendMessage(SendMessageRequest) returns (SendMessageResponse);
+  rpc SendMessage(MessageRequest) returns (MessageResponse);
+  rpc UploadFile(FileRequest) returns (FileResponse);
 }

@@ -6,7 +6,7 @@ import (
 )
 
 var tm = &TokenManager{}
-
+	
 func (s *Server) MessageChannel(pc *proto.Connect, stream proto.ChatService_MessageChannelServer) error {
 	// Check authorize user
 	token := pc.Token

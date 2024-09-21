@@ -12,6 +12,7 @@ func tokenGenerator() string {
 	return fmt.Sprintf("%x", b)
 }
 
+// sadasdasd
 func checkToken(token string) (*TokenData, error) {
 	tokenData, err := tm.Get(token)
 	if err != nil {

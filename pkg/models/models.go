@@ -35,7 +35,7 @@ type Message struct {
 	ChatID      uint `gorm:"not null"`
 	SenderID    uint `gorm:"not null"`
 	Content     string
-	MessageType string `gorm:"default:'text'"`
+	MessageType string `gorm:"default:'text'"` // text|file
 	CreatedAt   time.Time
 }
 

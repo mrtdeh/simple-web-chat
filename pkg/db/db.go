@@ -1,4 +1,4 @@
-package db
+package database
 
 import (
 	"api-channel/pkg/models"
@@ -26,6 +26,7 @@ func Init() (*gorm.DB, error) {
 
 }
 
+// s dasdasdasdasd
 func GetInstance() *gorm.DB {
 	if db == nil {
 		var err error
