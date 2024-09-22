@@ -39,6 +39,13 @@ type Message struct {
 	CreatedAt   time.Time
 }
 
+type Reply struct {
+	ID        uint   `gorm:"primaryKey"`
+	MessageID uint   `gorm:"not null"` // message ID
+	ReplyToID uint   `gorm:"not null"` // message|attachment ID
+	Type      string `gorm:"not null"` // text|file
+}
+
 type Attachment struct {
 	ID         uint `gorm:"primaryKey"`
 	MessageID  uint `gorm:"not null"`
