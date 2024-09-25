@@ -1,9 +1,13 @@
 package models
 
-import "time"
+import (
+	"time"
+
+	"gorm.io/gorm"
+)
 
 type User struct {
-	ID             uint   `gorm:"primaryKey"`
+	gorm.Model
 	Username       string `gorm:"unique;not null"`
 	Password       string `gorm:"not null"`
 	DisplayName    string
@@ -16,7 +20,7 @@ type User struct {
 }
 
 type Chat struct {
-	ID        uint `gorm:"primaryKey"`
+	gorm.Model
 	Name      string
 	IsGroup   bool `gorm:"default:false"`
 	CreatedAt time.Time
@@ -31,7 +35,7 @@ type ChatMember struct {
 }
 
 type Message struct {
-	ID          uint `gorm:"primaryKey"`
+	gorm.Model
 	ChatID      uint `gorm:"not null"`
 	SenderID    uint `gorm:"not null"`
 	Content     string
@@ -40,23 +44,29 @@ type Message struct {
 }
 
 type Reply struct {
-	ID        uint   `gorm:"primaryKey"`
+	gorm.Model
 	MessageID uint   `gorm:"not null"` // message ID
 	ReplyToID uint   `gorm:"not null"` // message|attachment ID
 	Type      string `gorm:"not null"` // text|file
 }
 
 type Attachment struct {
-	ID         uint `gorm:"primaryKey"`
-	MessageID  uint `gorm:"not null"`
-	FilePath   string
-	FileType   string
-	FileSize   int
-	UploadedAt time.Time
+	gorm.Model
+	MessageID uint `gorm:"not null"`
+	FilePath  string
+	FileType  string // image|video|pdf|...
+	FileSize  int
+}
+
+type Thumbnail struct {
+	gorm.Model
+	AttachmentID uint   `gorm:"not null"`
+	Base64       string // base64 of image file
+	Type         string // mini|small|blur
 }
 
 type Group struct {
-	ID          uint   `gorm:"primaryKey"`
+	gorm.Model
 	Name        string `gorm:"not null"`
 	OwnerID     uint   `gorm:"not null"`
 	Description string

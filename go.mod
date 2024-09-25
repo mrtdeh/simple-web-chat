@@ -3,6 +3,7 @@ module api-channel
 go 1.23
 
 require (
+	github.com/h2non/bimg v1.1.9
 	google.golang.org/grpc v1.66.0
 	gorm.io/driver/mysql v1.5.7
 	gorm.io/gorm v1.25.12
