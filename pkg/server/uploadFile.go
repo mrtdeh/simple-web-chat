@@ -3,15 +3,13 @@ package server
 import (
 	"api-channel/pkg/conf"
 	database "api-channel/pkg/db"
+	"api-channel/pkg/helper"
 	"api-channel/pkg/models"
 	"api-channel/proto"
 	"context"
-	"encoding/base64"
 	"fmt"
 	"os"
 	"path"
-
-	"github.com/h2non/bimg"
 )
 
 func (s *Server) UploadFile(ctx context.Context, req *proto.FileRequest) (*proto.FileResponse, error) {
@@ -26,7 +24,7 @@ func (s *Server) UploadFile(ctx context.Context, req *proto.FileRequest) (*proto
 
 	db := database.GetInstance()
 	filepath := ""
-	fileType := "test"
+	fileType := "image"
 	fileSize := 0
 	if info := req.GetInfo(); info != nil {
 		filepath = path.Join(conf.UPLOAD_DIR, path.Base(info.Name))
@@ -43,58 +41,47 @@ func (s *Server) UploadFile(ctx context.Context, req *proto.FileRequest) (*proto
 		}
 	}
 	if req.GetDone() {
+		// Check and validate file type
+		// ....
+
 		// Write file path in Attachments table
-		var attachment models.Attachment
-		attachment = models.Attachment{
+		attachment := models.Attachment{
 			MessageID: uint(req.MessageId),
 			FilePath:  filepath,
 			FileType:  fileType,
 			FileSize:  fileSize,
 		}
-		res := db.Create(&attachment)
+		db.Create(&attachment)
 
 		// If file is image, Generate thumbnail of it.
 		if fileType == "image" {
-			buffer, err := bimg.Read(filepath)
+			img, err := helper.OpenImage(filepath)
 			if err != nil {
 				fmt.Fprintln(os.Stderr, err)
 			}
-
-			image := bimg.NewImage(buffer)
 
 			// generate small size 64x64
-			imageBytes, err := image.ForceResize(64, 64)
-			if err != nil {
-				fmt.Fprintln(os.Stderr, err)
-			}
-
+			thum64 := helper.Thumbnail(img, 64)
 			db.Create(models.Thumbnail{
 				AttachmentID: attachment.ID,
-				Base64:       base64.StdEncoding.EncodeToString(imageBytes),
+				Base64:       helper.Base64Image(thum64, 1),
 				Type:         "small",
 			})
 
 			// generate mini size 32x32
-			imageBytes, err = image.ForceResize(32, 32)
-			if err != nil {
-				fmt.Fprintln(os.Stderr, err)
-			}
-
+			thum32 := helper.Thumbnail(img, 32)
 			db.Create(models.Thumbnail{
 				AttachmentID: attachment.ID,
-				Base64:       base64.StdEncoding.EncodeToString(imageBytes),
+				Base64:       helper.Base64Image(thum32, 1),
 				Type:         "mini",
 			})
 
-			// generate blured and cropped
-			imageBytes, err := image.
-			if err != nil {
-				fmt.Fprintln(os.Stderr, err)
-			}
-
+			// generate image placeholder
+			placeholder := helper.Placeholder(img)
 			db.Create(models.Thumbnail{
 				AttachmentID: attachment.ID,
-				Base64:       base64.StdEncoding.EncodeToString(imageBytes),
+				Base64:       helper.Base64Image(placeholder, 1),
+				Type:         "placeholder",
 			})
 		}
 

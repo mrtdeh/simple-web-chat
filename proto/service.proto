@@ -79,6 +79,12 @@ message MessageRequest{
   string content = 1; // can be empty
   string type = 3; // text|file
   uint64 chat_id = 4;
+  repeated ReplayTo replaies = 5;
+
+  message ReplayTo{
+    uint64 id = 1;
+    string type = 2;
+  }
 }
 message MessageResponse{
   string message_id = 1;

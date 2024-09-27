@@ -62,7 +62,7 @@ type Thumbnail struct {
 	gorm.Model
 	AttachmentID uint   `gorm:"not null"`
 	Base64       string // base64 of image file
-	Type         string // mini|small|blur
+	Type         string // mini|small|placeholder
 }
 
 type Group struct {
