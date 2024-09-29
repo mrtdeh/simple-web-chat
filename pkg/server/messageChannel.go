@@ -3,10 +3,14 @@ package server
 import (
 	"api-channel/proto"
 	"fmt"
+	"sync"
 )
 
-var tm = &TokenManager{}
-	
+var tm = &TokenManager{
+	tokens: make(map[string]*TokenData),
+	l:      sync.RWMutex{},
+}
+
 func (s *Server) MessageChannel(pc *proto.Connect, stream proto.ChatService_MessageChannelServer) error {
 	// Check authorize user
 	token := pc.Token

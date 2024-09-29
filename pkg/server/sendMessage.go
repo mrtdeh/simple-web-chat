@@ -5,28 +5,34 @@ import (
 	"api-channel/pkg/models"
 	"api-channel/proto"
 	"context"
-	"time"
 )
 
 func (s *Server) SendMessage(ctx context.Context, req *proto.MessageRequest) (*proto.MessageResponse, error) {
 	token := req.Token
 
 	// Check token is exist
-	_, err := checkToken(token)
+	t, err := checkToken(token)
 	if err != nil {
 		return nil, err
 	}
 
 	db := database.GetInstance()
-	// Check for incomming text message
 
 	// Insert message into messages table
-	db.Create(models.Message{
-		// SenderID: fetch sender id from token store,
-		ChatID:    uint(req.ChatId),
-		Content:   req.Content,
-		CreatedAt: time.Now(),
-	})
+	msg := models.Message{
+		SenderID: t.UserID,
+		ChatID:   uint(req.ChatId),
+		Content:  req.Content,
+	}
+	db.Create(&msg)
 
-	return &proto.MessageResponse{}, nil
+	for _, r := range req.Replaies {
+		db.Create(&models.Reply{
+			MessageID: msg.ID,
+			ReplyToID: uint(r.Id),
+			Type:      r.Type,
+		})
+	}
+
+	return &proto.MessageResponse{MessageId: uint32(msg.ID)}, nil
 }

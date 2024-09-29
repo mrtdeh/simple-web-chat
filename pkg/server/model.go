@@ -16,11 +16,12 @@ type TokenManager struct {
 	l      sync.RWMutex
 }
 
-func (tm *TokenManager) Create(username string) string {
+func (tm *TokenManager) Create(userId uint, username string) string {
 	tm.l.Lock()
 	defer tm.l.Unlock()
 	token := tokenGenerator()
 	tm.tokens[token] = &TokenData{
+		UserID:     userId,
 		Username:   username,
 		ExpireTime: time.Now().Add(time.Minute * 5),
 	}
@@ -102,6 +103,7 @@ type Session struct {
 	error   chan error
 }
 type TokenData struct {
+	UserID     uint
 	Username   string
 	ExpireTime time.Time
 }

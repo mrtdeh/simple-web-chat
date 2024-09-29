@@ -50,8 +50,7 @@ func (s *Server) Serve() error {
 	s.listener = l
 
 	proto.RegisterChatServiceServer(gs, s)
-	gs.Serve(l)
-	return nil
+	return gs.Serve(l)
 }
 
 func (a *Server) setDefaultOptions() {

@@ -21,10 +21,10 @@ type User struct {
 
 type Chat struct {
 	gorm.Model
-	Name      string
-	IsGroup   bool `gorm:"default:false"`
-	CreatedAt time.Time
-	Members   []User `gorm:"many2many:chat_members;"`
+	Name     string
+	IsGroup  bool   `gorm:"default:false"`
+	Members  []User `gorm:"many2many:chat_members;"`
+	Messages []Message
 }
 
 type ChatMember struct {
@@ -39,8 +39,9 @@ type Message struct {
 	ChatID      uint `gorm:"not null"`
 	SenderID    uint `gorm:"not null"`
 	Content     string
-	MessageType string `gorm:"default:'text'"` // text|file
-	CreatedAt   time.Time
+	MessageType string       `gorm:"default:'text'"` // text|file
+	Attachments []Attachment `gorm:"foreignKey:MessageID"`
+	Replies     []Reply      `gorm:"foreignKey:MessageID"`
 }
 
 type Reply struct {
@@ -70,7 +71,6 @@ type Group struct {
 	Name        string `gorm:"not null"`
 	OwnerID     uint   `gorm:"not null"`
 	Description string
-	CreatedAt   time.Time
 	Members     []User `gorm:"many2many:group_members;"`
 }
 

@@ -78,16 +78,15 @@ message MessageRequest{
   string token = 2;
   string content = 1; // can be empty
   string type = 3; // text|file
-  uint64 chat_id = 4;
+  uint32 chat_id = 4;
   repeated ReplayTo replaies = 5;
-
-  message ReplayTo{
-    uint64 id = 1;
-    string type = 2;
-  }
+}
+message ReplayTo{
+  uint32 id = 1;
+  string type = 2;
 }
 message MessageResponse{
-  string message_id = 1;
+  uint32 message_id = 1;
 }
 
 // ======================== File Upload Request
@@ -99,7 +98,7 @@ message FileInfo {
 
 message FileRequest{
   string request_id = 5;
-  uint64 message_id =  1;
+  uint32 message_id =  1;
   oneof data{
     FileInfo info = 2;
     bytes chunk = 3;
@@ -110,11 +109,47 @@ message FileResponse{
   string status = 1;
 }
 
+message AddUserRequest{
+  string  username = 1;       
+  string	password = 2;       
+  string	displayName  = 3;  
+  string	phoneNumber  = 4;
+  string	email  = 5;
+}
+message AddUserResponse{
+  uint32 userId = 1;
+  string status = 2;
+}
+
+message CreateChatRequest{
+  string name = 1;
+  bool isGroup = 2;
+}
+message CreateChatResponse{
+  uint32 chatId = 1;
+}
+
+message GetMessagesRequest{
+  uint32 chatId = 1;
+}
+message Messages{
+  repeated MessageData data = 1;
+}
+message MessageData{
+  uint32 messageId = 1;
+  string content = 2;
+  repeated ReplayTo replies = 3;
+}
+
 service ChatService {
   rpc MessageChannel(Connect) returns (stream MessageStream);
+  rpc AddUser(AddUserRequest) returns (AddUserResponse);
   rpc Login(LoginRequest) returns (LoginResponse);
   rpc Ping(PingRequest) returns (PingResponse);
 
+  rpc CreateChat(CreateChatRequest) returns (CreateChatResponse);
   rpc SendMessage(MessageRequest) returns (MessageResponse);
+  rpc GetMessages(GetMessagesRequest) returns (Messages);
   rpc UploadFile(FileRequest) returns (FileResponse);
+  
 }
