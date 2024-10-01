@@ -38,10 +38,11 @@ type Message struct {
 	gorm.Model
 	ChatID      uint `gorm:"not null"`
 	SenderID    uint `gorm:"not null"`
+	Sender      User `gorm:"foreignKey:SenderID"`
 	Content     string
-	MessageType string       `gorm:"default:'text'"` // text|file
-	Attachments []Attachment `gorm:"foreignKey:MessageID"`
-	Replies     []Reply      `gorm:"foreignKey:MessageID"`
+	MessageType string `gorm:"default:'text'"` // text|file
+	Attachments []Attachment
+	Replies     []Reply
 }
 
 type Reply struct {

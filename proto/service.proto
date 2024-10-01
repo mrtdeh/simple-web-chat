@@ -136,9 +136,10 @@ message Messages{
   repeated MessageData data = 1;
 }
 message MessageData{
-  uint32 messageId = 1;
-  string content = 2;
-  repeated ReplayTo replies = 3;
+  uint32 senderId = 1;
+  uint32 messageId = 2;
+  string content = 3;
+  repeated ReplayTo replies = 4;
 }
 
 service ChatService {
