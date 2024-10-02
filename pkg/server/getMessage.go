@@ -27,10 +27,10 @@ func (s *Server) GetMessages(ctx context.Context, req *proto.GetMessagesRequest)
 		})
 		fmt.Println("msg id : ", m.ID)
 		for _, r := range m.Replies {
-			fmt.Println("reply to :", r.ReplyToID)
+			fmt.Println("reply to :", r.ReplyMessageId)
 			data[i].Replies = append(data[i].Replies, &proto.ReplayTo{
-				Id:   uint32(r.ReplyToID),
-				Type: r.Type,
+				Id: uint32(r.ReplyMessageId),
+				// Type: r.Type,
 			})
 		}
 	}

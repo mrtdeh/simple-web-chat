@@ -43,13 +43,28 @@ type Message struct {
 	MessageType string `gorm:"default:'text'"` // text|file
 	Attachments []Attachment
 	Replies     []Reply
+	Stickers    []Sticker
+}
+
+type Sticker struct {
+	gorm.Model
+	MessageID uint    `gorm:"not null"` // message ID
+	SenderID  uint    `gorm:"not null"`
+	Gesture   Gesture `gorm:"not null"`
 }
 
 type Reply struct {
 	gorm.Model
-	MessageID uint   `gorm:"not null"` // message ID
-	ReplyToID uint   `gorm:"not null"` // message|attachment ID
-	Type      string `gorm:"not null"` // text|file
+	MessageID      uint    `gorm:"not null"` // message ID
+	ReplyMessageId uint    `gorm:"not null"` // replied message id
+	ReplyMessage   Message `gorm:"foreignKey:ReplyMessageId"`
+	Thumbnails     []ReplyThumbnails
+}
+type ReplyThumbnails struct {
+	gorm.Model
+	ReplyID     uint      `gorm:"not null"` // replied message id
+	ThumbnailId uint      `gorm:"not null"`
+	Thumbnail   Thumbnail `gorm:"foreignKey:ThumbId"`
 }
 
 type Attachment struct {
