@@ -26,12 +26,26 @@ func (s *Server) SendMessage(ctx context.Context, req *proto.MessageRequest) (*p
 	}
 	db.Create(&msg)
 
-	for _, r := range req.Replaies {
-		db.Create(&models.Reply{
-			MessageID: msg.ID,
-			ReplyToID: uint(r.Id),
-			Type:      r.Type,
-		})
+	for _, r := range req.RepliedMessages {
+		// Create replied message
+		replied := &models.Reply{
+			MessageID:      msg.ID,
+			ReplyMessageId: uint(r.MessageId),
+		}
+		db.Create(replied)
+		// Create thumbnails related to replied message
+		for _, sel := range r.SelectedAttachments {
+			// Find mini thumbnail of attachment
+			var tumbId uint
+			db.Where(
+				&models.Thumbnail{AttachmentID: uint(sel), Type: "mini"},
+			).Select("id").First(&tumbId)
+			// Create replied message thumbnail
+			db.Create(&models.ReplyThumbnails{
+				ReplyID:     replied.ID,
+				ThumbnailId: tumbId,
+			})
+		}
 	}
 
 	return &proto.MessageResponse{MessageId: uint32(msg.ID)}, nil

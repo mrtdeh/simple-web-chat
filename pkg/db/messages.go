@@ -3,77 +3,65 @@ package database
 import (
 	"api-channel/pkg/models"
 	"api-channel/proto"
-	"fmt"
 )
 
-type Message struct {
-	MessageId   uint   `json:"message_id"`
-	Content     string `json:"content"`
-	SenderId    uint   `json:"sender_id"`
-	ChatId      uint   `json:"chat_id"`
-	SendDate    string `json:"send_date"`
-	Attachments []Attachment
-	Replies     []MessageReply
-}
-type MessageReply struct {
-	Message    *Message
-	Attachment *Attachment
-}
-type Attachment struct {
-	AttachmentId uint   `json:"attachment_id"`
-	Data         string `json:"data"`
-}
-
-func GetMessagesWithReplies(chatID uint) ([]Message, error) {
+func GetMessagesWithReplies(chatID uint) (*proto.MessagesResponse, error) {
 
 	var messages []models.Message
-	res := db.Model(&models.Message{ChatID: 1}).Preload("Sender").Preload("Replies").Find(&messages)
+	res := db.Model(&models.Message{ChatID: 1}).
+		Preload("Sender").
+		Preload("Replies").
+		Preload("Replies.ReplyMessage").
+		Preload("Replies.Thumbnails").
+		Preload("Replies.Thumbnails.Thumbnail").
+		Preload("Attachments").
+		Preload("Attachments.Thumbnails", "type = ?", "placeholder").
+		Find(&messages)
+
 	if res.Error != nil {
 		return nil, res.Error
 	}
 
-	var data []*proto.MessageData
-	for i, m := range messages {
-		data = append(data, &proto.MessageData{
-			SenderId:  uint32(m.Sender.ID),
-			MessageId: uint32(m.ID),
-			Content:   m.Content,
-		})
-		fmt.Println("msg id : ", m.ID)
+	var data []*proto.MessagesResponse_MessageData
+	for _, m := range messages {
+
+		// Fetch message attachment's placeholder
+		var attachsPlaceholder []string
+		for _, att := range m.Attachments {
+			for _, t := range att.Thumbnails {
+				if t.Type == "placeholder" {
+					attachsPlaceholder = append(attachsPlaceholder, t.Base64)
+					break
+				}
+			}
+		}
+
+		// Fetch replied messages with thumbnails
+		var repliedMessages []*proto.MessagesResponse_RepliedMessage
 		for _, r := range m.Replies {
-			fmt.Println("reply to :", r.ReplyToID)
-			data[i].Replies = append(data[i].Replies, &proto.ReplayTo{
-				Id:   uint32(r.ReplyToID),
-				Type: r.Type,
+			var thumbnails []string
+			for _, t := range r.Thumbnails {
+				thumbnails = append(thumbnails, t.Thumbnail.Base64)
+			}
+			repliedMessages = append(repliedMessages, &proto.MessagesResponse_RepliedMessage{
+				MessageId:  uint32(r.ReplyMessageId),
+				Content:    r.ReplyMessage.Content,
+				Thumbnails: thumbnails,
 			})
 		}
+
+		// Collect message data
+		data = append(data, &proto.MessagesResponse_MessageData{
+			SenderId:        uint32(m.Sender.ID),
+			MessageId:       uint32(m.ID),
+			Content:         m.Content,
+			SendAt:          m.CreatedAt.Unix(),
+			Attachements:    attachsPlaceholder,
+			RepliedMessages: repliedMessages,
+		})
+
 	}
 
+	return &proto.MessagesResponse{Data: data}, nil
+
 }
-
-// func GetMessagesWithReplies(chatID uint) {
-// 	var messages []models.Message
-// 	db.Where("chat_id = ?", chatID).Find(&messages)
-
-// 	for _, message := range messages {
-// 		fmt.Printf("Message: %s", message.Content)
-
-// 		// دریافت پاسخ‌های مرتبط با پیام‌های متنی
-// 		var textReplies []models.Reply
-// 		db.Where("message_id = ? AND type = 'text'", message.ID).Find(&textReplies)
-// 		for _, reply := range textReplies {
-// 			var replyMessage models.Message
-// 			db.First(&replyMessage, reply.ReplyToID)
-// 			fmt.Printf(" (replied to text: %s)", replyMessage.Content)
-// 		}
-
-// 		// دریافت پاسخ‌های مرتبط با فایل‌ها
-// 		var fileReplies []models.Reply
-// 		db.Where("message_id = ? AND type = 'file'", message.ID).Find(&fileReplies)
-// 		for _, reply := range fileReplies {
-// 			var attachment models.Attachment
-// 			db.First(&attachment, reply.ReplyToID)
-// 			fmt.Printf(" (replied to file: %s)", attachment.FilePath)
-// 		}
-// 	}
-// }

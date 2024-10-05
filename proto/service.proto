@@ -79,12 +79,15 @@ message MessageRequest{
   string content = 1; // can be empty
   string type = 3; // text|file
   uint32 chat_id = 4;
-  repeated ReplayTo replaies = 5;
+  repeated RepliedMessage RepliedMessages = 5;
+
+  message RepliedMessage{
+    uint32 messageId = 1;
+    bool wholeMessage = 2;
+    repeated uint32 selectedAttachments = 3;
+  }
 }
-message ReplayTo{
-  uint32 id = 1;
-  string type = 2;
-}
+
 message MessageResponse{
   uint32 message_id = 1;
 }
@@ -132,15 +135,24 @@ message CreateChatResponse{
 message GetMessagesRequest{
   uint32 chatId = 1;
 }
-message Messages{
+message MessagesResponse{
   repeated MessageData data = 1;
+
+  message MessageData{
+    uint32 senderId = 1; // Sender user id
+    uint32 messageId = 2; // Message id
+    string content = 3; // Message content
+    repeated string attachements = 4;
+    repeated RepliedMessage RepliedMessages = 5; // Message replied messages
+    int64 sendAt = 6;
+  }
+  message RepliedMessage{
+    uint32 messageId = 1; // Replied message id
+    string content = 2; // Replied message content
+    repeated string thumbnails = 3; // Replied message thumbnails
+  }
 }
-message MessageData{
-  uint32 senderId = 1;
-  uint32 messageId = 2;
-  string content = 3;
-  repeated ReplayTo replies = 4;
-}
+
 
 service ChatService {
   rpc MessageChannel(Connect) returns (stream MessageStream);
@@ -150,7 +162,8 @@ service ChatService {
 
   rpc CreateChat(CreateChatRequest) returns (CreateChatResponse);
   rpc SendMessage(MessageRequest) returns (MessageResponse);
-  rpc GetMessages(GetMessagesRequest) returns (Messages);
+  rpc GetMessages(GetMessagesRequest) returns (MessagesResponse);
   rpc UploadFile(FileRequest) returns (FileResponse);
+  // rpc DownloadFile(FileRequest) returns (FileResponse);
   
 }

@@ -64,15 +64,16 @@ type ReplyThumbnails struct {
 	gorm.Model
 	ReplyID     uint      `gorm:"not null"` // replied message id
 	ThumbnailId uint      `gorm:"not null"`
-	Thumbnail   Thumbnail `gorm:"foreignKey:ThumbId"`
+	Thumbnail   Thumbnail `gorm:"foreignKey:ThumbnailId"`
 }
 
 type Attachment struct {
 	gorm.Model
-	MessageID uint `gorm:"not null"`
-	FilePath  string
-	FileType  string // image|video|pdf|...
-	FileSize  int
+	MessageID  uint `gorm:"not null"`
+	FilePath   string
+	FileType   string // image|video|pdf|...
+	FileSize   int
+	Thumbnails []Thumbnail
 }
 
 type Thumbnail struct {
