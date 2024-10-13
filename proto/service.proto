@@ -79,7 +79,7 @@ message MessageRequest{
   string content = 1; // can be empty
   string type = 3; // text|file
   uint32 chat_id = 4;
-  repeated RepliedMessage RepliedMessages = 5;
+  repeated RepliedMessage repliedMessages = 5;
 
   message RepliedMessage{
     uint32 messageId = 1;
@@ -143,7 +143,7 @@ message MessagesResponse{
     uint32 messageId = 2; // Message id
     string content = 3; // Message content
     repeated string attachements = 4;
-    repeated RepliedMessage RepliedMessages = 5; // Message replied messages
+    repeated RepliedMessage repliedMessages = 5; // Message replied messages
     int64 sendAt = 6;
   }
   message RepliedMessage{
