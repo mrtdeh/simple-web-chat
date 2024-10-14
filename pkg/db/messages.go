@@ -26,11 +26,16 @@ func GetMessagesWithReplies(chatID uint) (*proto.MessagesResponse, error) {
 	for _, m := range messages {
 
 		// Fetch message attachment's placeholder
-		var attachsPlaceholder []string
+		// var attachsPlaceholder []string
+		var attachs []*proto.MessagesResponse_Attachment
 		for _, att := range m.Attachments {
 			for _, t := range att.Thumbnails {
 				if t.Type == "placeholder" {
-					attachsPlaceholder = append(attachsPlaceholder, t.Base64)
+					attachs = append(attachs, &proto.MessagesResponse_Attachment{
+						Placeholder: t.Base64,     // Base64 of the attachment placeholder
+						Type:        att.FileType, // NOTE: most be image|video|audio|other...
+						Url:         att.FilePath, // TODO: replace with http URL
+					})
 					break
 				}
 			}
@@ -56,7 +61,7 @@ func GetMessagesWithReplies(chatID uint) (*proto.MessagesResponse, error) {
 			MessageId:       uint32(m.ID),
 			Content:         m.Content,
 			SendAt:          m.CreatedAt.Unix(),
-			Attachements:    attachsPlaceholder,
+			Attachements:    attachs,
 			RepliedMessages: repliedMessages,
 		})
 

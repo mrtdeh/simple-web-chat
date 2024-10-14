@@ -142,9 +142,14 @@ message MessagesResponse{
     uint32 senderId = 1; // Sender user id
     uint32 messageId = 2; // Message id
     string content = 3; // Message content
-    repeated string attachements = 4;
+    repeated Attachment attachements = 4;
     repeated RepliedMessage repliedMessages = 5; // Message replied messages
     int64 sendAt = 6;
+  }
+  message Attachment{
+    string placeholder = 1; // image placeholder of the attachment
+    string type = 2; // image|video|audio|other
+    string url = 3; // URL of attachment
   }
   message RepliedMessage{
     uint32 messageId = 1; // Replied message id
