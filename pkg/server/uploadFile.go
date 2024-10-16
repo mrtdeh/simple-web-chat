@@ -7,10 +7,18 @@ import (
 	"api-channel/pkg/models"
 	"api-channel/proto"
 	"context"
+	"encoding/base64"
 	"fmt"
 	"os"
 	"path"
 )
+
+type File struct {
+	d   *os.File
+	bin bool
+}
+
+var files = map[string]*File{}
 
 func (s *Server) UploadFile(ctx context.Context, req *proto.FileRequest) (*proto.FileResponse, error) {
 	// token := req.Token
@@ -24,22 +32,37 @@ func (s *Server) UploadFile(ctx context.Context, req *proto.FileRequest) (*proto
 
 	db := database.GetInstance()
 	filepath := ""
-	fileType := "image"
+	fileType := ""
 	fileSize := 0
+
+	// Read file details and create file descriptor
 	if info := req.GetInfo(); info != nil {
 		filepath = path.Join(conf.UPLOAD_DIR, path.Base(info.Name))
 		fileSize = int(info.Size)
+		fileType = info.Type
 		file, err := createFile(filepath)
 		if err != nil {
 			return nil, fmt.Errorf("error creating file: %w", err)
 		}
-		files[reqId] = file
+		files[reqId] = &File{file, isBinary(fileType)}
 	}
-	if chunk := req.GetChunk(); chunk != nil {
+	// Read file chunck from client and write to file
+	if chunk := req.GetChunk(); chunk != "" {
 		if f, ok := files[reqId]; ok {
-			f.Write(chunk)
+
+			var chunkByte = []byte(chunk)
+			// If file is binary, decode base64 to bytes
+			if f.bin {
+				var err error
+				chunkByte, err = base64.StdEncoding.DecodeString(chunk)
+				if err != nil {
+					return nil, fmt.Errorf("error decoding chunk: %w", err)
+				}
+			}
+			f.d.Write(chunkByte)
 		}
 	}
+	// Process whole file and save into database
 	if req.GetDone() {
 		// Check and validate file type
 		// ....
@@ -86,7 +109,7 @@ func (s *Server) UploadFile(ctx context.Context, req *proto.FileRequest) (*proto
 		}
 
 		if f, ok := files[reqId]; ok {
-			f.Close()
+			f.d.Close()
 		}
 		delete(files, reqId)
 	}
@@ -94,8 +117,15 @@ func (s *Server) UploadFile(ctx context.Context, req *proto.FileRequest) (*proto
 	return &proto.FileResponse{}, nil
 }
 
-var files = map[string]*os.File{}
-
+func isBinary(fileType string) bool {
+	switch fileType {
+	case "image", "video", "audio":
+		return true
+	case "txt", "text":
+		return false
+	}
+	panic("unknown file type: " + fileType)
+}
 func createFile(filepath string) (*os.File, error) {
 	var err error
 	if err := os.MkdirAll(path.Dir(filepath), 0777); err != nil {

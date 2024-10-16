@@ -97,6 +97,7 @@ message MessageResponse{
 message FileInfo {
   string name = 1;
   uint32 size = 2;
+  string type = 3; // image|video|audio
 }
 
 message FileRequest{
@@ -104,7 +105,7 @@ message FileRequest{
   uint32 message_id =  1;
   oneof data{
     FileInfo info = 2;
-    bytes chunk = 3;
+    string chunk = 3;
     bool done = 4;
   }
 }
