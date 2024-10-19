@@ -87,13 +87,14 @@ type Group struct {
 	gorm.Model
 	Name        string `gorm:"not null"`
 	OwnerID     uint   `gorm:"not null"`
+	ChatID      uint   `gorm:"not null"`
 	Description string
-	Members     []User `gorm:"many2many:group_members;"`
+	Members     []User `gorm:"many2many:chat_members;foreignKey:ChatID;joinForeignKey:ChatID;"`
 }
 
-type GroupMember struct {
-	GroupID  uint   `gorm:"primaryKey"`
-	UserID   uint   `gorm:"primaryKey"`
-	Role     string `gorm:"default:'member'"`
-	JoinedAt time.Time
-}
+// type GroupMember struct {
+// 	GroupID  uint   `gorm:"primaryKey"`
+// 	UserID   uint   `gorm:"primaryKey"`
+// 	Role     string `gorm:"default:'member'"`
+// 	JoinedAt time.Time
+// }

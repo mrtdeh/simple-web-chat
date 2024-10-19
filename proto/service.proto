@@ -168,8 +168,11 @@ service ChatService {
 
   rpc CreateChat(CreateChatRequest) returns (CreateChatResponse);
   rpc SendMessage(MessageRequest) returns (MessageResponse);
-  rpc GetMessages(GetMessagesRequest) returns (MessagesResponse);
   rpc UploadFile(FileRequest) returns (FileResponse);
   // rpc DownloadFile(FileRequest) returns (FileResponse);
+
+  // Just for test
+  rpc GetMessages(GetMessagesRequest) returns (MessagesResponse);
+  // rpc GetChats(GetChatsRequest) returns (ChatsResponse);
   
 }

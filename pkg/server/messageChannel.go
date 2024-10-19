@@ -4,6 +4,7 @@ import (
 	"api-channel/proto"
 	"fmt"
 	"sync"
+	"time"
 )
 
 var tm = &TokenManager{
@@ -21,10 +22,6 @@ func (s *Server) MessageChannel(pc *proto.Connect, stream proto.ChatService_Mess
 	if err != nil {
 		return err
 	}
-
-	// Check for username is registred or not
-	// TODO: search in db for username and check exits and registred
-	// TODO: check for username in redis cache
 	username := tokenData.Username
 
 	// Deny requested username if it assigned and actived by another client
@@ -39,9 +36,7 @@ func (s *Server) MessageChannel(pc *proto.Connect, stream proto.ChatService_Mess
 	}
 	s.Sessions.Add(username, session)
 	// Delete the session from map after stream terminate.
-	defer func() {
-		s.Sessions.Delete(username)
-	}()
+	defer s.Sessions.Delete(username)
 
 	// This service for realtime checking receive channel for incomming messages
 	go receiveService(session)
@@ -67,6 +62,7 @@ func (s *Server) MessageChannel(pc *proto.Connect, stream proto.ChatService_Mess
 // =================================================================
 
 func receiveService(session *Session) {
+	t := time.NewTimer(time.Second * 10)
 	for {
 		select {
 		case <-session.close:
@@ -74,6 +70,10 @@ func receiveService(session *Session) {
 			return
 		case <-session.OnReceive():
 			fmt.Println("received")
+		case <-t.C:
+			// check for received messages from db
+
+			// send messages in stream
 
 		}
 	}
