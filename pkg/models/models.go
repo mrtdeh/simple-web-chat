@@ -17,6 +17,7 @@ type User struct {
 	Bio            string
 	CreatedAt      time.Time
 	LastLogin      time.Time
+	Chats          []Chat `gorm:"many2many:chat_members;"`
 }
 
 type Chat struct {
@@ -46,6 +47,13 @@ type Message struct {
 	Stickers    []Sticker
 }
 
+type LastMessageRead struct {
+	gorm.Model
+	UserID    uint `gorm:"not null"`
+	ChatID    uint `gorm:"not null"`
+	MessageID uint `gorm:"not null"`
+}
+
 type Sticker struct {
 	gorm.Model
 	MessageID uint    `gorm:"not null"` // message ID
@@ -60,6 +68,7 @@ type Reply struct {
 	ReplyMessage   Message `gorm:"foreignKey:ReplyMessageId"`
 	Thumbnails     []ReplyThumbnails
 }
+
 type ReplyThumbnails struct {
 	gorm.Model
 	ReplyID     uint      `gorm:"not null"` // replied message id
@@ -86,10 +95,12 @@ type Thumbnail struct {
 type Group struct {
 	gorm.Model
 	Name        string `gorm:"not null"`
-	OwnerID     uint   `gorm:"not null"`
-	ChatID      uint   `gorm:"not null"`
 	Description string
-	Members     []User `gorm:"many2many:chat_members;foreignKey:ChatID;joinForeignKey:ChatID;"`
+	OwnerID     uint      `gorm:"not null"`
+	ChatID      uint      `gorm:"not null"`
+	Chat        Chat      `gorm:"foreignKey:ChatID"`
+	Messages    []Message `gorm:"foreignKey:ChatID"`
+	Members     []User    `gorm:"many2many:chat_members;foreignKey:ChatID;joinForeignKey:ChatID;"`
 }
 
 // type GroupMember struct {

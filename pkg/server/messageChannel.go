@@ -12,7 +12,7 @@ var tm = &TokenManager{
 	l:      sync.RWMutex{},
 }
 
-func (s *Server) MessageChannel(pc *proto.Connect, stream proto.ChatService_MessageChannelServer) error {
+func (s *Server) MessageChannel(pc *proto.MessageChannelRequest, stream proto.ChatService_MessageChannelServer) error {
 	// Check authorize user
 	token := pc.Token
 	ctx := stream.Context()
@@ -71,6 +71,7 @@ func receiveService(session *Session) {
 		case <-session.OnReceive():
 			fmt.Println("received")
 		case <-t.C:
+			// store the last readed message id to start from it later
 			// check for received messages from db
 
 			// send messages in stream

@@ -5,9 +5,6 @@ option go_package = ".;proto";
 
 
 // @@@ - client connection request for connect to server
-message Connect {
-  string token = 1;
-}
 
 // close response
 message Close {}
@@ -133,6 +130,18 @@ message CreateChatResponse{
   uint32 chatId = 1;
 }
 
+// =================================================================
+
+message MessageChannelRequest {
+  string token = 1;
+}
+message MessageChannelResponse{
+  oneof data{
+    MessagesResponse messages = 1;
+    ChatsResponse chats = 2;
+  }
+}
+
 message GetMessagesRequest{
   uint32 chatId = 1;
 }
@@ -160,8 +169,16 @@ message MessagesResponse{
 }
 
 
+message GetChatsRequest{
+  uint32 userId = 1;
+}
+message ChatsResponse{
+
+}
+
+
 service ChatService {
-  rpc MessageChannel(Connect) returns (stream MessageStream);
+  rpc MessageChannel(MessageChannelRequest) returns (stream MessageChannelResponse);
   rpc AddUser(AddUserRequest) returns (AddUserResponse);
   rpc Login(LoginRequest) returns (LoginResponse);
   rpc Ping(PingRequest) returns (PingResponse);
@@ -173,6 +190,6 @@ service ChatService {
 
   // Just for test
   rpc GetMessages(GetMessagesRequest) returns (MessagesResponse);
-  // rpc GetChats(GetChatsRequest) returns (ChatsResponse);
+  rpc GetChats(GetChatsRequest) returns (ChatsResponse);
   
 }
