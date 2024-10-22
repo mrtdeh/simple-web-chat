@@ -173,7 +173,17 @@ message GetChatsRequest{
   uint32 userId = 1;
 }
 message ChatsResponse{
+  repeated ChatData data = 1;
+  
+  message ChatData{
+    uint32 chatId = 1; // Chat id
+    string chatTitle = 2; // Title of Chat
+    string type = 3; // Type of Chat : group|channel|private
+    bool mute = 4; // Whether to mute
+    string avatarUrl = 5; // URL of avatar
+    string lastMessage = 6; // Last message
 
+  }
 }
 
 
