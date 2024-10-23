@@ -1380,6 +1380,209 @@ func (x *ChatsResponse) GetData() []*ChatsResponse_ChatData {
 	return nil
 }
 
+type CreateGroupRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Token string `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
+	Name  string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+}
+
+func (x *CreateGroupRequest) Reset() {
+	*x = CreateGroupRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_proto_service_proto_msgTypes[24]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *CreateGroupRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateGroupRequest) ProtoMessage() {}
+
+func (x *CreateGroupRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_service_proto_msgTypes[24]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateGroupRequest.ProtoReflect.Descriptor instead.
+func (*CreateGroupRequest) Descriptor() ([]byte, []int) {
+	return file_proto_service_proto_rawDescGZIP(), []int{24}
+}
+
+func (x *CreateGroupRequest) GetToken() string {
+	if x != nil {
+		return x.Token
+	}
+	return ""
+}
+
+func (x *CreateGroupRequest) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+type CreateGroupResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	GroupId uint32 `protobuf:"varint,1,opt,name=groupId,proto3" json:"groupId,omitempty"`
+	ChatId  uint32 `protobuf:"varint,2,opt,name=chatId,proto3" json:"chatId,omitempty"`
+}
+
+func (x *CreateGroupResponse) Reset() {
+	*x = CreateGroupResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_proto_service_proto_msgTypes[25]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *CreateGroupResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateGroupResponse) ProtoMessage() {}
+
+func (x *CreateGroupResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_service_proto_msgTypes[25]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateGroupResponse.ProtoReflect.Descriptor instead.
+func (*CreateGroupResponse) Descriptor() ([]byte, []int) {
+	return file_proto_service_proto_rawDescGZIP(), []int{25}
+}
+
+func (x *CreateGroupResponse) GetGroupId() uint32 {
+	if x != nil {
+		return x.GroupId
+	}
+	return 0
+}
+
+func (x *CreateGroupResponse) GetChatId() uint32 {
+	if x != nil {
+		return x.ChatId
+	}
+	return 0
+}
+
+type JoinGroupRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Token  string `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
+	ChatId uint32 `protobuf:"varint,2,opt,name=chatId,proto3" json:"chatId,omitempty"`
+}
+
+func (x *JoinGroupRequest) Reset() {
+	*x = JoinGroupRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_proto_service_proto_msgTypes[26]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *JoinGroupRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*JoinGroupRequest) ProtoMessage() {}
+
+func (x *JoinGroupRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_service_proto_msgTypes[26]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use JoinGroupRequest.ProtoReflect.Descriptor instead.
+func (*JoinGroupRequest) Descriptor() ([]byte, []int) {
+	return file_proto_service_proto_rawDescGZIP(), []int{26}
+}
+
+func (x *JoinGroupRequest) GetToken() string {
+	if x != nil {
+		return x.Token
+	}
+	return ""
+}
+
+func (x *JoinGroupRequest) GetChatId() uint32 {
+	if x != nil {
+		return x.ChatId
+	}
+	return 0
+}
+
+type JoinGroupResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+}
+
+func (x *JoinGroupResponse) Reset() {
+	*x = JoinGroupResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_proto_service_proto_msgTypes[27]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *JoinGroupResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*JoinGroupResponse) ProtoMessage() {}
+
+func (x *JoinGroupResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_service_proto_msgTypes[27]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use JoinGroupResponse.ProtoReflect.Descriptor instead.
+func (*JoinGroupResponse) Descriptor() ([]byte, []int) {
+	return file_proto_service_proto_rawDescGZIP(), []int{27}
+}
+
 type StreamData_Header struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1393,7 +1596,7 @@ type StreamData_Header struct {
 func (x *StreamData_Header) Reset() {
 	*x = StreamData_Header{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_proto_service_proto_msgTypes[24]
+		mi := &file_proto_service_proto_msgTypes[28]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1406,7 +1609,7 @@ func (x *StreamData_Header) String() string {
 func (*StreamData_Header) ProtoMessage() {}
 
 func (x *StreamData_Header) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_service_proto_msgTypes[24]
+	mi := &file_proto_service_proto_msgTypes[28]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1454,7 +1657,7 @@ type StreamData_Text struct {
 func (x *StreamData_Text) Reset() {
 	*x = StreamData_Text{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_proto_service_proto_msgTypes[25]
+		mi := &file_proto_service_proto_msgTypes[29]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1467,7 +1670,7 @@ func (x *StreamData_Text) String() string {
 func (*StreamData_Text) ProtoMessage() {}
 
 func (x *StreamData_Text) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_service_proto_msgTypes[25]
+	mi := &file_proto_service_proto_msgTypes[29]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1506,7 +1709,7 @@ type StreamData_File struct {
 func (x *StreamData_File) Reset() {
 	*x = StreamData_File{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_proto_service_proto_msgTypes[26]
+		mi := &file_proto_service_proto_msgTypes[30]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1519,7 +1722,7 @@ func (x *StreamData_File) String() string {
 func (*StreamData_File) ProtoMessage() {}
 
 func (x *StreamData_File) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_service_proto_msgTypes[26]
+	mi := &file_proto_service_proto_msgTypes[30]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1598,7 +1801,7 @@ type MessageRequest_RepliedMessage struct {
 func (x *MessageRequest_RepliedMessage) Reset() {
 	*x = MessageRequest_RepliedMessage{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_proto_service_proto_msgTypes[27]
+		mi := &file_proto_service_proto_msgTypes[31]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1611,7 +1814,7 @@ func (x *MessageRequest_RepliedMessage) String() string {
 func (*MessageRequest_RepliedMessage) ProtoMessage() {}
 
 func (x *MessageRequest_RepliedMessage) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_service_proto_msgTypes[27]
+	mi := &file_proto_service_proto_msgTypes[31]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1664,7 +1867,7 @@ type MessagesResponse_MessageData struct {
 func (x *MessagesResponse_MessageData) Reset() {
 	*x = MessagesResponse_MessageData{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_proto_service_proto_msgTypes[28]
+		mi := &file_proto_service_proto_msgTypes[32]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1677,7 +1880,7 @@ func (x *MessagesResponse_MessageData) String() string {
 func (*MessagesResponse_MessageData) ProtoMessage() {}
 
 func (x *MessagesResponse_MessageData) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_service_proto_msgTypes[28]
+	mi := &file_proto_service_proto_msgTypes[32]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1748,7 +1951,7 @@ type MessagesResponse_Attachment struct {
 func (x *MessagesResponse_Attachment) Reset() {
 	*x = MessagesResponse_Attachment{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_proto_service_proto_msgTypes[29]
+		mi := &file_proto_service_proto_msgTypes[33]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1761,7 +1964,7 @@ func (x *MessagesResponse_Attachment) String() string {
 func (*MessagesResponse_Attachment) ProtoMessage() {}
 
 func (x *MessagesResponse_Attachment) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_service_proto_msgTypes[29]
+	mi := &file_proto_service_proto_msgTypes[33]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1811,7 +2014,7 @@ type MessagesResponse_RepliedMessage struct {
 func (x *MessagesResponse_RepliedMessage) Reset() {
 	*x = MessagesResponse_RepliedMessage{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_proto_service_proto_msgTypes[30]
+		mi := &file_proto_service_proto_msgTypes[34]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1824,7 +2027,7 @@ func (x *MessagesResponse_RepliedMessage) String() string {
 func (*MessagesResponse_RepliedMessage) ProtoMessage() {}
 
 func (x *MessagesResponse_RepliedMessage) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_service_proto_msgTypes[30]
+	mi := &file_proto_service_proto_msgTypes[34]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1877,7 +2080,7 @@ type ChatsResponse_ChatData struct {
 func (x *ChatsResponse_ChatData) Reset() {
 	*x = ChatsResponse_ChatData{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_proto_service_proto_msgTypes[31]
+		mi := &file_proto_service_proto_msgTypes[35]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1890,7 +2093,7 @@ func (x *ChatsResponse_ChatData) String() string {
 func (*ChatsResponse_ChatData) ProtoMessage() {}
 
 func (x *ChatsResponse_ChatData) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_service_proto_msgTypes[31]
+	mi := &file_proto_service_proto_msgTypes[35]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2124,8 +2327,22 @@ var file_proto_service_proto_rawDesc = []byte{
 	0x0a, 0x09, 0x61, 0x76, 0x61, 0x74, 0x61, 0x72, 0x55, 0x72, 0x6c, 0x18, 0x05, 0x20, 0x01, 0x28,
 	0x09, 0x52, 0x09, 0x61, 0x76, 0x61, 0x74, 0x61, 0x72, 0x55, 0x72, 0x6c, 0x12, 0x20, 0x0a, 0x0b,
 	0x6c, 0x61, 0x73, 0x74, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x18, 0x06, 0x20, 0x01, 0x28,
-	0x09, 0x52, 0x0b, 0x6c, 0x61, 0x73, 0x74, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x32, 0xb2,
-	0x04, 0x0a, 0x0b, 0x43, 0x68, 0x61, 0x74, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x12, 0x4f,
+	0x09, 0x52, 0x0b, 0x6c, 0x61, 0x73, 0x74, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x22, 0x3e,
+	0x0a, 0x12, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x47, 0x72, 0x6f, 0x75, 0x70, 0x52, 0x65, 0x71,
+	0x75, 0x65, 0x73, 0x74, 0x12, 0x14, 0x0a, 0x05, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x18, 0x01, 0x20,
+	0x01, 0x28, 0x09, 0x52, 0x05, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x12, 0x12, 0x0a, 0x04, 0x6e, 0x61,
+	0x6d, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x22, 0x47,
+	0x0a, 0x13, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x47, 0x72, 0x6f, 0x75, 0x70, 0x52, 0x65, 0x73,
+	0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x18, 0x0a, 0x07, 0x67, 0x72, 0x6f, 0x75, 0x70, 0x49, 0x64,
+	0x18, 0x01, 0x20, 0x01, 0x28, 0x0d, 0x52, 0x07, 0x67, 0x72, 0x6f, 0x75, 0x70, 0x49, 0x64, 0x12,
+	0x16, 0x0a, 0x06, 0x63, 0x68, 0x61, 0x74, 0x49, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0d, 0x52,
+	0x06, 0x63, 0x68, 0x61, 0x74, 0x49, 0x64, 0x22, 0x40, 0x0a, 0x10, 0x4a, 0x6f, 0x69, 0x6e, 0x47,
+	0x72, 0x6f, 0x75, 0x70, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x14, 0x0a, 0x05, 0x74,
+	0x6f, 0x6b, 0x65, 0x6e, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x74, 0x6f, 0x6b, 0x65,
+	0x6e, 0x12, 0x16, 0x0a, 0x06, 0x63, 0x68, 0x61, 0x74, 0x49, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28,
+	0x0d, 0x52, 0x06, 0x63, 0x68, 0x61, 0x74, 0x49, 0x64, 0x22, 0x13, 0x0a, 0x11, 0x4a, 0x6f, 0x69,
+	0x6e, 0x47, 0x72, 0x6f, 0x75, 0x70, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x32, 0xb8,
+	0x05, 0x0a, 0x0b, 0x43, 0x68, 0x61, 0x74, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x12, 0x4f,
 	0x0a, 0x0e, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x43, 0x68, 0x61, 0x6e, 0x6e, 0x65, 0x6c,
 	0x12, 0x1c, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65,
 	0x43, 0x68, 0x61, 0x6e, 0x6e, 0x65, 0x6c, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x1d,
@@ -2145,23 +2362,31 @@ var file_proto_service_proto_rawDesc = []byte{
 	0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x43, 0x68, 0x61, 0x74, 0x52,
 	0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x19, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x43,
 	0x72, 0x65, 0x61, 0x74, 0x65, 0x43, 0x68, 0x61, 0x74, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73,
-	0x65, 0x12, 0x3c, 0x0a, 0x0b, 0x53, 0x65, 0x6e, 0x64, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65,
-	0x12, 0x15, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65,
-	0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x16, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e,
-	0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12,
-	0x35, 0x0a, 0x0a, 0x55, 0x70, 0x6c, 0x6f, 0x61, 0x64, 0x46, 0x69, 0x6c, 0x65, 0x12, 0x12, 0x2e,
-	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x46, 0x69, 0x6c, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73,
-	0x74, 0x1a, 0x13, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x46, 0x69, 0x6c, 0x65, 0x52, 0x65,
-	0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x41, 0x0a, 0x0b, 0x47, 0x65, 0x74, 0x4d, 0x65, 0x73,
-	0x73, 0x61, 0x67, 0x65, 0x73, 0x12, 0x19, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x47, 0x65,
-	0x74, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74,
-	0x1a, 0x17, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65,
-	0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x38, 0x0a, 0x08, 0x47, 0x65, 0x74,
-	0x43, 0x68, 0x61, 0x74, 0x73, 0x12, 0x16, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x47, 0x65,
-	0x74, 0x43, 0x68, 0x61, 0x74, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x14, 0x2e,
-	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x43, 0x68, 0x61, 0x74, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f,
-	0x6e, 0x73, 0x65, 0x42, 0x09, 0x5a, 0x07, 0x2e, 0x3b, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x06,
-	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x65, 0x12, 0x44, 0x0a, 0x0b, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x47, 0x72, 0x6f, 0x75, 0x70,
+	0x12, 0x19, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x47,
+	0x72, 0x6f, 0x75, 0x70, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x1a, 0x2e, 0x70, 0x72,
+	0x6f, 0x74, 0x6f, 0x2e, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x47, 0x72, 0x6f, 0x75, 0x70, 0x52,
+	0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x3e, 0x0a, 0x09, 0x4a, 0x6f, 0x69, 0x6e, 0x47,
+	0x72, 0x6f, 0x75, 0x70, 0x12, 0x17, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x4a, 0x6f, 0x69,
+	0x6e, 0x47, 0x72, 0x6f, 0x75, 0x70, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x18, 0x2e,
+	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x4a, 0x6f, 0x69, 0x6e, 0x47, 0x72, 0x6f, 0x75, 0x70, 0x52,
+	0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x3c, 0x0a, 0x0b, 0x53, 0x65, 0x6e, 0x64, 0x4d,
+	0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x12, 0x15, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x4d,
+	0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x16, 0x2e,
+	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x52, 0x65, 0x73,
+	0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x35, 0x0a, 0x0a, 0x55, 0x70, 0x6c, 0x6f, 0x61, 0x64, 0x46,
+	0x69, 0x6c, 0x65, 0x12, 0x12, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x46, 0x69, 0x6c, 0x65,
+	0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x13, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e,
+	0x46, 0x69, 0x6c, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x41, 0x0a, 0x0b,
+	0x47, 0x65, 0x74, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x73, 0x12, 0x19, 0x2e, 0x70, 0x72,
+	0x6f, 0x74, 0x6f, 0x2e, 0x47, 0x65, 0x74, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x73, 0x52,
+	0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x17, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x4d,
+	0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12,
+	0x38, 0x0a, 0x08, 0x47, 0x65, 0x74, 0x43, 0x68, 0x61, 0x74, 0x73, 0x12, 0x16, 0x2e, 0x70, 0x72,
+	0x6f, 0x74, 0x6f, 0x2e, 0x47, 0x65, 0x74, 0x43, 0x68, 0x61, 0x74, 0x73, 0x52, 0x65, 0x71, 0x75,
+	0x65, 0x73, 0x74, 0x1a, 0x14, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x43, 0x68, 0x61, 0x74,
+	0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x42, 0x09, 0x5a, 0x07, 0x2e, 0x3b, 0x70,
+	0x72, 0x6f, 0x74, 0x6f, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -2176,7 +2401,7 @@ func file_proto_service_proto_rawDescGZIP() []byte {
 	return file_proto_service_proto_rawDescData
 }
 
-var file_proto_service_proto_msgTypes = make([]protoimpl.MessageInfo, 32)
+var file_proto_service_proto_msgTypes = make([]protoimpl.MessageInfo, 36)
 var file_proto_service_proto_goTypes = []interface{}{
 	(*Close)(nil),                           // 0: proto.Close
 	(*ErrorResponse)(nil),                   // 1: proto.ErrorResponse
@@ -2202,49 +2427,57 @@ var file_proto_service_proto_goTypes = []interface{}{
 	(*MessagesResponse)(nil),                // 21: proto.MessagesResponse
 	(*GetChatsRequest)(nil),                 // 22: proto.GetChatsRequest
 	(*ChatsResponse)(nil),                   // 23: proto.ChatsResponse
-	(*StreamData_Header)(nil),               // 24: proto.StreamData.Header
-	(*StreamData_Text)(nil),                 // 25: proto.StreamData.Text
-	(*StreamData_File)(nil),                 // 26: proto.StreamData.File
-	(*MessageRequest_RepliedMessage)(nil),   // 27: proto.MessageRequest.RepliedMessage
-	(*MessagesResponse_MessageData)(nil),    // 28: proto.MessagesResponse.MessageData
-	(*MessagesResponse_Attachment)(nil),     // 29: proto.MessagesResponse.Attachment
-	(*MessagesResponse_RepliedMessage)(nil), // 30: proto.MessagesResponse.RepliedMessage
-	(*ChatsResponse_ChatData)(nil),          // 31: proto.ChatsResponse.ChatData
+	(*CreateGroupRequest)(nil),              // 24: proto.CreateGroupRequest
+	(*CreateGroupResponse)(nil),             // 25: proto.CreateGroupResponse
+	(*JoinGroupRequest)(nil),                // 26: proto.JoinGroupRequest
+	(*JoinGroupResponse)(nil),               // 27: proto.JoinGroupResponse
+	(*StreamData_Header)(nil),               // 28: proto.StreamData.Header
+	(*StreamData_Text)(nil),                 // 29: proto.StreamData.Text
+	(*StreamData_File)(nil),                 // 30: proto.StreamData.File
+	(*MessageRequest_RepliedMessage)(nil),   // 31: proto.MessageRequest.RepliedMessage
+	(*MessagesResponse_MessageData)(nil),    // 32: proto.MessagesResponse.MessageData
+	(*MessagesResponse_Attachment)(nil),     // 33: proto.MessagesResponse.Attachment
+	(*MessagesResponse_RepliedMessage)(nil), // 34: proto.MessagesResponse.RepliedMessage
+	(*ChatsResponse_ChatData)(nil),          // 35: proto.ChatsResponse.ChatData
 }
 var file_proto_service_proto_depIdxs = []int32{
 	8,  // 0: proto.MessageStream.data:type_name -> proto.StreamData
-	24, // 1: proto.StreamData.header:type_name -> proto.StreamData.Header
-	25, // 2: proto.StreamData.text:type_name -> proto.StreamData.Text
-	26, // 3: proto.StreamData.file:type_name -> proto.StreamData.File
-	27, // 4: proto.MessageRequest.repliedMessages:type_name -> proto.MessageRequest.RepliedMessage
+	28, // 1: proto.StreamData.header:type_name -> proto.StreamData.Header
+	29, // 2: proto.StreamData.text:type_name -> proto.StreamData.Text
+	30, // 3: proto.StreamData.file:type_name -> proto.StreamData.File
+	31, // 4: proto.MessageRequest.repliedMessages:type_name -> proto.MessageRequest.RepliedMessage
 	11, // 5: proto.FileRequest.info:type_name -> proto.FileInfo
 	21, // 6: proto.MessageChannelResponse.messages:type_name -> proto.MessagesResponse
 	23, // 7: proto.MessageChannelResponse.chats:type_name -> proto.ChatsResponse
-	28, // 8: proto.MessagesResponse.data:type_name -> proto.MessagesResponse.MessageData
-	31, // 9: proto.ChatsResponse.data:type_name -> proto.ChatsResponse.ChatData
+	32, // 8: proto.MessagesResponse.data:type_name -> proto.MessagesResponse.MessageData
+	35, // 9: proto.ChatsResponse.data:type_name -> proto.ChatsResponse.ChatData
 	11, // 10: proto.StreamData.File.info:type_name -> proto.FileInfo
-	29, // 11: proto.MessagesResponse.MessageData.attachements:type_name -> proto.MessagesResponse.Attachment
-	30, // 12: proto.MessagesResponse.MessageData.repliedMessages:type_name -> proto.MessagesResponse.RepliedMessage
+	33, // 11: proto.MessagesResponse.MessageData.attachements:type_name -> proto.MessagesResponse.Attachment
+	34, // 12: proto.MessagesResponse.MessageData.repliedMessages:type_name -> proto.MessagesResponse.RepliedMessage
 	18, // 13: proto.ChatService.MessageChannel:input_type -> proto.MessageChannelRequest
 	14, // 14: proto.ChatService.AddUser:input_type -> proto.AddUserRequest
 	5,  // 15: proto.ChatService.Login:input_type -> proto.LoginRequest
 	2,  // 16: proto.ChatService.Ping:input_type -> proto.PingRequest
 	16, // 17: proto.ChatService.CreateChat:input_type -> proto.CreateChatRequest
-	9,  // 18: proto.ChatService.SendMessage:input_type -> proto.MessageRequest
-	12, // 19: proto.ChatService.UploadFile:input_type -> proto.FileRequest
-	20, // 20: proto.ChatService.GetMessages:input_type -> proto.GetMessagesRequest
-	22, // 21: proto.ChatService.GetChats:input_type -> proto.GetChatsRequest
-	19, // 22: proto.ChatService.MessageChannel:output_type -> proto.MessageChannelResponse
-	15, // 23: proto.ChatService.AddUser:output_type -> proto.AddUserResponse
-	6,  // 24: proto.ChatService.Login:output_type -> proto.LoginResponse
-	3,  // 25: proto.ChatService.Ping:output_type -> proto.PingResponse
-	17, // 26: proto.ChatService.CreateChat:output_type -> proto.CreateChatResponse
-	10, // 27: proto.ChatService.SendMessage:output_type -> proto.MessageResponse
-	13, // 28: proto.ChatService.UploadFile:output_type -> proto.FileResponse
-	21, // 29: proto.ChatService.GetMessages:output_type -> proto.MessagesResponse
-	23, // 30: proto.ChatService.GetChats:output_type -> proto.ChatsResponse
-	22, // [22:31] is the sub-list for method output_type
-	13, // [13:22] is the sub-list for method input_type
+	24, // 18: proto.ChatService.CreateGroup:input_type -> proto.CreateGroupRequest
+	26, // 19: proto.ChatService.JoinGroup:input_type -> proto.JoinGroupRequest
+	9,  // 20: proto.ChatService.SendMessage:input_type -> proto.MessageRequest
+	12, // 21: proto.ChatService.UploadFile:input_type -> proto.FileRequest
+	20, // 22: proto.ChatService.GetMessages:input_type -> proto.GetMessagesRequest
+	22, // 23: proto.ChatService.GetChats:input_type -> proto.GetChatsRequest
+	19, // 24: proto.ChatService.MessageChannel:output_type -> proto.MessageChannelResponse
+	15, // 25: proto.ChatService.AddUser:output_type -> proto.AddUserResponse
+	6,  // 26: proto.ChatService.Login:output_type -> proto.LoginResponse
+	3,  // 27: proto.ChatService.Ping:output_type -> proto.PingResponse
+	17, // 28: proto.ChatService.CreateChat:output_type -> proto.CreateChatResponse
+	25, // 29: proto.ChatService.CreateGroup:output_type -> proto.CreateGroupResponse
+	27, // 30: proto.ChatService.JoinGroup:output_type -> proto.JoinGroupResponse
+	10, // 31: proto.ChatService.SendMessage:output_type -> proto.MessageResponse
+	13, // 32: proto.ChatService.UploadFile:output_type -> proto.FileResponse
+	21, // 33: proto.ChatService.GetMessages:output_type -> proto.MessagesResponse
+	23, // 34: proto.ChatService.GetChats:output_type -> proto.ChatsResponse
+	24, // [24:35] is the sub-list for method output_type
+	13, // [13:24] is the sub-list for method input_type
 	13, // [13:13] is the sub-list for extension type_name
 	13, // [13:13] is the sub-list for extension extendee
 	0,  // [0:13] is the sub-list for field type_name
@@ -2545,7 +2778,7 @@ func file_proto_service_proto_init() {
 			}
 		}
 		file_proto_service_proto_msgTypes[24].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*StreamData_Header); i {
+			switch v := v.(*CreateGroupRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2557,7 +2790,7 @@ func file_proto_service_proto_init() {
 			}
 		}
 		file_proto_service_proto_msgTypes[25].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*StreamData_Text); i {
+			switch v := v.(*CreateGroupResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2569,7 +2802,7 @@ func file_proto_service_proto_init() {
 			}
 		}
 		file_proto_service_proto_msgTypes[26].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*StreamData_File); i {
+			switch v := v.(*JoinGroupRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2581,7 +2814,7 @@ func file_proto_service_proto_init() {
 			}
 		}
 		file_proto_service_proto_msgTypes[27].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*MessageRequest_RepliedMessage); i {
+			switch v := v.(*JoinGroupResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2593,7 +2826,7 @@ func file_proto_service_proto_init() {
 			}
 		}
 		file_proto_service_proto_msgTypes[28].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*MessagesResponse_MessageData); i {
+			switch v := v.(*StreamData_Header); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2605,7 +2838,7 @@ func file_proto_service_proto_init() {
 			}
 		}
 		file_proto_service_proto_msgTypes[29].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*MessagesResponse_Attachment); i {
+			switch v := v.(*StreamData_Text); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2617,7 +2850,7 @@ func file_proto_service_proto_init() {
 			}
 		}
 		file_proto_service_proto_msgTypes[30].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*MessagesResponse_RepliedMessage); i {
+			switch v := v.(*StreamData_File); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2629,6 +2862,54 @@ func file_proto_service_proto_init() {
 			}
 		}
 		file_proto_service_proto_msgTypes[31].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*MessageRequest_RepliedMessage); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_proto_service_proto_msgTypes[32].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*MessagesResponse_MessageData); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_proto_service_proto_msgTypes[33].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*MessagesResponse_Attachment); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_proto_service_proto_msgTypes[34].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*MessagesResponse_RepliedMessage); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_proto_service_proto_msgTypes[35].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ChatsResponse_ChatData); i {
 			case 0:
 				return &v.state
@@ -2655,7 +2936,7 @@ func file_proto_service_proto_init() {
 		(*MessageChannelResponse_Messages)(nil),
 		(*MessageChannelResponse_Chats)(nil),
 	}
-	file_proto_service_proto_msgTypes[26].OneofWrappers = []interface{}{
+	file_proto_service_proto_msgTypes[30].OneofWrappers = []interface{}{
 		(*StreamData_File_Info)(nil),
 		(*StreamData_File_Chunk)(nil),
 		(*StreamData_File_End)(nil),
@@ -2666,7 +2947,7 @@ func file_proto_service_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_proto_service_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   32,
+			NumMessages:   36,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

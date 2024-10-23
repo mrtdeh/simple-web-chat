@@ -187,6 +187,24 @@ message ChatsResponse{
 }
 
 
+message CreateGroupRequest{
+  string token = 1;
+  string name = 2;
+
+}
+message CreateGroupResponse{
+  uint32 groupId = 1;
+  uint32 chatId = 2;
+}
+
+message JoinGroupRequest{
+  string token = 1;
+  uint32 chatId = 2;
+}
+message JoinGroupResponse{
+
+}
+
 service ChatService {
   rpc MessageChannel(MessageChannelRequest) returns (stream MessageChannelResponse);
   rpc AddUser(AddUserRequest) returns (AddUserResponse);
@@ -194,6 +212,8 @@ service ChatService {
   rpc Ping(PingRequest) returns (PingResponse);
 
   rpc CreateChat(CreateChatRequest) returns (CreateChatResponse);
+  rpc CreateGroup(CreateGroupRequest) returns (CreateGroupResponse);
+  rpc JoinGroup(JoinGroupRequest) returns (JoinGroupResponse);
   rpc SendMessage(MessageRequest) returns (MessageResponse);
   rpc UploadFile(FileRequest) returns (FileResponse);
   // rpc DownloadFile(FileRequest) returns (FileResponse);
