@@ -17,28 +17,6 @@ type Chat struct {
 
 func GetChats(userId uint) (*proto.ChatsResponse, error) {
 
-	// var user models.User
-	// res := db.First(&user, userId).Preload("Chats").Preload("Group")
-
-	// if res.Error != nil {
-	// 	return nil, res.Error
-	// }
-
-	// var data []Chat
-	// for _, chat := range user.Chats {
-	// 	c := Chat{ChatID: chat.ID}
-	// 	if chat.IsGroup {
-	// 		c.ChatName = chat.Group.Name
-	// 		c.AvatarUrl = chat.Group.AvatarUrl
-
-	// 		res :=  db.Table("chats").
-	// 	InnerJoins("JOIN chat_members cm ON chats.id = cm.chat_id AND cm.user_id = ?",userId)
-	// 		c.Mute = chat.
-	// 	} else {
-
-	// 	}
-	// }
-
 	var chats []struct {
 		ChatID             uint
 		ChatName           string
@@ -46,7 +24,6 @@ func GetChats(userId uint) (*proto.ChatsResponse, error) {
 		Mute               bool
 		AvatarUrl          string
 		LastMessage        string
-		LastMessageRead    string
 		UnreadMessageCount int
 	}
 
@@ -59,14 +36,11 @@ func GetChats(userId uint) (*proto.ChatsResponse, error) {
 		Joins("LEFT JOIN users u2 ON pc.user2_id = u2.id").
 		// اتصال به جدول گروه‌ها برای چت‌های گروهی
 		Joins("LEFT JOIN groups g ON chats.id = g.chat_id").
-		// Connect to Last_Message_Reads table
-		// Joins("LEFT JOIN last_message_reads lmr ON lmr.chat_id = chats.id AND lmr.user_id = ?", userId).
-		// // محاسبه تعداد پیام‌های خوانده‌نشده
-		// Joins("LEFT JOIN LATERAL (SELECT COUNT(*) FROM messages m WHERE m.chat_id = chats.id AND m.created_at > COALESCE(last_read_msg.created_at, '1970-01-01')) AS unread_msg_count ON chats.id = unread_msg_count.chat_id").
 
-		Joins("LEFT JOIN LATERAL (SELECT m.content, m.created_at FROM messages m WHERE m.chat_id = chats.id ORDER BY m.created_at DESC LIMIT 1) AS last_msg ON chats.id = last_msg.chat_id").
 		// پیوستن به آخرین پیامی که کاربر خوانده است
 		Joins("LEFT JOIN last_message_reads lmr ON lmr.chat_id = chats.id AND lmr.user_id = ?", userId).
+		// Joins("LEFT JOIN LATERAL (SELECT m.content, m.created_at FROM messages m WHERE m.chat_id = chats.id ORDER BY m.created_at DESC LIMIT 1) AS last_msg ON chats.id = last_msg.chat_id").
+		Joins("LEFT JOIN LATERAL (SELECT m.content, m.created_at FROM messages m WHERE m.chat_id = chats.id AND m.id = lmr.last_message_id) AS last_msg ON chats.id = last_msg.chat_id").
 		// پیوستن به پیام خوانده‌شده توسط کاربر
 		Joins("LEFT JOIN messages last_read_msg ON last_read_msg.id = lmr.last_readed_message_id").
 		// محاسبه تعداد پیام‌های خوانده‌نشده
@@ -92,8 +66,8 @@ func GetChats(userId uint) (*proto.ChatsResponse, error) {
 			WHEN pc.user2_id = ? THEN u1.profile_picture 
 		END AS avatar_url,
 		last_msg.content AS last_message,              
-		last_read_msg.content AS last_message_read,   
 		unread_msg_count.count AS unread_message_count 
+		/* last_read_msg.content AS last_message_read*/   
 
 	`, userId, userId).
 		Scan(&chats)
