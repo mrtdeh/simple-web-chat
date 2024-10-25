@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  mariadb:
+    image: mariadb:latest
+    container_name: mariadb_container
+    environment:
+      - MARIADB_ROOT_PASSWORD=12345
+      - MARIADB_DATABASE=test
+      - MARIADB_USER=apiservices
+      - MARIADB_PASSWORD=F@rz@n@2022
+    ports:
+      - "3306:3306" 
+    volumes:
+      - mariadb_data:/var/lib/mysql 
+    networks:
+      - mariadb_network
+
+volumes:
+  mariadb_data:
+
+networks:
+  mariadb_network:

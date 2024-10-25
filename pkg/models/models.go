@@ -78,16 +78,16 @@ type Group struct {
 	OwnerID     uint   `gorm:"not null"`
 	ChatID      uint   `gorm:"not null"`
 	Chat        Chat   `gorm:"foreignKey:ChatID"`
-	Members     []User `gorm:"many2many:chat_members;"`
+	Members     []User `gorm:"many2many:chat_members;foreignKey:ChatID;joinForeignKey:ChatID;"`
 }
 
 type PrivateChat struct {
 	gorm.Model
-	ChatID      uint `gorm:"not null"`
-	LeftUserID  uint `gorm:"not null"` // کاربر اول
-	RightUserID uint `gorm:"not null"` // کاربر دوم
-	LeftUser    User `gorm:"foreignKey:LeftUserID"`
-	RightUser   User `gorm:"foreignKey:RightUserID"`
+	ChatID  uint `gorm:"not null"`
+	User1ID uint `gorm:"not null"` // کاربر اول
+	User2ID uint `gorm:"not null"` // کاربر دوم
+	User1   User `gorm:"foreignKey:User1ID"`
+	User2   User `gorm:"foreignKey:User2ID"`
 }
 
 type ChatMember struct {

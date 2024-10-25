@@ -19,9 +19,11 @@ func Init() (*gorm.DB, error) {
 		return nil, fmt.Errorf("failed to connect database")
 	}
 
-	db.AutoMigrate(&models.User{}, &models.Chat{}, &models.ChatMember{},
+	db.SetupJoinTable(&models.Group{}, "Members", &models.ChatMember{})
+	db.AutoMigrate(&models.User{}, &models.Chat{},
 		&models.Message{}, &models.Attachment{}, &models.Group{},
-		models.Thumbnail{}, models.Reply{}, models.ReplyThumbnails{})
+		models.Thumbnail{}, models.Reply{}, models.ReplyThumbnails{},
+		&models.PrivateChat{}, &models.LastMessageRead{}, &models.Sticker{})
 
 	return db, nil
 
