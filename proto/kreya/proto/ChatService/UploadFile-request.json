@@ -1,0 +1,9 @@
+{
+  "messageId": 327,
+  "info": {
+    "name": "{{ faker.name.last_name }}",
+    "size": 171,
+    "type": "{{ faker.database.type }}"
+  },
+  "requestId": "{{ faker.random.uuid }}"
+}

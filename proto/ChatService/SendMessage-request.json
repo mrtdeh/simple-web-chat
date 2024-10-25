@@ -1,0 +1,24 @@
+{
+  "content": "Tasty Concrete Soap",
+  "token": "Sleek withdrawal Iowa",
+  "type": "{{ faker.database.type }}",
+  "chatId": 113,
+  "repliedMessages": [
+    {
+      "messageId": 827,
+      "wholeMessage": true,
+      "selectedAttachments": [
+        160,
+        209
+      ]
+    },
+    {
+      "messageId": 344,
+      "wholeMessage": true,
+      "selectedAttachments": [
+        14,
+        21
+      ]
+    }
+  ]
+}

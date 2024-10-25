@@ -1,0 +1,7 @@
+{
+  "username": "user1",
+  "password": "12345",
+  "displayName": "Netherlands panel",
+  "phoneNumber": "{{ faker.phone.phone_number }}",
+  "email": "{{ faker.internet.example_email }}"
+}

@@ -1,0 +1,13 @@
+{
+  "details": {
+    "methodFqn": "proto.ChatService.MessageChannel"
+  },
+  "requests": [
+    {
+      "location": "MessageChannel-request.json"
+    }
+  ],
+  "operationType": "serverStreaming",
+  "invokerName": "grpc",
+  "importStreamId": "90b0904e-5a60-421a-99b1-5f68c96ac0ed"
+}

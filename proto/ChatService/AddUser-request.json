@@ -1,0 +1,7 @@
+{
+  "username": "synergistic drive grid-enabled",
+  "password": "{{ faker.internet.password }}",
+  "displayName": "programming Representative",
+  "phoneNumber": "{{ faker.phone.phone_number }}",
+  "email": "{{ faker.internet.example_email }}"
+}

@@ -1,0 +1,4 @@
+{
+  "username": "Squares",
+  "password": "{{ faker.internet.password }}"
+}
