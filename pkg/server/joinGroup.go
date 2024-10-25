@@ -20,7 +20,7 @@ func (s *Server) JoinGroup(ctx context.Context, req *proto.JoinGroupRequest) (*p
 	member := &models.ChatMember{
 		UserID:   t.UserID,
 		ChatID:   uint(req.ChatId),
-		Role:     "member",
+		Role:     req.Role,
 		JoinedAt: time.Now(),
 	}
 	res := db.Create(member)

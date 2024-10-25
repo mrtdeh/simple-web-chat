@@ -25,7 +25,7 @@ func (s *Server) CreateGroup(ctx context.Context, req *proto.CreateGroupRequest)
 		return nil, res.Error
 	}
 
-	// Create group
+	// Create group chat
 	g := &models.Group{
 		Name:    req.Name,
 		OwnerID: t.UserID,
@@ -34,6 +34,16 @@ func (s *Server) CreateGroup(ctx context.Context, req *proto.CreateGroupRequest)
 	res = db.Create(g)
 	if res.Error != nil {
 		return nil, res.Error
+	}
+
+	// Join current user to created group chat
+	_, err = s.JoinGroup(ctx, &proto.JoinGroupRequest{
+		Token:  req.Token,
+		ChatId: uint32(chat.ID),
+		Role:   "admin",
+	})
+	if err != nil {
+		return nil, err
 	}
 
 	return &proto.CreateGroupResponse{

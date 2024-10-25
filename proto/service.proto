@@ -200,6 +200,7 @@ message CreateGroupResponse{
 message JoinGroupRequest{
   string token = 1;
   uint32 chatId = 2;
+  string role = 3;
 }
 message JoinGroupResponse{
 
