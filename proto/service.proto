@@ -170,7 +170,7 @@ message MessagesResponse{
 
 
 message GetChatsRequest{
-  uint32 userId = 1;
+  string token = 1;
 }
 message ChatsResponse{
   repeated ChatData data = 1;
@@ -182,7 +182,7 @@ message ChatsResponse{
     bool mute = 4; // Whether to mute
     string avatarUrl = 5; // URL of avatar
     string lastMessage = 6; // Last message
-
+    string unreadedMessagesCount = 7; // Unreaded messages count
   }
 }
 
@@ -206,9 +206,18 @@ message JoinGroupResponse{
 
 }
 
+message AddMemberRequest{
+  uint32 chatId = 1;
+  repeated uint32 membersId = 2;
+}
+message AddMemberResponse{
+  string status = 1;
+}
+
 service ChatService {
   rpc MessageChannel(MessageChannelRequest) returns (stream MessageChannelResponse);
   rpc AddUser(AddUserRequest) returns (AddUserResponse);
+  rpc AddMember(AddMemberRequest) returns (AddMemberResponse);
   rpc Login(LoginRequest) returns (LoginResponse);
   rpc Ping(PingRequest) returns (PingResponse);
 

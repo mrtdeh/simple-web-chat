@@ -6,49 +6,6 @@ import (
 	"gorm.io/gorm"
 )
 
-// type User struct {
-// 	gorm.Model
-// 	Username       string `gorm:"unique;not null"`
-// 	Password       string `gorm:"not null"`
-// 	DisplayName    string
-// 	PhoneNumber    string `gorm:"unique"`
-// 	Email          string `gorm:"unique"`
-// 	ProfilePicture string
-// 	Bio            string
-// 	CreatedAt      time.Time
-// 	LastLogin      time.Time
-// 	Chats          []Chat `gorm:"many2many:chat_members;"`
-// }
-
-// type Chat struct {
-// 	gorm.Model
-// 	Name     string
-// 	IsGroup  bool   `gorm:"default:false"`
-// 	Members  []User `gorm:"many2many:chat_members;"`
-// 	Messages []Message
-// 	Group    *Group `gorm:"foreignKey:ChatID"`
-// }
-
-// type Group struct {
-// 	gorm.Model
-// 	Name        string `gorm:"not null"`
-// 	Description string
-// 	AvatarUrl   string
-// 	OwnerID     uint      `gorm:"not null"`
-// 	ChatID      uint      `gorm:"not null"`
-// 	Chat        Chat      `gorm:"foreignKey:ChatID"`
-// 	Messages    []Message `gorm:"foreignKey:ChatID"`
-// 	Members     []User    `gorm:"many2many:chat_members;foreignKey:ChatID;joinForeignKey:ChatID;"`
-// }
-
-// type ChatMember struct {
-// 	ChatID   uint   `gorm:"primaryKey"`
-// 	UserID   uint   `gorm:"primaryKey"`
-// 	Role     string `gorm:"default:'member'"`
-// 	Mute     bool   `gorm:"default:false"`
-// 	JoinedAt time.Time
-// }
-
 type User struct {
 	gorm.Model
 	Username       string `gorm:"unique;not null"`
@@ -63,36 +20,41 @@ type User struct {
 
 type Chat struct {
 	gorm.Model
-	Name        string
-	IsGroup     bool   `gorm:"default:false"`
-	Members     []User `gorm:"many2many:chat_members;"`
-	Messages    []Message
-	Group       *Group       `gorm:"foreignKey:ChatID"` // رابطه با جدول گروه
-	PrivateChat *PrivateChat `gorm:"foreignKey:ChatID"` // رابطه برای چت خصوصی
+	Name          string
+	IsGroup       bool   `gorm:"default:false"`
+	Members       []User `gorm:"many2many:chat_members;"`
+	Messages      []Message
+	Group         *Group `gorm:"foreignKey:ChatID"` // رابطه با جدول گروه
+	LastMessageID uint
+	// LastMessage   Message
+	// PrivateChat *PrivateChat `gorm:"foreignKey:ChatID"` // رابطه برای چت خصوصی
 }
 
 type Group struct {
 	gorm.Model
 	Name        string `gorm:"not null"`
 	Description string
-	OwnerID     uint   `gorm:"not null"`
-	ChatID      uint   `gorm:"not null"`
-	Chat        Chat   `gorm:"foreignKey:ChatID"`
-	Members     []User `gorm:"many2many:chat_members;foreignKey:ChatID;joinForeignKey:ChatID;"`
+	AvatarUrl   string
+	OwnerID     uint `gorm:"not null"`
+	ChatID      uint `gorm:"not null"`
+	// Chat        Chat   `gorm:"foreignKey:ChatID"`
+	// Members     []User `gorm:"many2many:chat_members;foreignKey:ChatID;joinForeignKey:ChatID;"`
 }
 
-type PrivateChat struct {
-	gorm.Model
-	ChatID  uint `gorm:"not null"`
-	User1ID uint `gorm:"not null"` // کاربر اول
-	User2ID uint `gorm:"not null"` // کاربر دوم
-	User1   User `gorm:"foreignKey:User1ID"`
-	User2   User `gorm:"foreignKey:User2ID"`
-}
+// type PrivateChat struct {
+// 	gorm.Model
+// 	ChatID  uint `gorm:"not null"`
+// 	User1ID uint `gorm:"not null"` // کاربر اول
+// 	User2ID uint `gorm:"not null"` // کاربر دوم
+// 	User1   User `gorm:"foreignKey:User1ID"`
+// 	User2   User `gorm:"foreignKey:User2ID"`
+// }
 
 type ChatMember struct {
 	ChatID   uint   `gorm:"primaryKey"`
+	Chat     Chat   `gorm:"foreignKey:ChatID"`
 	UserID   uint   `gorm:"primaryKey"`
+	User     User   `gorm:"foreignKey:UserID"`
 	Role     string `gorm:"default:'member'"`
 	Mute     bool   `gorm:"default:false"`
 	JoinedAt time.Time
@@ -112,9 +74,9 @@ type Message struct {
 
 type LastMessageRead struct {
 	gorm.Model
-	UserID              uint `gorm:"not null"`
-	ChatID              uint `gorm:"not null"`
-	LastMessageID       uint `gorm:"not null"`
+	UserID uint `gorm:"not null"`
+	ChatID uint `gorm:"not null"`
+	// LastMessageID       uint `gorm:"not null"`
 	LastReadedMessageID uint `gorm:"not null"`
 }
 

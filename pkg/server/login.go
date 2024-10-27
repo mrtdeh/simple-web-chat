@@ -16,11 +16,8 @@ func (s *Server) Login(ctx context.Context, req *proto.LoginRequest) (*proto.Log
 	// TODO: check username and password in db
 	var result models.User
 
-	db.Model(&models.User{
-		Username: req.Username,
-		Password: req.Password,
-	}).Find(&result)
-	if result.Username != req.Username {
+	err := db.Where("username = ? AND password = ?", req.Username, req.Password).First(&result).Error
+	if err != nil {
 		return nil, fmt.Errorf("username or password incorrect")
 	}
 

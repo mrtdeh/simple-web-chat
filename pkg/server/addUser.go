@@ -12,8 +12,12 @@ func (s *Server) AddUser(ctx context.Context, req *proto.AddUserRequest) (*proto
 	db := database.GetInstance()
 	// TODO: check username and password in db
 	var user = models.User{
-		Username: req.Username,
-		Password: req.Password,
+		Username:    req.Username,
+		Password:    req.Password,
+		PhoneNumber: req.PhoneNumber,
+		Email:       req.Email,
+		DisplayName: req.DisplayName,
+		// ProfilePicture: req.,
 	}
 	res := db.Create(&user)
 	if res.Error != nil {

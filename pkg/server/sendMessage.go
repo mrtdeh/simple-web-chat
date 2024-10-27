@@ -24,7 +24,15 @@ func (s *Server) SendMessage(ctx context.Context, req *proto.MessageRequest) (*p
 		ChatID:   uint(req.ChatId),
 		Content:  req.Content,
 	}
-	db.Create(&msg)
+	err = db.Create(&msg).Error
+	if err != nil {
+		return nil, err
+	}
+
+	err = db.Model(&models.Chat{}).Where("id = ?", req.ChatId).Update("last_message_id", msg.ID).Error
+	if err != nil {
+		return nil, err
+	}
 
 	for _, r := range req.RepliedMessages {
 		// Create replied message

@@ -5,25 +5,26 @@ import (
 	"fmt"
 	"log"
 
-	"gorm.io/driver/mysql"
+	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
 var db *gorm.DB
 
 func Init() (*gorm.DB, error) {
-	dsn := "apiservices:F@rz@n@2022@tcp(127.0.0.1:3306)/test?charset=utf8mb4&parseTime=True&loc=Local"
+	// dsn := "apiservices:F@rz@n@2022@tcp(127.0.0.1:3306)/test?charset=utf8mb4&parseTime=True&loc=Local"
+	dsn := "host=localhost user=apiservices password=12345 dbname=test port=5432 sslmode=disable TimeZone=Asia/Tehran"
 	var err error
-	db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		return nil, fmt.Errorf("failed to connect database")
 	}
 
-	db.SetupJoinTable(&models.Group{}, "Members", &models.ChatMember{})
-	db.AutoMigrate(&models.User{}, &models.Chat{},
+	// db.SetupJoinTable(&models.Group{}, "Members", &models.ChatMember{})
+	db.AutoMigrate(&models.User{}, &models.Chat{}, &models.ChatMember{},
 		&models.Message{}, &models.Attachment{}, &models.Group{},
 		models.Thumbnail{}, models.Reply{}, models.ReplyThumbnails{},
-		&models.PrivateChat{}, &models.LastMessageRead{}, &models.Sticker{})
+		&models.LastMessageRead{}, &models.Sticker{})
 
 	return db, nil
 
