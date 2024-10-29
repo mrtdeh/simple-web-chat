@@ -50,6 +50,13 @@ type Group struct {
 // 	User2   User `gorm:"foreignKey:User2ID"`
 // }
 
+type Token struct {
+	gorm.Model
+	UserID     uint      `gorm:"not null"`
+	Value      string    `gorm:"not null"`
+	ExpireDate time.Time `gorm:"not null"`
+}
+
 type ChatMember struct {
 	ChatID   uint   `gorm:"primaryKey"`
 	Chat     Chat   `gorm:"foreignKey:ChatID"`
