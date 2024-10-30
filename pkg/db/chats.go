@@ -18,9 +18,9 @@ func GetChats(userId uint) (*proto.ChatsResponse, error) {
 		// Find the group chat if it exists
 		Joins("LEFT JOIN groups g ON chats.id = g.chat_id").
 		// Find last readed message id and last message id of chat
-		Joins("LEFT JOIN last_message_reads lmr ON lmr.chat_id = chats.id AND lmr.user_id = ?", userId).
+		// Joins("LEFT JOIN last_message_reads lmr ON lmr.chat_id = chats.id AND lmr.user_id = ?", userId).
 		// Find last readed message of chats
-		Joins("LEFT JOIN messages last_read_msg ON last_read_msg.id = lmr.last_readed_message_id").
+		Joins("LEFT JOIN messages last_read_msg ON last_read_msg.id = cm1.last_readed_message_id").
 		// Find last message of chats
 		Joins(`
 			LEFT JOIN LATERAL (

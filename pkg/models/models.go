@@ -58,13 +58,14 @@ type Token struct {
 }
 
 type ChatMember struct {
-	ChatID   uint   `gorm:"primaryKey"`
-	Chat     Chat   `gorm:"foreignKey:ChatID"`
-	UserID   uint   `gorm:"primaryKey"`
-	User     User   `gorm:"foreignKey:UserID"`
-	Role     string `gorm:"default:'member'"`
-	Mute     bool   `gorm:"default:false"`
-	JoinedAt time.Time
+	ChatID              uint   `gorm:"primaryKey"`
+	Chat                Chat   `gorm:"foreignKey:ChatID"`
+	UserID              uint   `gorm:"primaryKey"`
+	User                User   `gorm:"foreignKey:UserID"`
+	Role                string `gorm:"default:'member'"`
+	Mute                bool   `gorm:"default:false"`
+	LastReadedMessageID uint   `gorm:"not null"`
+	JoinedAt            time.Time
 }
 
 type Message struct {
@@ -77,14 +78,6 @@ type Message struct {
 	Attachments []Attachment
 	Replies     []Reply
 	Stickers    []Sticker
-}
-
-type LastMessageRead struct {
-	gorm.Model
-	UserID uint `gorm:"not null"`
-	ChatID uint `gorm:"not null"`
-	// LastMessageID       uint `gorm:"not null"`
-	LastReadedMessageID uint `gorm:"not null"`
 }
 
 type Sticker struct {

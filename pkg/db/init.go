@@ -24,7 +24,7 @@ func Init() (*gorm.DB, error) {
 	db.AutoMigrate(&models.User{}, &models.Chat{}, &models.ChatMember{},
 		&models.Message{}, &models.Attachment{}, &models.Group{},
 		models.Thumbnail{}, models.Reply{}, models.ReplyThumbnails{},
-		&models.LastMessageRead{}, &models.Sticker{})
+		&models.Sticker{})
 
 	return db, nil
 
