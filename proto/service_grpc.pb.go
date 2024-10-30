@@ -28,6 +28,7 @@ type ChatServiceClient interface {
 	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponse, error)
 	Ping(ctx context.Context, in *PingRequest, opts ...grpc.CallOption) (*PingResponse, error)
 	CreateChat(ctx context.Context, in *CreateChatRequest, opts ...grpc.CallOption) (*CreateChatResponse, error)
+	UpdateMemberInfo(ctx context.Context, in *MemberInfoRequest, opts ...grpc.CallOption) (*MemberInfoResponse, error)
 	CreateGroup(ctx context.Context, in *CreateGroupRequest, opts ...grpc.CallOption) (*CreateGroupResponse, error)
 	JoinGroup(ctx context.Context, in *JoinGroupRequest, opts ...grpc.CallOption) (*JoinGroupResponse, error)
 	SendMessage(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*MessageResponse, error)
@@ -122,6 +123,15 @@ func (c *chatServiceClient) CreateChat(ctx context.Context, in *CreateChatReques
 	return out, nil
 }
 
+func (c *chatServiceClient) UpdateMemberInfo(ctx context.Context, in *MemberInfoRequest, opts ...grpc.CallOption) (*MemberInfoResponse, error) {
+	out := new(MemberInfoResponse)
+	err := c.cc.Invoke(ctx, "/proto.ChatService/UpdateMemberInfo", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *chatServiceClient) CreateGroup(ctx context.Context, in *CreateGroupRequest, opts ...grpc.CallOption) (*CreateGroupResponse, error) {
 	out := new(CreateGroupResponse)
 	err := c.cc.Invoke(ctx, "/proto.ChatService/CreateGroup", in, out, opts...)
@@ -186,6 +196,7 @@ type ChatServiceServer interface {
 	Login(context.Context, *LoginRequest) (*LoginResponse, error)
 	Ping(context.Context, *PingRequest) (*PingResponse, error)
 	CreateChat(context.Context, *CreateChatRequest) (*CreateChatResponse, error)
+	UpdateMemberInfo(context.Context, *MemberInfoRequest) (*MemberInfoResponse, error)
 	CreateGroup(context.Context, *CreateGroupRequest) (*CreateGroupResponse, error)
 	JoinGroup(context.Context, *JoinGroupRequest) (*JoinGroupResponse, error)
 	SendMessage(context.Context, *MessageRequest) (*MessageResponse, error)
@@ -216,6 +227,9 @@ func (UnimplementedChatServiceServer) Ping(context.Context, *PingRequest) (*Ping
 }
 func (UnimplementedChatServiceServer) CreateChat(context.Context, *CreateChatRequest) (*CreateChatResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateChat not implemented")
+}
+func (UnimplementedChatServiceServer) UpdateMemberInfo(context.Context, *MemberInfoRequest) (*MemberInfoResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateMemberInfo not implemented")
 }
 func (UnimplementedChatServiceServer) CreateGroup(context.Context, *CreateGroupRequest) (*CreateGroupResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateGroup not implemented")
@@ -358,6 +372,24 @@ func _ChatService_CreateChat_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ChatService_UpdateMemberInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MemberInfoRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ChatServiceServer).UpdateMemberInfo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.ChatService/UpdateMemberInfo",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ChatServiceServer).UpdateMemberInfo(ctx, req.(*MemberInfoRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _ChatService_CreateGroup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateGroupRequest)
 	if err := dec(in); err != nil {
@@ -492,6 +524,10 @@ var ChatService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateChat",
 			Handler:    _ChatService_CreateChat_Handler,
+		},
+		{
+			MethodName: "UpdateMemberInfo",
+			Handler:    _ChatService_UpdateMemberInfo_Handler,
 		},
 		{
 			MethodName: "CreateGroup",

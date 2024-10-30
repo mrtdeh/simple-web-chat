@@ -8,7 +8,7 @@ import (
 func GetMessagesWithReplies(chatID uint) (*proto.MessagesResponse, error) {
 
 	var messages []models.Message
-	res := db.Model(&models.Message{ChatID: 1}).
+	res := db.Where(&models.Message{ChatID: chatID}).
 		Preload("Sender").
 		Preload("Replies").
 		Preload("Replies.ReplyMessage").

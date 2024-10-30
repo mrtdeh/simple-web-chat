@@ -214,6 +214,17 @@ message AddMemberResponse{
   string status = 1;
 }
 
+message MemberInfoRequest{
+  string token = 1;
+  uint32 chatId = 2;
+  oneof info{
+    bool mute = 3;
+    uint32 lastReadedMessageId = 4;
+  }
+}
+message MemberInfoResponse{
+}
+
 service ChatService {
   rpc MessageChannel(MessageChannelRequest) returns (stream MessageChannelResponse);
   rpc AddUser(AddUserRequest) returns (AddUserResponse);
@@ -222,6 +233,7 @@ service ChatService {
   rpc Ping(PingRequest) returns (PingResponse);
 
   rpc CreateChat(CreateChatRequest) returns (CreateChatResponse);
+  rpc UpdateMemberInfo(MemberInfoRequest) returns (MemberInfoResponse);
   rpc CreateGroup(CreateGroupRequest) returns (CreateGroupResponse);
   rpc JoinGroup(JoinGroupRequest) returns (JoinGroupResponse);
   rpc SendMessage(MessageRequest) returns (MessageResponse);
