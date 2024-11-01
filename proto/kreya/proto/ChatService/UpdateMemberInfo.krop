@@ -1,10 +1,10 @@
 {
   "details": {
-    "methodFqn": "proto.ChatService.AddUser"
+    "methodFqn": "proto.ChatService.UpdateMemberInfo"
   },
   "requests": [
     {
-      "location": "AddUser-request.json"
+      "location": "UpdateMemberInfo-request.json"
     }
   ],
   "operationType": "unary",

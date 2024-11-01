@@ -1,7 +1,6 @@
 package server
 
 import (
-	database "api-channel/pkg/db"
 	"api-channel/pkg/models"
 	"api-channel/proto"
 	"context"
@@ -16,20 +15,7 @@ func (s *Server) SendMessage(ctx context.Context, req *proto.MessageRequest) (*p
 		return nil, err
 	}
 
-	db := database.GetInstance()
-
-	// Insert message into messages table
-	msg := models.Message{
-		SenderID: t.UserID,
-		ChatID:   uint(req.ChatId),
-		Content:  req.Content,
-	}
-	err = db.Create(&msg).Error
-	if err != nil {
-		return nil, err
-	}
-
-	err = db.Model(&models.Chat{}).Where("id = ?", req.ChatId).Update("last_message_id", msg.ID).Error
+	msgId, err := s.db.CreateMessage(uint(req.ChatId), t.UserID, req.Content)
 	if err != nil {
 		return nil, err
 	}
@@ -37,7 +23,7 @@ func (s *Server) SendMessage(ctx context.Context, req *proto.MessageRequest) (*p
 	for _, r := range req.RepliedMessages {
 		// Create replied message
 		replied := &models.Reply{
-			MessageID:      msg.ID,
+			MessageID:      msgId,
 			ReplyMessageId: uint(r.MessageId),
 		}
 		db.Create(replied)

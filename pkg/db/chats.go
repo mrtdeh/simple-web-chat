@@ -1,14 +1,12 @@
 package database
 
 import (
-	"api-channel/proto"
+	"database/sql"
 )
 
-func GetChats(userId uint) (*proto.ChatsResponse, error) {
+func (db *ChatDatabase) GetChats(userId uint) (*sql.Rows, error) {
 
-	var Data []*proto.ChatsResponse_ChatData
-
-	db.Table("chats").
+	rows, err := db.gormDB.Table("chats").
 		// Get Chats of user with details from chat_member table
 		InnerJoins("JOIN chat_members cm1 ON chats.id = cm1.chat_id AND cm1.user_id = ?", userId).
 		// Find the private chat if it exists
@@ -55,9 +53,11 @@ func GetChats(userId uint) (*proto.ChatsResponse, error) {
 		latest_message.content AS last_message,
 		unread_msg_count.count AS unreaded_messages_count
 		
-	`).
-		Scan(&Data)
+	`).Rows()
+	if err != nil {
+		return nil, err
+	}
 
-	return &proto.ChatsResponse{Data: Data}, nil
+	return rows, nil
 
 }

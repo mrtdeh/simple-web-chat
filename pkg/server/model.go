@@ -1,6 +1,7 @@
 package server
 
 import (
+	database "api-channel/pkg/db"
 	"api-channel/proto"
 	"net"
 	"sync"
@@ -19,6 +20,7 @@ type Server struct {
 	grpcServer *grpc.Server
 	listener   net.Listener
 	Sessions   *SessionManger
+	db         *database.ChatDatabase
 }
 type ServerOptions struct {
 	MaxTimeout           time.Duration

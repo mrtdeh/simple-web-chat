@@ -1,11 +1,8 @@
 package server
 
 import (
-	database "api-channel/pkg/db"
-	"api-channel/pkg/models"
 	"api-channel/proto"
 	"context"
-	"time"
 )
 
 func (s *Server) JoinGroup(ctx context.Context, req *proto.JoinGroupRequest) (*proto.JoinGroupResponse, error) {
@@ -15,17 +12,9 @@ func (s *Server) JoinGroup(ctx context.Context, req *proto.JoinGroupRequest) (*p
 		return nil, err
 	}
 
-	db := database.GetInstance()
-
-	member := &models.ChatMember{
-		UserID:   t.UserID,
-		ChatID:   uint(req.ChatId),
-		Role:     req.Role,
-		JoinedAt: time.Now(),
-	}
-	res := db.Create(member)
-	if res.Error != nil {
-		return nil, res.Error
+	err = s.db.CreateChatMember(uint(req.ChatId), uint32(t.UserID), "member")
+	if err != nil {
+		return nil, err
 	}
 
 	return &proto.JoinGroupResponse{}, nil

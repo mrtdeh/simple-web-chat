@@ -1,6 +1,7 @@
 package server
 
 import (
+	database "api-channel/pkg/db"
 	"api-channel/proto"
 	"crypto/sha256"
 	"encoding/hex"
@@ -14,8 +15,9 @@ import (
 )
 
 type Config struct {
-	Port    int
-	Options ServerOptions
+	Port     int
+	Options  ServerOptions
+	Database *database.ChatDatabase
 }
 
 func NewServer(cnf ...Config) *Server {
@@ -29,6 +31,7 @@ func NewServer(cnf ...Config) *Server {
 		Addr:    fmt.Sprintf("127.0.0.1:%d", c.Port),
 		status:  "unknown",
 		Options: &c.Options,
+		db:      c.Database,
 		Sessions: &SessionManger{
 			l:        &sync.RWMutex{},
 			sessions: make(map[string]*Session),

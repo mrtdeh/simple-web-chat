@@ -1,0 +1,13 @@
+{
+  "details": {
+    "methodFqn": "proto.ChatService.AddUser"
+  },
+  "requests": [
+    {
+      "location": "1.AddUser-request.json"
+    }
+  ],
+  "operationType": "unary",
+  "invokerName": "grpc",
+  "importStreamId": "cdc33527-912c-4bf2-8a3a-2da2def31999"
+}

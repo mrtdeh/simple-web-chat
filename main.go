@@ -13,12 +13,14 @@ func main() {
 	port := flag.Int("p", 8082, "The port of server")
 	flag.Parse()
 
-	if _, err := database.Init(); err != nil {
+	db, err := database.New()
+	if err != nil {
 		log.Fatal(err)
 	}
 
 	s := server.NewServer(server.Config{
-		Port: *port,
+		Database: db,
+		Port:     *port,
 		Options: server.ServerOptions{
 			MaxTimeout: time.Second * 10,
 		},
