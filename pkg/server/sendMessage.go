@@ -15,7 +15,7 @@ func (s *Server) SendMessage(ctx context.Context, req *proto.MessageRequest) (*p
 		return nil, err
 	}
 
-	msgId, err := s.db.CreateMessage(uint(req.ChatId), t.UserID, req.Content)
+	msgId, err := s.db.CreateMessage(req.ChatId, t.UserID, req.Content)
 	if err != nil {
 		return nil, err
 	}
@@ -24,23 +24,25 @@ func (s *Server) SendMessage(ctx context.Context, req *proto.MessageRequest) (*p
 		// Create replied message
 		replied := &models.Reply{
 			MessageID:      msgId,
-			ReplyMessageId: uint(r.MessageId),
+			ReplyMessageId: r.MessageId,
 		}
-		db.Create(replied)
+		s.db.GORM().Create(replied)
 		// Create thumbnails related to replied message
 		for _, sel := range r.SelectedAttachments {
 			// Find mini thumbnail of attachment
-			var tumbId uint
-			db.Where(
-				&models.Thumbnail{AttachmentID: uint(sel), Type: "mini"},
-			).Select("id").First(&tumbId)
+			var tumbId uint32
+			s.db.GORM().
+				Where(
+					&models.Thumbnail{AttachmentID: sel, Type: "mini"},
+				).Select("id").First(&tumbId)
 			// Create replied message thumbnail
-			db.Create(&models.ReplyThumbnails{
-				ReplyID:     replied.ID,
-				ThumbnailId: tumbId,
-			})
+			s.db.GORM().
+				Create(&models.ReplyThumbnails{
+					ReplyID:     replied.ID,
+					ThumbnailId: tumbId,
+				})
 		}
 	}
 
-	return &proto.MessageResponse{MessageId: uint32(msg.ID)}, nil
+	return &proto.MessageResponse{MessageId: msgId}, nil
 }

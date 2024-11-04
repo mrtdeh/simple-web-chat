@@ -4,7 +4,7 @@ import (
 	"database/sql"
 )
 
-func (db *ChatDatabase) GetChats(userId uint) (*sql.Rows, error) {
+func (db *ChatDatabase) GetChats(userId uint32) (*sql.Rows, error) {
 
 	rows, err := db.gormDB.Table("chats").
 		// Get Chats of user with details from chat_member table

@@ -8,7 +8,7 @@ import (
 func (s *Server) GetMessages(ctx context.Context, req *proto.GetMessagesRequest) (*proto.MessagesResponse, error) {
 
 	// return &proto.Messages{Data: data}, nil
-	messages, err := s.db.GetMessages(uint(req.ChatId))
+	messages, err := s.db.GetMessages(req.ChatId)
 	if err != nil {
 		return nil, err
 	}

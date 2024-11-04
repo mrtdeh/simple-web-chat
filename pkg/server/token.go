@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-func (tm *TokenManager) Create(userId uint, username string) string {
+func (tm *TokenManager) Create(userId uint32, username string) string {
 	tm.l.Lock()
 	defer tm.l.Unlock()
 	token := tokenGenerator()

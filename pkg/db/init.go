@@ -18,6 +18,9 @@ type ChatDatabase struct {
 func (db *ChatDatabase) ScanRows(rows *sql.Rows, dest interface{}) error {
 	return db.gormDB.ScanRows(rows, dest)
 }
+func (db *ChatDatabase) GORM() *gorm.DB {
+	return db.gormDB
+}
 
 func New() (*ChatDatabase, error) {
 	// dsn := "apiservices:F@rz@n@2022@tcp(127.0.0.1:3306)/test?charset=utf8mb4&parseTime=True&loc=Local"

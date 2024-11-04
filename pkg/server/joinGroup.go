@@ -12,7 +12,7 @@ func (s *Server) JoinGroup(ctx context.Context, req *proto.JoinGroupRequest) (*p
 		return nil, err
 	}
 
-	err = s.db.CreateChatMember(uint(req.ChatId), uint32(t.UserID), "member")
+	err = s.db.CreateChatMember(req.ChatId, t.UserID, "member")
 	if err != nil {
 		return nil, err
 	}

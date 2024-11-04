@@ -108,6 +108,7 @@ message FileRequest{
 }
 message FileResponse{
   string status = 1;
+  uint32 attachment_id = 2;
 }
 
 message AddUserRequest{

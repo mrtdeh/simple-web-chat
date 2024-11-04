@@ -17,13 +17,13 @@ func (s *Server) CreateGroup(ctx context.Context, req *proto.CreateGroupRequest)
 		return nil, err
 	}
 
-	groupId, err := s.db.CreateGroup(req.Name, uint(chatId), t.UserID)
+	groupId, err := s.db.CreateGroup(req.Name, chatId, t.UserID)
 	if err != nil {
 		return nil, err
 	}
 
 	// Join current user to created group chat
-	err = s.db.CreateChatMember(uint(chatId), uint32(t.UserID), "admin")
+	err = s.db.CreateChatMember(chatId, t.UserID, "admin")
 	if err != nil {
 		return nil, err
 	}

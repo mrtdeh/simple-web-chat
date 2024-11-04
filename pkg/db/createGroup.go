@@ -4,7 +4,7 @@ import (
 	"api-channel/pkg/models"
 )
 
-func (db *ChatDatabase) CreateGroup(groupName string, chatID, userID uint) (uint32, error) {
+func (db *ChatDatabase) CreateGroup(groupName string, chatID, userID uint32) (uint32, error) {
 
 	g := &models.Group{
 		Name:    groupName,

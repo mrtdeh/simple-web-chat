@@ -1,13 +1,20 @@
 package models
 
 import (
+	"database/sql"
 	"time"
-
-	"gorm.io/gorm"
 )
 
+type DeletedAt sql.NullTime
+type Model struct {
+	ID        uint32 `gorm:"primarykey"`
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	DeletedAt DeletedAt `gorm:"index"`
+}
+
 type User struct {
-	gorm.Model
+	Model
 	Username       string `gorm:"unique;not null"`
 	Password       string `gorm:"not null"`
 	DisplayName    string
@@ -19,7 +26,7 @@ type User struct {
 }
 
 type Chat struct {
-	gorm.Model
+	Model
 	Name          string
 	IsGroup       bool   `gorm:"default:false"`
 	Members       []User `gorm:"many2many:chat_members;"`
@@ -31,48 +38,48 @@ type Chat struct {
 }
 
 type Group struct {
-	gorm.Model
+	Model
 	Name        string `gorm:"not null"`
 	Description string
 	AvatarUrl   string
-	OwnerID     uint `gorm:"not null"`
-	ChatID      uint `gorm:"not null"`
+	OwnerID     uint32 `gorm:"not null"`
+	ChatID      uint32 `gorm:"not null"`
 	// Chat        Chat   `gorm:"foreignKey:ChatID"`
 	// Members     []User `gorm:"many2many:chat_members;foreignKey:ChatID;joinForeignKey:ChatID;"`
 }
 
 // type PrivateChat struct {
-// 	gorm.Model
-// 	ChatID  uint `gorm:"not null"`
-// 	User1ID uint `gorm:"not null"` // کاربر اول
-// 	User2ID uint `gorm:"not null"` // کاربر دوم
+// 	Model
+// 	ChatID  uint32`gorm:"not null"`
+// 	User1ID uint32`gorm:"not null"` // کاربر اول
+// 	User2ID uint32`gorm:"not null"` // کاربر دوم
 // 	User1   User `gorm:"foreignKey:User1ID"`
 // 	User2   User `gorm:"foreignKey:User2ID"`
 // }
 
 type Token struct {
-	gorm.Model
-	UserID     uint      `gorm:"not null"`
+	Model
+	UserID     uint32    `gorm:"not null"`
 	Value      string    `gorm:"not null"`
 	ExpireDate time.Time `gorm:"not null"`
 }
 
 type ChatMember struct {
-	ChatID              uint   `gorm:"primaryKey"`
+	ChatID              uint32 `gorm:"primaryKey"`
 	Chat                Chat   `gorm:"foreignKey:ChatID"`
-	UserID              uint   `gorm:"primaryKey"`
+	UserID              uint32 `gorm:"primaryKey"`
 	User                User   `gorm:"foreignKey:UserID"`
 	Role                string `gorm:"default:'member'"`
 	Mute                bool   `gorm:"default:false"`
-	LastReadedMessageID uint   `gorm:"not null"`
+	LastReadedMessageID uint32 `gorm:"not null"`
 	JoinedAt            time.Time
 }
 
 type Message struct {
-	gorm.Model
-	ChatID      uint `gorm:"not null"`
-	SenderID    uint `gorm:"not null"`
-	Sender      User `gorm:"foreignKey:SenderID"`
+	Model
+	ChatID      uint32 `gorm:"not null"`
+	SenderID    uint32 `gorm:"not null"`
+	Sender      User   `gorm:"foreignKey:SenderID"`
 	Content     string
 	MessageType string `gorm:"default:'text'"` // text|file
 	Attachments []Attachment
@@ -81,30 +88,30 @@ type Message struct {
 }
 
 type Sticker struct {
-	gorm.Model
-	MessageID uint    `gorm:"not null"` // message ID
-	SenderID  uint    `gorm:"not null"`
+	Model
+	MessageID uint32  `gorm:"not null"` // message ID
+	SenderID  uint32  `gorm:"not null"`
 	Gesture   Gesture `gorm:"not null"`
 }
 
 type Reply struct {
-	gorm.Model
-	MessageID      uint    `gorm:"not null"` // message ID
-	ReplyMessageId uint    `gorm:"not null"` // replied message id
+	Model
+	MessageID      uint32  `gorm:"not null"` // message ID
+	ReplyMessageId uint32  `gorm:"not null"` // replied message id
 	ReplyMessage   Message `gorm:"foreignKey:ReplyMessageId"`
 	Thumbnails     []ReplyThumbnails
 }
 
 type ReplyThumbnails struct {
-	gorm.Model
-	ReplyID     uint      `gorm:"not null"` // replied message id
-	ThumbnailId uint      `gorm:"not null"`
+	Model
+	ReplyID     uint32    `gorm:"not null"` // replied message id
+	ThumbnailId uint32    `gorm:"not null"`
 	Thumbnail   Thumbnail `gorm:"foreignKey:ThumbnailId"`
 }
 
 type Attachment struct {
-	gorm.Model
-	MessageID  uint `gorm:"not null"`
+	Model
+	MessageID  uint32 `gorm:"not null"`
 	FilePath   string
 	FileType   string // image|video|pdf|...
 	FileSize   int
@@ -112,15 +119,15 @@ type Attachment struct {
 }
 
 type Thumbnail struct {
-	gorm.Model
-	AttachmentID uint   `gorm:"not null"`
+	Model
+	AttachmentID uint32 `gorm:"not null"`
 	Base64       string // base64 of image file
 	Type         string // mini|small|placeholder
 }
 
 // type GroupMember struct {
-// 	GroupID  uint   `gorm:"primaryKey"`
-// 	UserID   uint   `gorm:"primaryKey"`
+// 	GroupID  uint32  `gorm:"primaryKey"`
+// 	UserID   uint32  `gorm:"primaryKey"`
 // 	Role     string `gorm:"default:'member'"`
 // 	JoinedAt time.Time
 // }

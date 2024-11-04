@@ -5,12 +5,12 @@ import (
 	"time"
 )
 
-func (db *ChatDatabase) CreateChatMember(chatID uint, userID uint32, role string) error {
+func (db *ChatDatabase) CreateChatMember(chatID uint32, userID uint32, role string) error {
 	now := time.Now()
 
 	member := &models.ChatMember{
 		ChatID:   chatID,
-		UserID:   uint(userID),
+		UserID:   userID,
 		Role:     role,
 		JoinedAt: now,
 	}

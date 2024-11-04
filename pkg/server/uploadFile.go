@@ -2,7 +2,6 @@ package server
 
 import (
 	"api-channel/pkg/conf"
-	database "api-channel/pkg/db"
 	"api-channel/pkg/helper"
 	"api-channel/pkg/models"
 	"api-channel/proto"
@@ -30,10 +29,10 @@ func (s *Server) UploadFile(ctx context.Context, req *proto.FileRequest) (*proto
 	// 	return nil, err
 	// }
 
-	db := database.GetInstance()
 	filepath := ""
 	fileType := ""
 	fileSize := 0
+	var attachment models.Attachment
 
 	// Read file details and create file descriptor
 	if info := req.GetInfo(); info != nil {
@@ -68,44 +67,57 @@ func (s *Server) UploadFile(ctx context.Context, req *proto.FileRequest) (*proto
 		// ....
 
 		// Write file path in Attachments table
-		attachment := models.Attachment{
-			MessageID: uint(req.MessageId),
+		attachment = models.Attachment{
+			MessageID: req.MessageId,
 			FilePath:  filepath,
 			FileType:  fileType,
 			FileSize:  fileSize,
 		}
-		db.Create(&attachment)
+		err := s.db.GORM().Create(&attachment).Error
+		if err != nil {
+			return nil, err
+		}
 
 		// If file is image, Generate thumbnail of it.
 		if fileType == "image" {
 			img, err := helper.OpenImage(filepath)
 			if err != nil {
 				fmt.Fprintln(os.Stderr, err)
+				return nil, err
 			}
 
 			// generate small size 64x64
 			thum64 := helper.Thumbnail(img, 64)
-			db.Create(models.Thumbnail{
+			err = s.db.GORM().Create(&models.Thumbnail{
 				AttachmentID: attachment.ID,
 				Base64:       helper.Base64Image(thum64, 1),
 				Type:         "small",
-			})
+			}).Error
+			if err != nil {
+				return nil, err
+			}
 
 			// generate mini size 32x32
 			thum32 := helper.Thumbnail(img, 32)
-			db.Create(models.Thumbnail{
+			err = s.db.GORM().Create(&models.Thumbnail{
 				AttachmentID: attachment.ID,
 				Base64:       helper.Base64Image(thum32, 1),
 				Type:         "mini",
-			})
+			}).Error
+			if err != nil {
+				return nil, err
+			}
 
 			// generate image placeholder
 			placeholder := helper.Placeholder(img)
-			db.Create(models.Thumbnail{
+			err = s.db.GORM().Create(&models.Thumbnail{
 				AttachmentID: attachment.ID,
 				Base64:       helper.Base64Image(placeholder, 1),
 				Type:         "placeholder",
-			})
+			}).Error
+			if err != nil {
+				return nil, err
+			}
 		}
 
 		if f, ok := files[reqId]; ok {
@@ -114,7 +126,7 @@ func (s *Server) UploadFile(ctx context.Context, req *proto.FileRequest) (*proto
 		delete(files, reqId)
 	}
 
-	return &proto.FileResponse{}, nil
+	return &proto.FileResponse{AttachmentId: attachment.ID}, nil
 }
 
 func isBinary(fileType string) bool {

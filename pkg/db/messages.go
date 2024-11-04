@@ -4,7 +4,7 @@ import (
 	"api-channel/pkg/models"
 )
 
-func (db *ChatDatabase) GetMessages(chatID uint) ([]models.Message, error) {
+func (db *ChatDatabase) GetMessages(chatID uint32) ([]models.Message, error) {
 
 	var messages []models.Message
 	err := db.gormDB.Where(&models.Message{ChatID: chatID}).
@@ -22,7 +22,7 @@ func (db *ChatDatabase) GetMessages(chatID uint) ([]models.Message, error) {
 	}
 	return messages, nil
 }
-func (db *ChatDatabase) CreateMessage(chatID, userID uint, content string) (uint, error) {
+func (db *ChatDatabase) CreateMessage(chatID, userID uint32, content string) (uint32, error) {
 	// Insert message into messages table
 	msg := models.Message{
 		SenderID: userID,

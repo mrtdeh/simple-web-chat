@@ -4,7 +4,7 @@ import (
 	"api-channel/pkg/models"
 )
 
-func (db *ChatDatabase) CreateUser(user models.User) (uint, error) {
+func (db *ChatDatabase) CreateUser(user models.User) (uint32, error) {
 
 	err := db.gormDB.Create(&user).Error
 	if err != nil {
@@ -15,7 +15,7 @@ func (db *ChatDatabase) CreateUser(user models.User) (uint, error) {
 
 }
 
-func (db *ChatDatabase) CheckUser(username, password string) (uint, error) {
+func (db *ChatDatabase) CheckUser(username, password string) (uint32, error) {
 
 	var result models.User
 
