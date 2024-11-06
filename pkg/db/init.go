@@ -2,25 +2,12 @@ package database
 
 import (
 	"api-channel/pkg/models"
-	"database/sql"
+	"api-channel/seeds"
 	"fmt"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
-
-// var db *gorm.DB
-
-type ChatDatabase struct {
-	gormDB *gorm.DB
-}
-
-func (db *ChatDatabase) ScanRows(rows *sql.Rows, dest interface{}) error {
-	return db.gormDB.ScanRows(rows, dest)
-}
-func (db *ChatDatabase) GORM() *gorm.DB {
-	return db.gormDB
-}
 
 func New() (*ChatDatabase, error) {
 	// dsn := "apiservices:F@rz@n@2022@tcp(127.0.0.1:3306)/test?charset=utf8mb4&parseTime=True&loc=Local"
@@ -36,6 +23,8 @@ func New() (*ChatDatabase, error) {
 		&models.Message{}, &models.Attachment{}, &models.Group{},
 		models.Thumbnail{}, models.Reply{}, models.ReplyThumbnails{},
 		&models.Sticker{})
+
+	seeds.UserSeeds(db)
 
 	return &ChatDatabase{db}, nil
 

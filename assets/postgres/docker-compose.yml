@@ -15,6 +15,14 @@ services:
     networks:
       - postgres_network
 
+  # admin:
+  #   image: dpage/pgadmin4:latest
+  #   environment:
+  #     - PGADMIN_DEFAULT_EMAIL=user@domain.com
+  #     - PGADMIN_DEFAULT_PASSWORD=SuperSecret
+  #   ports:
+  #     - "8080:80" 
+
 volumes:
   postgres_data:
 
