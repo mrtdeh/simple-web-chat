@@ -24,7 +24,7 @@ func New() (*ChatDatabase, error) {
 		models.Thumbnail{}, models.Reply{}, models.ReplyThumbnails{},
 		&models.Sticker{})
 
-	seeds.UserSeeds(db)
+	seeds.SeedDatabase(db)
 
 	return &ChatDatabase{db}, nil
 
