@@ -10,7 +10,6 @@ import (
 )
 
 func New() (*ChatDatabase, error) {
-	// dsn := "apiservices:F@rz@n@2022@tcp(127.0.0.1:3306)/test?charset=utf8mb4&parseTime=True&loc=Local"
 	dsn := "host=localhost user=apiservices password=12345 dbname=test port=5432 sslmode=disable TimeZone=Asia/Tehran"
 	var err error
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
@@ -29,15 +28,3 @@ func New() (*ChatDatabase, error) {
 	return &ChatDatabase{db}, nil
 
 }
-
-// s dasdasdasdasd
-// func GetInstance() *gorm.DB {
-// 	if db == nil {
-// 		var err error
-// 		db, err = Init()
-// 		if err != nil {
-// 			log.Fatal(err)
-// 		}
-// 	}
-// 	return db
-// }
