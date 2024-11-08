@@ -1,17 +1,16 @@
 module api-channel
 
-go 1.23
+go 1.23.3
 
 require (
 	github.com/anthonynsimon/bild v0.14.0
+	github.com/bxcodec/faker/v4 v4.0.0-beta.3
 	google.golang.org/grpc v1.66.0
 	gorm.io/driver/postgres v1.5.9
 	gorm.io/gorm v1.25.12
 )
 
 require (
-	github.com/bxcodec/faker v2.0.1+incompatible // indirect
-	github.com/bxcodec/faker/v4 v4.0.0-beta.3 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20221227161230-091c0ba34f0a // indirect
 	github.com/jackc/pgx/v5 v5.5.5 // indirect
