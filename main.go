@@ -10,7 +10,7 @@ import (
 
 func main() {
 
-	port := flag.Int("p", 8082, "The port of server")
+	port := flag.Int("p", 9090, "The port of server")
 	flag.Parse()
 
 	db, err := database.New()
