@@ -1,36 +1,37 @@
 import 'dart:async';
 import 'dart:html';
-
 import '../proto/service.pbgrpc.dart';
 
 class WebChat {
   final ChatServiceClient _service;
+  String? token;
 
   WebChat(this._service);
 
-  Future<void> sendMessage(String token, message) async {
-    _addLeftMessage(message);
-
+  Future<void> login(String username, String password) async {
     try {
-      // final response = await _service.echo(EchoRequest()..message = message);
-      final response = await _service.sendMessage(
-          MessageRequest(chatId: 1, content: message, token: token));
-      _addRightMessage(response.message);
+      final response = await _service.login(
+        LoginRequest(username: username, password: password),
+      );
+      token = response.token;
+      print("Login successful, token: $token");
     } catch (error) {
-      _addRightMessage(error.toString());
+      _addRightMessage("Login failed: $error");
+      print("Login failed: $error");
     }
   }
 
-  void createMessageChannel(String token) async {
+  void createMessageChannel(String token) {
     final request = MessageChannelRequest()..token = token;
-
     _service.messageChannel(request).listen((response) {
-      _addRightMessage(response.message);
+      // _addRightMessage(response.message);
     }, onError: (error) {
-      _addRightMessage(error.toString());
-    }, onDone: () => print('Closed connection to server.'));
+      _addRightMessage("Error: $error");
+      print("Error in message channel: $error");
+    }, onDone: () {
+      print('Closed connection to server.');
+    });
   }
-
 
   void _addLeftMessage(String message) {
     _addMessage(message, 'label-primary pull-left');
