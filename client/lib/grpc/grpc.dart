@@ -1,54 +1,63 @@
 import 'dart:async';
-import 'dart:html';
+import 'package:grpc/grpc_web.dart';
+
 import '../proto/service.pbgrpc.dart';
 
 class WebChat {
-  final ChatServiceClient _service;
+  WebChat._privateConstructor();
+  static final WebChat instance = WebChat._privateConstructor();
+
+  late ChatServiceClient _service;
   String? token;
 
-  WebChat(this._service);
+  // WebChat(this._service);
 
-  Future<void> login(String username, String password) async {
+  final StreamController<List<ChatsResponse_ChatData>> _chatController =
+      StreamController<List<ChatsResponse_ChatData>>.broadcast();
+  Stream<List<ChatsResponse_ChatData>> get chatStream => _chatController.stream;
+
+  Future<void> start() async {
+    try {
+      final channel =
+          GrpcWebClientChannel.xhr(Uri.parse('http://localhost:8081'));
+      _service = ChatServiceClient(channel);
+    } catch (err) {
+      print("connect to server failed : " + err.toString());
+    }
+  }
+
+  Future<bool> login(String username, String password) async {
     try {
       final response = await _service.login(
         LoginRequest(username: username, password: password),
       );
       token = response.token;
       print("Login successful, token: $token");
+      return true;
     } catch (error) {
-      _addRightMessage("Login failed: $error");
       print("Login failed: $error");
+      return false;
     }
   }
 
-  void createMessageChannel(String token) {
+  void startMessageChannel(String token) {
     final request = MessageChannelRequest()..token = token;
+
     _service.messageChannel(request).listen((response) {
-      // _addRightMessage(response.message);
+      if (response.hasChats()) {
+        for (var chat in response.chats.data) {
+          // put json to stream
+          _chatController.sink.add([chat]);
+
+          print("Add to stream : " + chat.chatTitle);
+        }
+      }
     }, onError: (error) {
-      _addRightMessage("Error: $error");
       print("Error in message channel: $error");
     }, onDone: () {
       print('Closed connection to server.');
     });
   }
-
-  void _addLeftMessage(String message) {
-    _addMessage(message, 'label-primary pull-left');
-  }
-
-  void _addRightMessage(String message) {
-    _addMessage(message, 'label-default pull-right');
-  }
-
-  void _addMessage(String message, String cssClass) {
-    final classes = cssClass.split(' ');
-    querySelector('#first')!.after(DivElement()
-      ..classes.add('row')
-      ..append(Element.tag('h2')
-        ..append(SpanElement()
-          ..classes.add('label')
-          ..classes.addAll(classes)
-          ..text = message)));
-  }
 }
+
+final $WebChat = WebChat.instance;
