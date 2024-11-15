@@ -5,17 +5,9 @@ import 'package:flutter/material.dart';
 class ChatScreen extends StatelessWidget {
   const ChatScreen({Key? key}) : super(key: key);
 
-  // یک Stream برای دریافت لیست چت‌ها به صورت بلادرنگ
-  Stream<List<String>> get chatStream async* {
-    // شبیه‌سازی داده‌های چت به صورت بلادرنگ
-    await Future.delayed(Duration(seconds: 1));
-    yield ["Chat 1", "Chat 2", "Chat 3"];
-    await Future.delayed(Duration(seconds: 3));
-    yield ["Chat 1", "Chat 2", "Chat 3", "Chat 4"];
-  }
-
   @override
   Widget build(BuildContext context) {
+    $WebChat.startMessageChannel();
     return Scaffold(
       appBar: AppBar(
         title: Text("Chat App"),

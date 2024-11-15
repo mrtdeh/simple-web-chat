@@ -10,6 +10,7 @@ func (tm *TokenManager) Create(userId uint32, username string) string {
 	defer tm.l.Unlock()
 	token := tokenGenerator()
 	tm.tokens[token] = &TokenData{
+		Value:      token,
 		UserID:     userId,
 		Username:   username,
 		ExpireTime: time.Now().Add(time.Minute * 5),

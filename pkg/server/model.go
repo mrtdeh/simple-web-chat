@@ -47,6 +47,7 @@ type TokenManager struct {
 	l      sync.RWMutex
 }
 type TokenData struct {
+	Value      string
 	UserID     uint32
 	Username   string
 	ExpireTime time.Time

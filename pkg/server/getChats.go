@@ -18,7 +18,7 @@ func (s *Server) GetChats(ctx context.Context, req *proto.GetChatsRequest) (*pro
 	}
 
 	var Data []*proto.ChatsResponse_ChatData
-	if err := s.db.ScanRows(rows, Data); err != nil {
+	if err := s.db.ScanRows(rows, &Data); err != nil {
 		return nil, err
 	}
 

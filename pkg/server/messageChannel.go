@@ -2,6 +2,7 @@ package server
 
 import (
 	"api-channel/proto"
+	"context"
 	"fmt"
 	"sync"
 	"time"
@@ -38,6 +39,7 @@ func (s *Server) MessageChannel(pc *proto.MessageChannelRequest, stream proto.Ch
 	// Delete the session from map after stream terminate.
 	defer s.Sessions.Delete(username)
 
+	go sendChats(ctx, s, session)
 	// This service for realtime checking receive channel for incomming messages
 	go receiveService(session)
 
@@ -60,6 +62,23 @@ func (s *Server) MessageChannel(pc *proto.MessageChannelRequest, stream proto.Ch
 }
 
 // =================================================================
+
+func sendChats(ctx context.Context, s *Server, session *Session) error {
+	res, err := s.GetChats(ctx, &proto.GetChatsRequest{
+		Token: session.token.Value,
+	})
+	if err != nil {
+		return err
+	}
+	fmt.Println("res.Data : ", len(res.Data))
+	return session.stream.Send(&proto.MessageChannelResponse{
+		Data: &proto.MessageChannelResponse_Chats{
+			Chats: &proto.ChatsResponse{
+				Data: res.Data,
+			},
+		},
+	})
+}
 
 func receiveService(session *Session) {
 	t := time.NewTimer(time.Second * 10)

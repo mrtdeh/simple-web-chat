@@ -8,7 +8,7 @@ class WebChat {
   static final WebChat instance = WebChat._privateConstructor();
 
   late ChatServiceClient _service;
-  String? token;
+  String token = "";
 
   // WebChat(this._service);
 
@@ -40,10 +40,12 @@ class WebChat {
     }
   }
 
-  void startMessageChannel(String token) {
+  void startMessageChannel() {
+    print("start listening...");
     final request = MessageChannelRequest()..token = token;
-
+    // while (true) {
     _service.messageChannel(request).listen((response) {
+      print("debug 1");
       if (response.hasChats()) {
         for (var chat in response.chats.data) {
           // put json to stream
@@ -54,8 +56,18 @@ class WebChat {
       }
     }, onError: (error) {
       print("Error in message channel: $error");
+      _retryStream();
     }, onDone: () {
       print('Closed connection to server.');
+      _retryStream();
+    });
+    // }
+  }
+
+  void _retryStream() {
+    print("Retrying the stream...");
+    Future.delayed(Duration(seconds: 1), () {
+      startMessageChannel();
     });
   }
 }
