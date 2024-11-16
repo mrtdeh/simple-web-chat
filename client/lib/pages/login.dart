@@ -6,6 +6,8 @@ class LoginPage extends StatelessWidget {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
+  LoginPage({super.key});
+
   Future<bool> _handleLogin() async {
     final username = _usernameController.text;
     final password = _passwordController.text;
