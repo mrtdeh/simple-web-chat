@@ -14,7 +14,18 @@ class MyApp extends StatelessWidget {
       title: 'Web Chat',
       theme: ThemeData(
         primarySwatch: Colors.blue,
+         
       ),
+      darkTheme: ThemeData(
+        brightness: Brightness.dark,
+        /* dark theme settings */
+      ),
+      themeMode: ThemeMode.dark, 
+      /* ThemeMode.system to follow system theme, 
+         ThemeMode.light for light theme, 
+         ThemeMode.dark for dark theme
+      */
+      debugShowCheckedModeBanner: false,
       home: LoginPage(),
     );
   }

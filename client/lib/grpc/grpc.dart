@@ -43,7 +43,6 @@ class WebChat {
   void startMessageChannel() {
     print("start listening...");
     final request = MessageChannelRequest()..token = token;
-    // while (true) {
     _service.messageChannel(request).listen((response) {
       print("debug 1");
       if (response.hasChats()) {
@@ -61,7 +60,6 @@ class WebChat {
       print('Closed connection to server.');
       _retryStream();
     });
-    // }
   }
 
   void _retryStream() {

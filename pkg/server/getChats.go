@@ -3,6 +3,7 @@ package server
 import (
 	"api-channel/proto"
 	"context"
+	"log"
 )
 
 func (s *Server) GetChats(ctx context.Context, req *proto.GetChatsRequest) (*proto.ChatsResponse, error) {
@@ -18,8 +19,12 @@ func (s *Server) GetChats(ctx context.Context, req *proto.GetChatsRequest) (*pro
 	}
 
 	var Data []*proto.ChatsResponse_ChatData
-	if err := s.db.ScanRows(rows, &Data); err != nil {
-		return nil, err
+	for rows.Next() {
+		var r *proto.ChatsResponse_ChatData
+		if err := s.db.GORM().ScanRows(rows, &r); err != nil {
+			log.Fatalf("failed to scan row: %v", err)
+		}
+		Data = append(Data, r)
 	}
 
 	return &proto.ChatsResponse{Data: Data}, nil
