@@ -14,7 +14,18 @@ protoc:
 	protoc --go-grpc_out=require_unimplemented_servers=false:./proto/ ./proto/*.proto --go_out=./proto
 
 run: protoc build
-	./bin/server
+	./bin/server 
+asset-up:
+	@docker compose -f ./assets/postgres/docker-compose.yml up -d
+	@envoy -c ./assets/envoy/config.yml --log-path /tmp/envoy.log &
+
+asset-down:
+	@docker compose -f ./assets/postgres/docker-compose.yml down
+	@a=$$(ps -aux | grep envoy | grep -v grep | awk '{print $$2}'); \
+	if [ -n "$$a" ]; then \
+		kill -9 $$a; \
+		echo killed; \
+	fi  
 
 
 clean:
