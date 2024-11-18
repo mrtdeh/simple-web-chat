@@ -2,12 +2,22 @@ import 'package:dashboard/grpc/grpc.dart';
 import 'package:dashboard/proto/service.pb.dart';
 import 'package:flutter/material.dart';
 
-class ChatScreen extends StatelessWidget {
+class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  _ChatScreenState createState() => _ChatScreenState();
+}
+
+class _ChatScreenState extends State<ChatScreen> {
+  @override
+  void initState() {
     $WebChat.startMessageChannel();
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text("Chat App"),
@@ -17,7 +27,7 @@ class ChatScreen extends StatelessWidget {
           // بخش سایدبار برای نمایش لیست چت‌ها
           Container(
             width: 250, // عرض سایدبار
-            color: Colors.grey[200],
+            color: Colors.black54,
             child: Column(
               children: [
                 Container(
