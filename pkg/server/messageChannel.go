@@ -15,7 +15,6 @@ var tm = &TokenManager{
 }
 
 func (s *Server) MessageChannel(pc *proto.MessageChannelRequest, stream proto.ChatService_MessageChannelServer) error {
-	fmt.Println("debug 1")
 	// Check authorize user
 	token := pc.Token
 	ctx := stream.Context()
@@ -26,7 +25,6 @@ func (s *Server) MessageChannel(pc *proto.MessageChannelRequest, stream proto.Ch
 		return err
 	}
 	username := tokenData.Username
-	fmt.Println("debug 2")
 	// Deny requested username if it assigned and actived by another client
 	s.Sessions.Close(username)
 	// Prepare new connection info
@@ -40,8 +38,6 @@ func (s *Server) MessageChannel(pc *proto.MessageChannelRequest, stream proto.Ch
 	s.Sessions.Add(username, session)
 	// Delete the session from map after stream terminate.
 	defer s.Sessions.Delete(username)
-	fmt.Println("debug 3")
-	defer fmt.Println("debug end")
 
 	if err := sendChats(ctx, s, session); err != nil {
 		log.Fatal("error in sendChats: ", err)
@@ -70,14 +66,12 @@ func (s *Server) MessageChannel(pc *proto.MessageChannelRequest, stream proto.Ch
 // =================================================================
 
 func sendChats(ctx context.Context, s *Server, session *Session) error {
-	fmt.Println("ssss 1")
 	res, err := s.GetChats(ctx, &proto.GetChatsRequest{
 		Token: session.token.Value,
 	})
 	if err != nil {
 		return err
 	}
-	fmt.Println("ssss 2 : ", len(res.Data))
 	return session.stream.Send(&proto.MessageChannelResponse{
 		Data: &proto.MessageChannelResponse_Chats{
 			Chats: &proto.ChatsResponse{
