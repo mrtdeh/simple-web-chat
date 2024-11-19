@@ -61,11 +61,17 @@ class _ChatScreenState extends State<ChatScreen> {
                         itemCount: chats.length,
                         itemBuilder: (context, index) {
                           return ListTile(
+                            trailing: Badge(
+                              backgroundColor: Colors.red,
+                              textColor: Colors.white,
+                              label: Text(chats[index].unreadedMessagesCount),
+                            ),
                             leading: CircleAvatar(
                               child: Icon(Icons.person),
                             ),
                             title: Text(chats[index].chatTitle),
-                            subtitle: Text("Last message preview..."),
+                            subtitle: Text(chats[index].lastMessage,
+                                style: TextStyle(color: Colors.white)),
                             onTap: () {
                               // عمل کلیک بر روی چت
                             },

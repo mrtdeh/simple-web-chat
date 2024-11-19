@@ -8,6 +8,8 @@ import (
 
 func SeedDatabase(db *gorm.DB) {
 	// Clear records of table
+	truncateTable(db, models.Reply{}, true)
+	truncateTable(db, models.Message{}, true)
 	truncateTable(db, models.ChatMember{}, false)
 	truncateTable(db, models.User{}, true)
 	truncateTable(db, models.Group{}, true)
@@ -22,5 +24,10 @@ func SeedDatabase(db *gorm.DB) {
 	chatId2 := newChat(db, false)
 	joinChat(db, chatId2, user1)
 	joinChat(db, chatId2, user2)
+	// Create message for private chat
+	msgId1 := newMessage(db, chatId2, user1, "hello user2")
+	newReplay(db, chatId2, user2, msgId1, "thanks and you?")
+
+	newMessage(db, chatId, user1, "hello every one...")
 
 }

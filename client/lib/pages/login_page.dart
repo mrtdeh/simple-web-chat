@@ -1,5 +1,5 @@
 import 'package:dashboard/grpc/grpc.dart';
-import 'package:dashboard/pages/chat.dart';
+import 'package:dashboard/pages/chat_Page.dart';
 import 'package:flutter/material.dart';
 
 class LoginPage extends StatelessWidget {

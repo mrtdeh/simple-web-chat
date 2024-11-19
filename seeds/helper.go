@@ -42,6 +42,30 @@ func newGroup(db *gorm.DB, name string, owner uint32) (chatId uint32) {
 	return
 }
 
+func newMessage(db *gorm.DB, chatId, senderId uint32, text string) (msgId uint32) {
+	msg := models.Message{
+		ChatID:      chatId,
+		SenderID:    senderId,
+		Content:     text,
+		MessageType: "text",
+	}
+	db.Create(&msg)
+	db.Table("chats").
+		Where("id = ?", chatId).
+		Update("last_message_id", msg.ID)
+	return msg.ID
+}
+
+func newReplay(db *gorm.DB, chatId, senderId, repliedMsgId uint32, text string) (msgId uint32) {
+	msgId = newMessage(db, chatId, senderId, text)
+	replyMsg := &models.Reply{
+		MessageID:      msgId,
+		ReplyMessageId: repliedMsgId,
+	}
+	db.Create(&replyMsg)
+	return msgId
+}
+
 func truncateTable(db *gorm.DB, model interface{}, resetId bool) error {
 	// Get struct name
 	sn := reflect.TypeOf(model).Name()

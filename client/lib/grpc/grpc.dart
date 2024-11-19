@@ -49,8 +49,6 @@ class WebChat {
           chats.add(chat);
           // put json to stream
           _chatController.sink.add(chats);
-
-          print("Add to stream : " + chat.chatTitle);
         }
       }
     }, onError: (error) {

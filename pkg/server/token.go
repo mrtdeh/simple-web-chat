@@ -13,7 +13,7 @@ func (tm *TokenManager) Create(userId uint32, username string) string {
 		Value:      token,
 		UserID:     userId,
 		Username:   username,
-		ExpireTime: time.Now().Add(time.Minute * 5),
+		ExpireTime: time.Now().Add(time.Minute * 15),
 	}
 	return token
 }
