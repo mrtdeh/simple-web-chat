@@ -128,7 +128,7 @@ message CreateChatRequest{
   bool isGroup = 2;
 }
 message CreateChatResponse{
-  uint32 chatId = 1;
+  uint32 chat_id = 1;
 }
 
 // =================================================================
@@ -144,7 +144,7 @@ message MessageChannelResponse{
 }
 
 message GetMessagesRequest{
-  uint32 chatId = 1;
+  uint32 chat_id = 1;
 }
 message MessagesResponse{
   repeated MessageData data = 1;
@@ -177,7 +177,7 @@ message ChatsResponse{
   repeated ChatData data = 1;
   
   message ChatData{
-    uint32 chatId = 1; // Chat id
+    uint32 chat_id = 1; // Chat id
     string chatTitle = 2; // Title of Chat
     string type = 3; // Type of Chat : group|channel|private
     bool mute = 4; // Whether to mute
@@ -195,12 +195,12 @@ message CreateGroupRequest{
 }
 message CreateGroupResponse{
   uint32 groupId = 1;
-  uint32 chatId = 2;
+  uint32 chat_id = 2;
 }
 
 message JoinGroupRequest{
   string token = 1;
-  uint32 chatId = 2;
+  uint32 chat_id = 2;
   string role = 3;
 }
 message JoinGroupResponse{
@@ -208,7 +208,7 @@ message JoinGroupResponse{
 }
 
 message AddMemberRequest{
-  uint32 chatId = 1;
+  uint32 chat_id = 1;
   repeated uint32 membersId = 2;
 }
 message AddMemberResponse{
@@ -217,13 +217,19 @@ message AddMemberResponse{
 
 message MemberInfoRequest{
   string token = 1;
-  uint32 chatId = 2;
+  uint32 chat_id = 2;
   oneof info{
     bool mute = 3;
     uint32 lastReadedMessageId = 4;
   }
 }
 message MemberInfoResponse{
+}
+
+
+message SelectChatRequest{
+  string token = 1;
+  uint32 chat_id = 2;
 }
 
 service ChatService {
@@ -240,6 +246,7 @@ service ChatService {
   rpc SendMessage(MessageRequest) returns (MessageResponse);
   rpc UploadFile(FileRequest) returns (FileResponse);
   // rpc DownloadFile(FileRequest) returns (FileResponse);
+  rpc SelectChat(SelectChatRequest) returns (EmptyRequest);
 
   // Just for test
   rpc GetMessages(GetMessagesRequest) returns (MessagesResponse);

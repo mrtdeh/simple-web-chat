@@ -13,7 +13,17 @@ func (s *Server) GetChats(ctx context.Context, req *proto.GetChatsRequest) (*pro
 		return nil, err
 	}
 
-	rows, err := s.db.GetChats(t.UserID)
+	chats, err := s.getChats(t.UserID)
+	if err != nil {
+		return nil, err
+	}
+
+	return &proto.ChatsResponse{Data: chats}, nil
+}
+
+func (s *Server) getChats(userId uint32) ([]*proto.ChatsResponse_ChatData, error) {
+
+	rows, err := s.db.GetChats(userId)
 	if err != nil {
 		return nil, err
 	}
@@ -27,5 +37,5 @@ func (s *Server) GetChats(ctx context.Context, req *proto.GetChatsRequest) (*pro
 		Data = append(Data, r)
 	}
 
-	return &proto.ChatsResponse{Data: Data}, nil
+	return Data, nil
 }

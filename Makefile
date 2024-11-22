@@ -11,7 +11,8 @@ build: clean
 	go build -v -o bin/server  ./main.go
 
 protoc:
-	protoc --go-grpc_out=require_unimplemented_servers=false:./proto/ ./proto/*.proto --go_out=./proto
+	protoc  --go-grpc_out=require_unimplemented_servers=false:./proto/ ./proto/*.proto --go_out=./proto
+	protoc  --dart_out=grpc:client/lib/ proto/service.proto
 
 run: protoc build
 	./bin/server 

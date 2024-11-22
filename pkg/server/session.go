@@ -28,7 +28,8 @@ func (s *SessionManger) Close(key string) {
 	}
 }
 
-func (s *Session) FireReceive() {
+func (s *Session) ActiveChat(chatId uint32) {
+	s.activeChatId = chatId
 	close(s.receive)
 	s.receive = make(chan struct{})
 }

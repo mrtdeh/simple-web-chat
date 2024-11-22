@@ -33,6 +33,8 @@ type ChatServiceClient interface {
 	JoinGroup(ctx context.Context, in *JoinGroupRequest, opts ...grpc.CallOption) (*JoinGroupResponse, error)
 	SendMessage(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*MessageResponse, error)
 	UploadFile(ctx context.Context, in *FileRequest, opts ...grpc.CallOption) (*FileResponse, error)
+	// rpc DownloadFile(FileRequest) returns (FileResponse);
+	SelectChat(ctx context.Context, in *SelectChatRequest, opts ...grpc.CallOption) (*EmptyRequest, error)
 	// Just for test
 	GetMessages(ctx context.Context, in *GetMessagesRequest, opts ...grpc.CallOption) (*MessagesResponse, error)
 	GetChats(ctx context.Context, in *GetChatsRequest, opts ...grpc.CallOption) (*ChatsResponse, error)
@@ -168,6 +170,15 @@ func (c *chatServiceClient) UploadFile(ctx context.Context, in *FileRequest, opt
 	return out, nil
 }
 
+func (c *chatServiceClient) SelectChat(ctx context.Context, in *SelectChatRequest, opts ...grpc.CallOption) (*EmptyRequest, error) {
+	out := new(EmptyRequest)
+	err := c.cc.Invoke(ctx, "/proto.ChatService/SelectChat", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *chatServiceClient) GetMessages(ctx context.Context, in *GetMessagesRequest, opts ...grpc.CallOption) (*MessagesResponse, error) {
 	out := new(MessagesResponse)
 	err := c.cc.Invoke(ctx, "/proto.ChatService/GetMessages", in, out, opts...)
@@ -201,6 +212,8 @@ type ChatServiceServer interface {
 	JoinGroup(context.Context, *JoinGroupRequest) (*JoinGroupResponse, error)
 	SendMessage(context.Context, *MessageRequest) (*MessageResponse, error)
 	UploadFile(context.Context, *FileRequest) (*FileResponse, error)
+	// rpc DownloadFile(FileRequest) returns (FileResponse);
+	SelectChat(context.Context, *SelectChatRequest) (*EmptyRequest, error)
 	// Just for test
 	GetMessages(context.Context, *GetMessagesRequest) (*MessagesResponse, error)
 	GetChats(context.Context, *GetChatsRequest) (*ChatsResponse, error)
@@ -242,6 +255,9 @@ func (UnimplementedChatServiceServer) SendMessage(context.Context, *MessageReque
 }
 func (UnimplementedChatServiceServer) UploadFile(context.Context, *FileRequest) (*FileResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UploadFile not implemented")
+}
+func (UnimplementedChatServiceServer) SelectChat(context.Context, *SelectChatRequest) (*EmptyRequest, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SelectChat not implemented")
 }
 func (UnimplementedChatServiceServer) GetMessages(context.Context, *GetMessagesRequest) (*MessagesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetMessages not implemented")
@@ -462,6 +478,24 @@ func _ChatService_UploadFile_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ChatService_SelectChat_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SelectChatRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ChatServiceServer).SelectChat(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.ChatService/SelectChat",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ChatServiceServer).SelectChat(ctx, req.(*SelectChatRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _ChatService_GetMessages_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetMessagesRequest)
 	if err := dec(in); err != nil {
@@ -544,6 +578,10 @@ var ChatService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UploadFile",
 			Handler:    _ChatService_UploadFile_Handler,
+		},
+		{
+			MethodName: "SelectChat",
+			Handler:    _ChatService_SelectChat_Handler,
 		},
 		{
 			MethodName: "GetMessages",

@@ -39,11 +39,11 @@ func (s *Server) MessageChannel(pc *proto.MessageChannelRequest, stream proto.Ch
 	// Delete the session from map after stream terminate.
 	defer s.Sessions.Delete(username)
 
-	if err := sendChats(ctx, s, session); err != nil {
+	if err := s.sendChats(username); err != nil {
 		log.Fatal("error in sendChats: ", err)
 	}
 	// This service for realtime checking receive channel for incomming messages
-	go receiveService(session)
+	go s.receiveService(username)
 
 	// This blocking select wait for interrupt signals (kill,error,context done) and close session
 	select {
@@ -65,23 +65,41 @@ func (s *Server) MessageChannel(pc *proto.MessageChannelRequest, stream proto.Ch
 
 // =================================================================
 
-func sendChats(ctx context.Context, s *Server, session *Session) error {
-	res, err := s.GetChats(ctx, &proto.GetChatsRequest{
-		Token: session.token.Value,
-	})
+func (s *Server) sendChats(username string) error {
+	session := s.Sessions.Get(username)
+	chats, err := s.getChats(session.token.UserID)
 	if err != nil {
 		return err
 	}
 	return session.stream.Send(&proto.MessageChannelResponse{
 		Data: &proto.MessageChannelResponse_Chats{
 			Chats: &proto.ChatsResponse{
+				Data: chats,
+			},
+		},
+	})
+}
+
+func (s *Server) sendMessages(username string) error {
+	session := s.Sessions.Get(username)
+	res, err := s.GetMessages(context.Background(), &proto.GetMessagesRequest{
+		ChatId: session.activeChatId,
+	})
+	if err != nil {
+		return err
+	}
+	return session.stream.Send(&proto.MessageChannelResponse{
+		Data: &proto.MessageChannelResponse_Messages{
+			Messages: &proto.MessagesResponse{
 				Data: res.Data,
 			},
 		},
 	})
 }
 
-func receiveService(session *Session) {
+func (s *Server) receiveService(username string) {
+	session := s.Sessions.Get(username)
+
 	t := time.NewTimer(time.Second * 10)
 	for {
 		select {
@@ -89,9 +107,10 @@ func receiveService(session *Session) {
 			fmt.Println("session killed: receive channel closed")
 			return
 		case <-session.OnReceive():
-			fmt.Println("received")
+			if err := s.sendMessages(session.token.Username); err != nil {
+				fmt.Println("error in send messages from channel : ", err.Error())
+			}
 		case <-t.C:
-			// store the last readed message id to start from it later
 			// check for received messages from db
 
 			// send messages in stream

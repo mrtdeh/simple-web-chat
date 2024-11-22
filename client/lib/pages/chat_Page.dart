@@ -70,8 +70,7 @@ class _ChatScreenState extends State<ChatScreen> {
                               child: Icon(Icons.person),
                             ),
                             title: Text(chats[index].chatTitle),
-                            subtitle: Text(chats[index].lastMessage,
-                                style: TextStyle(color: Colors.white)),
+                            subtitle: Text(chats[index].lastMessage, style: TextStyle(color: Colors.white)),
                             onTap: () {
                               // عمل کلیک بر روی چت
                             },
@@ -88,11 +87,46 @@ class _ChatScreenState extends State<ChatScreen> {
           Expanded(
             child: Container(
               color: Colors.white,
-              child: Center(
-                child: Text(
-                  "Select a chat to start messaging",
-                  style: TextStyle(fontSize: 18, color: Colors.grey),
-                ),
+              // child: Center(
+              //   child: Text(
+              //     "Select a chat to start messaging",
+              //     style: TextStyle(fontSize: 18, color: Colors.grey),
+              //   ),
+              // ),
+              child: StreamBuilder<List<MessagesResponse_MessageData>>(
+                stream: $WebChat.messageStream,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(child: CircularProgressIndicator());
+                  }
+                  if (snapshot.hasError) {
+                    return Center(child: Text("Error: ${snapshot.error}"));
+                  }
+                  if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                    return Center(
+                        child: Text(
+                      "Select a chat to start messaging",
+                      style: TextStyle(fontSize: 18, color: Colors.grey),
+                    ));
+                  }
+
+                  // نمایش لیست چت‌ها
+                  final messages = snapshot.data!;
+                  return ListView.builder(
+                    itemCount: messages.length,
+                    itemBuilder: (context, index) {
+                      return Container(
+                        decoration: BoxDecoration(
+                            border: Border.all(
+                              color: Colors.red,
+                            ),
+                            color: Colors.green),
+                        margin: EdgeInsets.all(10),
+                        child: Text(messages[index].content),
+                      );
+                    },
+                  );
+                },
               ),
             ),
           ),

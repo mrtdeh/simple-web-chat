@@ -34,11 +34,12 @@ type SessionManger struct {
 	sessions map[string]*Session
 }
 type Session struct {
-	stream  proto.ChatService_MessageChannelServer
-	token   *TokenData
-	receive chan struct{}
-	close   chan struct{}
-	error   chan error
+	stream       proto.ChatService_MessageChannelServer
+	token        *TokenData
+	receive      chan struct{}
+	close        chan struct{}
+	activeChatId uint32
+	error        chan error
 }
 
 // Token manager struct
