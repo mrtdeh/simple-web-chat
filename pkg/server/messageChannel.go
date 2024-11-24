@@ -2,7 +2,6 @@ package server
 
 import (
 	"api-channel/proto"
-	"context"
 	"fmt"
 	"log"
 	"sync"
@@ -80,24 +79,25 @@ func (s *Server) sendChats(username string) error {
 	})
 }
 
-func (s *Server) sendMessages(username string) error {
-	session := s.Sessions.Get(username)
-	res, err := s.GetMessages(context.Background(), &proto.GetMessagesRequest{
-		ChatId: session.activeChatId,
-	})
-	if err != nil {
-		return err
-	}
-	return session.stream.Send(&proto.MessageChannelResponse{
-		Data: &proto.MessageChannelResponse_Messages{
-			Messages: &proto.MessagesResponse{
-				Data: res.Data,
-			},
-		},
-	})
-}
+// func (s *Server) sendMessages(username string) error {
+// 	session := s.Sessions.Get(username)
+// 	res, err := s.GetMessages(context.Background(), &proto.GetMessagesRequest{
+// 		ChatId: session.activeChatId,
+// 	})
+// 	if err != nil {
+// 		return err
+// 	}
+// 	return session.stream.Send(&proto.MessageChannelResponse{
+// 		Data: &proto.MessageChannelResponse_Messages{
+// 			Messages: &proto.MessagesResponse{
+// 				Data: res.Data,
+// 			},
+// 		},
+// 	})
+// }
 
 func (s *Server) receiveService(username string) {
+	fmt.Println("xxxxxxxxxxxxxxxxxxxxxx")
 	session := s.Sessions.Get(username)
 
 	t := time.NewTimer(time.Second * 10)
@@ -107,9 +107,9 @@ func (s *Server) receiveService(username string) {
 			fmt.Println("session killed: receive channel closed")
 			return
 		case <-session.OnReceive():
-			if err := s.sendMessages(session.token.Username); err != nil {
-				fmt.Println("error in send messages from channel : ", err.Error())
-			}
+			// if err := s.sendMessages(session.token.Username); err != nil {
+			// 	fmt.Println("error in send messages from channel : ", err.Error())
+			// }
 		case <-t.C:
 			// check for received messages from db
 

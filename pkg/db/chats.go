@@ -51,7 +51,8 @@ func (db *ChatDatabase) GetChats(userId uint32) (*sql.Rows, error) {
 			WHEN u.id > 0 THEN u.profile_picture        
 		END AS avatar_url,
 		latest_message.content AS last_message,
-		unread_msg_count.count AS unreaded_messages_count
+		unread_msg_count.count AS unreaded_messages_count,
+		cm1.last_readed_message_id AS last_readed_message_id
 		
 	`).Rows()
 	if err != nil {

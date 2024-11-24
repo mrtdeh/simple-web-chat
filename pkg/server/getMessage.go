@@ -2,15 +2,14 @@ package server
 
 import (
 	"api-channel/proto"
-	"context"
 )
 
-func (s *Server) GetMessages(ctx context.Context, req *proto.GetMessagesRequest) (*proto.MessagesResponse, error) {
+func (s *Server) GetMessages(req *proto.GetMessagesRequest, stream proto.ChatService_GetMessagesServer) error {
 
 	// return &proto.Messages{Data: data}, nil
-	messages, err := s.db.GetMessages(req.ChatId)
+	messages, err := s.db.GetMessages(req.ChatId, req.ReadedMsgId, req.NextCount, req.PrevCount)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	var data []*proto.MessagesResponse_MessageData
@@ -58,5 +57,12 @@ func (s *Server) GetMessages(ctx context.Context, req *proto.GetMessagesRequest)
 
 	}
 
-	return &proto.MessagesResponse{Data: data}, nil
+	err = stream.Send(&proto.MessagesResponse{
+		Data: data,
+	})
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

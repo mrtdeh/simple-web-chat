@@ -1,14 +1,18 @@
 package server
 
+import "fmt"
+
 func (s *SessionManger) Add(key string, session *Session) {
 	s.l.Lock()
 	s.sessions[key] = session
+	fmt.Println("session added : ", key)
 	s.l.Unlock()
 }
 
 func (s *SessionManger) Delete(key string) {
 	s.l.Lock()
 	delete(s.sessions, key)
+	fmt.Println("session deleted : ", key)
 	s.l.Unlock()
 }
 

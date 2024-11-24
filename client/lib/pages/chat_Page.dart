@@ -73,6 +73,7 @@ class _ChatScreenState extends State<ChatScreen> {
                             subtitle: Text(chats[index].lastMessage, style: TextStyle(color: Colors.white)),
                             onTap: () {
                               // عمل کلیک بر روی چت
+                              $WebChat.getMessages(chats[index].chatId,chats[index].lastReadedMessageId,20,20);
                             },
                           );
                         },

@@ -145,6 +145,9 @@ message MessageChannelResponse{
 
 message GetMessagesRequest{
   uint32 chat_id = 1;
+  uint32 readed_msg_id = 2;
+  uint32 next_count = 3;
+  uint32 prev_count = 4;
 }
 message MessagesResponse{
   repeated MessageData data = 1;
@@ -184,6 +187,7 @@ message ChatsResponse{
     string avatarUrl = 5; // URL of avatar
     string lastMessage = 6; // Last message
     string unreadedMessagesCount = 7; // Unreaded messages count
+    uint32 lastReadedMessageId = 8; // Last message id
   }
 }
 
@@ -245,11 +249,9 @@ service ChatService {
   rpc JoinGroup(JoinGroupRequest) returns (JoinGroupResponse);
   rpc SendMessage(MessageRequest) returns (MessageResponse);
   rpc UploadFile(FileRequest) returns (FileResponse);
-  // rpc DownloadFile(FileRequest) returns (FileResponse);
-  rpc SelectChat(SelectChatRequest) returns (EmptyRequest);
+  rpc GetMessages(GetMessagesRequest) returns (stream MessagesResponse);
 
   // Just for test
-  rpc GetMessages(GetMessagesRequest) returns (MessagesResponse);
   rpc GetChats(GetChatsRequest) returns (ChatsResponse);
   
 }

@@ -33,8 +33,6 @@ type Chat struct {
 	Messages      []Message
 	Group         *Group `gorm:"foreignKey:ChatID"` // رابطه با جدول گروه
 	LastMessageID uint
-	// LastMessage   Message
-	// PrivateChat *PrivateChat `gorm:"foreignKey:ChatID"` // رابطه برای چت خصوصی
 }
 
 type Group struct {
@@ -44,18 +42,7 @@ type Group struct {
 	AvatarUrl   string
 	OwnerID     uint32 `gorm:"not null"`
 	ChatID      uint32 `gorm:"not null"`
-	// Chat        Chat   `gorm:"foreignKey:ChatID"`
-	// Members     []User `gorm:"many2many:chat_members;foreignKey:ChatID;joinForeignKey:ChatID;"`
 }
-
-// type PrivateChat struct {
-// 	Model
-// 	ChatID  uint32`gorm:"not null"`
-// 	User1ID uint32`gorm:"not null"` // کاربر اول
-// 	User2ID uint32`gorm:"not null"` // کاربر دوم
-// 	User1   User `gorm:"foreignKey:User1ID"`
-// 	User2   User `gorm:"foreignKey:User2ID"`
-// }
 
 type Token struct {
 	Model
@@ -124,10 +111,3 @@ type Thumbnail struct {
 	Base64       string // base64 of image file
 	Type         string // mini|small|placeholder
 }
-
-// type GroupMember struct {
-// 	GroupID  uint32  `gorm:"primaryKey"`
-// 	UserID   uint32  `gorm:"primaryKey"`
-// 	Role     string `gorm:"default:'member'"`
-// 	JoinedAt time.Time
-// }

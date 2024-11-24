@@ -346,12 +346,17 @@ const GetMessagesRequest$json = {
   '1': 'GetMessagesRequest',
   '2': [
     {'1': 'chat_id', '3': 1, '4': 1, '5': 13, '10': 'chatId'},
+    {'1': 'readed_msg_id', '3': 2, '4': 1, '5': 13, '10': 'readedMsgId'},
+    {'1': 'next_count', '3': 3, '4': 1, '5': 13, '10': 'nextCount'},
+    {'1': 'prev_count', '3': 4, '4': 1, '5': 13, '10': 'prevCount'},
   ],
 };
 
 /// Descriptor for `GetMessagesRequest`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List getMessagesRequestDescriptor = $convert.base64Decode(
-    'ChJHZXRNZXNzYWdlc1JlcXVlc3QSFwoHY2hhdF9pZBgBIAEoDVIGY2hhdElk');
+    'ChJHZXRNZXNzYWdlc1JlcXVlc3QSFwoHY2hhdF9pZBgBIAEoDVIGY2hhdElkEiIKDXJlYWRlZF'
+    '9tc2dfaWQYAiABKA1SC3JlYWRlZE1zZ0lkEh0KCm5leHRfY291bnQYAyABKA1SCW5leHRDb3Vu'
+    'dBIdCgpwcmV2X2NvdW50GAQgASgNUglwcmV2Q291bnQ=');
 
 @$core.Deprecated('Use messagesResponseDescriptor instead')
 const MessagesResponse$json = {
@@ -440,17 +445,19 @@ const ChatsResponse_ChatData$json = {
     {'1': 'avatarUrl', '3': 5, '4': 1, '5': 9, '10': 'avatarUrl'},
     {'1': 'lastMessage', '3': 6, '4': 1, '5': 9, '10': 'lastMessage'},
     {'1': 'unreadedMessagesCount', '3': 7, '4': 1, '5': 9, '10': 'unreadedMessagesCount'},
+    {'1': 'lastReadedMessageId', '3': 8, '4': 1, '5': 13, '10': 'lastReadedMessageId'},
   ],
 };
 
 /// Descriptor for `ChatsResponse`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List chatsResponseDescriptor = $convert.base64Decode(
     'Cg1DaGF0c1Jlc3BvbnNlEjEKBGRhdGEYASADKAsyHS5wcm90by5DaGF0c1Jlc3BvbnNlLkNoYX'
-    'REYXRhUgRkYXRhGt8BCghDaGF0RGF0YRIXCgdjaGF0X2lkGAEgASgNUgZjaGF0SWQSHAoJY2hh'
+    'REYXRhUgRkYXRhGpECCghDaGF0RGF0YRIXCgdjaGF0X2lkGAEgASgNUgZjaGF0SWQSHAoJY2hh'
     'dFRpdGxlGAIgASgJUgljaGF0VGl0bGUSEgoEdHlwZRgDIAEoCVIEdHlwZRISCgRtdXRlGAQgAS'
     'gIUgRtdXRlEhwKCWF2YXRhclVybBgFIAEoCVIJYXZhdGFyVXJsEiAKC2xhc3RNZXNzYWdlGAYg'
     'ASgJUgtsYXN0TWVzc2FnZRI0ChV1bnJlYWRlZE1lc3NhZ2VzQ291bnQYByABKAlSFXVucmVhZG'
-    'VkTWVzc2FnZXNDb3VudA==');
+    'VkTWVzc2FnZXNDb3VudBIwChNsYXN0UmVhZGVkTWVzc2FnZUlkGAggASgNUhNsYXN0UmVhZGVk'
+    'TWVzc2FnZUlk');
 
 @$core.Deprecated('Use createGroupRequestDescriptor instead')
 const CreateGroupRequest$json = {
