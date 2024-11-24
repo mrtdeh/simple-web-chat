@@ -2,43 +2,44 @@ package database
 
 import (
 	"api-channel/pkg/models"
+	"fmt"
 )
 
 func (db *ChatDatabase) GetMessages(chatID, msgID, nextCount, prevCount uint32) ([]models.Message, error) {
-	var messages []models.Message
-
-	fetchMessages := func(condition string, order string, limit int) ([]models.Message, error) {
-		var result []models.Message
-		err := db.gormDB.Where(condition, chatID, msgID).
-			Order(order).
-			Limit(limit).
-			Preload("Sender").
-			Preload("Replies").
-			Preload("Replies.ReplyMessage").
-			Preload("Replies.Thumbnails").
-			Preload("Replies.Thumbnails.Thumbnail").
-			Preload("Attachments").
-			Preload("Attachments.Thumbnails", "type = ?", "placeholder").
-			Find(&result).Error
-		if err != nil {
-			return nil, err
-		}
-		return result, nil
+	// var messages []models.Message
+	fmt.Println("get messages:", chatID, msgID, nextCount, prevCount)
+	// fetchMessages := func(condition string, order string, limit int) ([]models.Message, error) {
+	var result []models.Message
+	err := db.gormDB.Debug().Where("chat_id = ? AND id < ?", chatID, msgID+nextCount).
+		Order("id DESC").
+		Limit(int(nextCount)+int(prevCount)).
+		Preload("Sender").
+		Preload("Replies").
+		Preload("Replies.ReplyMessage").
+		Preload("Replies.Thumbnails").
+		Preload("Replies.Thumbnails.Thumbnail").
+		Preload("Attachments").
+		Preload("Attachments.Thumbnails", "type = ?", "placeholder").
+		Find(&result).Error
+	if err != nil {
+		return nil, err
 	}
+	return result, nil
+	// }
 
 	// Lazy-Loading prev messages
-	prevMessages, err := fetchMessages("chat_id = ? AND id < ?", "id DESC", int(prevCount))
-	if err != nil {
-		return nil, err
-	}
+	// prevMessages, err := fetchMessages("chat_id = ? AND id < ?", "id DESC", int(prevCount))
+	// if err != nil {
+	// 	return nil, err
+	// }
 	// Lazy-Loading next messages
-	nextMessages, err := fetchMessages("chat_id = ? AND id > ?", "id ASC", int(nextCount))
-	if err != nil {
-		return nil, err
-	}
+	// nextMessages, err := fetchMessages("chat_id = ? AND id+? < ?", "id ASC", int(nextCount))
+	// if err != nil {
+	// 	return nil, err
+	// }
 	// Merge all messages
-	messages = append(prevMessages, nextMessages...)
-	return messages, nil
+	// messages = nextMessages //append(prevMessages, nextMessages...)
+	// return messages, nil
 }
 
 func (db *ChatDatabase) CreateMessage(chatID, userID uint32, content string) (uint32, error) {

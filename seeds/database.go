@@ -2,6 +2,7 @@ package seeds
 
 import (
 	"api-channel/pkg/models"
+	"fmt"
 
 	"gorm.io/gorm"
 )
@@ -28,6 +29,8 @@ func SeedDatabase(db *gorm.DB) {
 	msgId1 := newMessage(db, chatId2, user1, "hello user2")
 	newReplay(db, chatId2, user2, msgId1, "thanks and you?")
 
-	newMessage(db, chatId, user1, "hello every one...")
+	for i := 0; i < 500; i++ {
+		newMessage(db, chatId, user1, fmt.Sprintf("message %d", i+1))
+	}
 
 }

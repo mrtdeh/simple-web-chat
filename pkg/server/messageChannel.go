@@ -25,7 +25,7 @@ func (s *Server) MessageChannel(pc *proto.MessageChannelRequest, stream proto.Ch
 	}
 	username := tokenData.Username
 	// Deny requested username if it assigned and actived by another client
-	s.Sessions.Close(username)
+
 	// Prepare new connection info
 	session := &Session{
 		stream:  stream,
@@ -36,7 +36,10 @@ func (s *Server) MessageChannel(pc *proto.MessageChannelRequest, stream proto.Ch
 	}
 	s.Sessions.Add(username, session)
 	// Delete the session from map after stream terminate.
-	defer s.Sessions.Delete(username)
+	defer func() {
+		s.Sessions.Close(username)
+		s.Sessions.Delete(username)
+	}()
 
 	if err := s.sendChats(username); err != nil {
 		log.Fatal("error in sendChats: ", err)
