@@ -3,16 +3,36 @@ package database
 import (
 	"api-channel/pkg/models"
 	"fmt"
+	"time"
 )
 
 func (db *ChatDatabase) GetMessages(chatID, msgID, nextCount, prevCount uint32) ([]models.Message, error) {
+	time.Sleep(time.Millisecond * 700)
 	// var messages []models.Message
-	fmt.Println("get messages:", chatID, msgID, nextCount, prevCount)
-	// fetchMessages := func(condition string, order string, limit int) ([]models.Message, error) {
+	fmt.Println("get messages:", msgID, prevCount, int(msgID)-int(prevCount))
+	fromMsgID := 1
+	toMsgID := 50
+	if nextCount > 0 {
+		fromMsgID = int(msgID)
+		toMsgID = int(msgID + nextCount)
+	}
+	if prevCount > 0 {
+
+		fromMsgID = int(msgID)
+		toMsgID = int(msgID - prevCount)
+		if toMsgID < 1 {
+			toMsgID = 1
+		}
+	}
+	// newFrom := int(msgID) - int(prevCount)
+	// if newFrom > 0 {
+	// 	fromMsgID = newFrom
+	// }
+	// toMsgID := msgID + nextCount
 	var result []models.Message
-	err := db.gormDB.Debug().Where("chat_id = ? AND id < ?", chatID, msgID+nextCount).
-		Order("id DESC").
-		Limit(int(nextCount)+int(prevCount)).
+	err := db.gormDB.Debug().
+		Where("chat_id = ? AND id >= ? AND id <= ?", chatID, fromMsgID, toMsgID).
+		Order("id ASC").
 		Preload("Sender").
 		Preload("Replies").
 		Preload("Replies.ReplyMessage").

@@ -12,20 +12,15 @@ class WebChat {
   List<ChatsResponse_ChatData> chats = [];
   List<MessagesResponse_MessageData> messages = [];
 
-  final StreamController<List<ChatsResponse_ChatData>> _chatController =
-      StreamController<List<ChatsResponse_ChatData>>.broadcast();
+  final StreamController<List<ChatsResponse_ChatData>> _chatController = StreamController<List<ChatsResponse_ChatData>>.broadcast();
   Stream<List<ChatsResponse_ChatData>> get chatStream => _chatController.stream;
 
-  final StreamController<List<MessagesResponse_MessageData>>
-      _messageController =
-      StreamController<List<MessagesResponse_MessageData>>.broadcast();
-  Stream<List<MessagesResponse_MessageData>> get messageStream =>
-      _messageController.stream;
+  final StreamController<List<MessagesResponse_MessageData>> _messageController = StreamController<List<MessagesResponse_MessageData>>.broadcast();
+  Stream<List<MessagesResponse_MessageData>> get messageStream => _messageController.stream;
 
   Future<void> start() async {
     try {
-      final channel =
-          GrpcWebClientChannel.xhr(Uri.parse('http://localhost:8081'));
+      final channel = GrpcWebClientChannel.xhr(Uri.parse('http://localhost:8081'));
       _service = ChatServiceClient(channel);
     } catch (err) {
       print("connect to server failed : " + err.toString());
@@ -46,27 +41,21 @@ class WebChat {
     }
   }
 
-  void getMessages(
-      int chatId, int readedMsgId, int nextCount, int prevCount) async {
-    final request = GetMessagesRequest(
-        chatId: chatId,
-        nextCount: nextCount,
-        prevCount: prevCount,
-        readedMsgId: readedMsgId);
-     _service.getMessages(request).listen((response) {
-     
-        // for (var msg in response.data) {
-        //   messages.add(msg);
-        // }
-        _messageController.sink.add(response.data);
-      
-
-     }, onError: (error) {
+  void getMessages(int chatId, int readedMsgId, int nextCount, int prevCount) async {
+    final request = GetMessagesRequest(chatId: chatId, nextCount: nextCount, prevCount: prevCount, readedMsgId: readedMsgId);
+    _service.getMessages(request).listen((response) {
+      if (nextCount > 0) {
+        messages.insertAll(messages.length, response.data);
+      }
+      if (prevCount > 0) {
+        messages.insertAll(0, response.data);
+      }
+      _messageController.sink.add(messages);
+    }, onError: (error) {
       print("Error in get messages: $error");
     }, onDone: () {
       print('get messages closed');
     });
-
   }
 
   void startMessageChannel() {

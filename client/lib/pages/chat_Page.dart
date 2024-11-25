@@ -23,7 +23,10 @@ class _ChatScreenState extends State<ChatScreen> {
   int chatId = 0;
   void _onScroll() {
     if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
-      $WebChat.getMessages(chatId, lastMsgId, 50, 50);
+      $WebChat.getMessages(chatId, lastMsgId, 50, 0);
+    }
+    if (_scrollController.position.pixels == _scrollController.position.minScrollExtent) {
+      $WebChat.getMessages(chatId, lastMsgId, 0, 50);
     }
   }
 
