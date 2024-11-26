@@ -44,10 +44,10 @@ class WebChat {
   void getMessages(int chatId, int readedMsgId, int nextCount, int prevCount) async {
     final request = GetMessagesRequest(chatId: chatId, nextCount: nextCount, prevCount: prevCount, readedMsgId: readedMsgId);
     _service.getMessages(request).listen((response) {
-      if (nextCount > 0) {
+      if (nextCount > 0 && prevCount==0) {
         messages.insertAll(messages.length, response.data);
       }
-      if (prevCount > 0) {
+      if (prevCount > 0 && nextCount==0) {
         messages.insertAll(0, response.data);
       }
       _messageController.sink.add(messages);

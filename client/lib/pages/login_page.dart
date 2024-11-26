@@ -27,7 +27,7 @@ class LoginPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: Text("Login")),
       body: FutureBuilder<void>(
-        future: $WebChat.start(),
+        future: WebChat.instance.start(),
         builder: (context, snapshot) {
           // حالت در حال بارگذاری
           if (snapshot.connectionState == ConnectionState.waiting) {

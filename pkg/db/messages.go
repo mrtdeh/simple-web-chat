@@ -9,21 +9,35 @@ import (
 func (db *ChatDatabase) GetMessages(chatID, msgID, nextCount, prevCount uint32) ([]models.Message, error) {
 	time.Sleep(time.Millisecond * 700)
 	// var messages []models.Message
-	fmt.Println("get messages:", msgID, prevCount, int(msgID)-int(prevCount))
-	fromMsgID := 1
-	toMsgID := 50
-	if nextCount > 0 {
-		fromMsgID = int(msgID)
-		toMsgID = int(msgID + nextCount)
-	}
-	if prevCount > 0 {
-
-		fromMsgID = int(msgID)
-		toMsgID = int(msgID - prevCount)
-		if toMsgID < 1 {
-			toMsgID = 1
+	fmt.Println("nextCount : ", nextCount)
+	fmt.Println("prevCount : ", prevCount)
+	var fromMsgID int
+	var toMsgID int
+	if prevCount > 0 && nextCount > 0 {
+		// اگر هر دو مقدار وجود داشته باشند
+		fromMsgID = int(msgID) - int(prevCount)
+		if fromMsgID < 1 {
+			fromMsgID = 1 // جلوگیری از مقدار منفی
 		}
+		toMsgID = int(msgID) + int(nextCount)
+	} else if nextCount > 0 {
+		// فقط پیام‌های جدیدتر (next)
+		fromMsgID = int(msgID)
+		toMsgID = int(msgID) + int(nextCount)
+	} else if prevCount > 0 {
+		// فقط پیام‌های قدیمی‌تر (previous)
+		toMsgID = int(msgID)
+		fromMsgID = int(msgID) - int(prevCount)
+		if fromMsgID < 1 {
+			fromMsgID = 1 // جلوگیری از مقدار منفی
+		}
+	} else {
+		// هیچ داده‌ای برای بازه مشخص نشده است
+		return nil, fmt.Errorf("no valid range specified")
 	}
+
+	fmt.Println("get messages:", fromMsgID, toMsgID)
+
 	// newFrom := int(msgID) - int(prevCount)
 	// if newFrom > 0 {
 	// 	fromMsgID = newFrom
