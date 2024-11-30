@@ -44,17 +44,17 @@ func (db *ChatDatabase) GetMessages(chatID, msgID, nextCount, prevCount uint32) 
 	// }
 	// toMsgID := msgID + nextCount
 	var result []models.Message
-	err := db.gormDB.Debug().
-		Where("chat_id = ? AND id >= ? AND id <= ?", chatID, fromMsgID, toMsgID).
-		Order("id ASC").
-		Preload("Sender").
-		Preload("Replies").
-		Preload("Replies.ReplyMessage").
-		Preload("Replies.Thumbnails").
-		Preload("Replies.Thumbnails.Thumbnail").
-		Preload("Attachments").
-		Preload("Attachments.Thumbnails", "type = ?", "placeholder").
-		Find(&result).Error
+	err := db.gormDB. //Debug().
+				Where("chat_id = ? AND id >= ? AND id <= ?", chatID, fromMsgID, toMsgID).
+				Order("id ASC").
+				Preload("Sender").
+				Preload("Replies").
+				Preload("Replies.ReplyMessage").
+				Preload("Replies.Thumbnails").
+				Preload("Replies.Thumbnails.Thumbnail").
+				Preload("Attachments").
+				Preload("Attachments.Thumbnails", "type = ?", "placeholder").
+				Find(&result).Error
 	if err != nil {
 		return nil, err
 	}

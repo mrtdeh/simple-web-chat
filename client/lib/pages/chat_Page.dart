@@ -21,13 +21,23 @@ class _ChatScreenState extends State<ChatScreen> {
   int lastMsgId = 0;
   int firstMsgId = 0;
   int chatId = 0;
+  // double currentOffset = 0;
+
   void _onScroll() {
     if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
-      $WebChat.getMessages(chatId, lastMsgId, 50, 0);
+      $WebChat.getMessages(chatId, lastMsgId, 50, 0, (totalHeight) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _scrollController.jumpTo(_scrollController.position.pixels - totalHeight);
+        });
+      });
     }
-    // if (_scrollController.position.pixels == _scrollController.position.minScrollExtent) {
-    //   $WebChat.getMessages(chatId, lastMsgId, 0, 50);
-    // }
+    if (_scrollController.position.pixels == _scrollController.position.minScrollExtent) {
+      $WebChat.getMessages(chatId, lastMsgId, 0, 50, (totalHeight) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _scrollController.jumpTo(_scrollController.position.pixels + totalHeight);
+        });
+      });
+    }
   }
 
   final _scrollController = ScrollController();
@@ -89,7 +99,7 @@ class _ChatScreenState extends State<ChatScreen> {
                             subtitle: Text(chats[index].lastMessage, style: TextStyle(color: Colors.white)),
                             onTap: () {
                               chatId = chats[index].chatId;
-                              $WebChat.getMessages(chats[index].chatId, chats[index].lastReadedMessageId, 50, 50);
+                              $WebChat.getMessages(chats[index].chatId, chats[index].lastReadedMessageId, 50, 50, (t) {});
                             },
                           );
                         },
@@ -109,7 +119,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 thumbColor: Colors.redAccent,
                 radius: Radius.circular(20),
                 thickness: 15,
-                child: StreamBuilder<List<MessagesResponse_MessageData>>(
+                child: StreamBuilder<List<Message>>(
                   stream: $WebChat.messageStream,
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
@@ -128,27 +138,42 @@ class _ChatScreenState extends State<ChatScreen> {
 
                     // نمایش لیست چت‌ها
                     final messages = snapshot.data!;
-                    return ListView.builder(
+                    // return Text("");
+                    return ListView(
+                      cacheExtent: 500,
                       controller: _scrollController,
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      itemCount: messages.length,
-                      itemBuilder: (context, index) {
+                      scrollDirection: Axis.vertical,
+                      children: List.generate(messages.length, (index) {
                         if (index == 0) {
-                          firstMsgId = messages[0].messageId;
+                          firstMsgId = messages[0].data.messageId;
                         }
                         if (index == messages.length - 1) {
-                          lastMsgId = messages[messages.length - 1].messageId;
+                          lastMsgId = messages[messages.length - 1].data.messageId;
                         }
-                        return Container(
-                          decoration: BoxDecoration(
-                              border: Border.all(
-                                color: Colors.red,
-                              ),
-                              color: Colors.green),
-                          margin: EdgeInsets.all(10),
-                          child: Text(messages[index].content),
-                        );
-                      },
+                        final msg = messages[index];
+                        return LayoutBuilder(builder: (context, constraints) {
+                          if (msg.height == null) {
+                            WidgetsBinding.instance.addPostFrameCallback((_) {
+                              try {
+                                final RenderBox box = context.findRenderObject() as RenderBox;
+                                msg.height = box.size.height;
+                                print(msg.data.content + " " + msg.height.toString());
+                              } catch (err) {}
+                            });
+                          }
+                          return Container(
+                            height: 50,
+                            // key: msg.key,
+                            decoration: BoxDecoration(
+                                border: Border.all(
+                                  color: Colors.red,
+                                ),
+                                color: Colors.green),
+                            margin: EdgeInsets.all(10),
+                            child: Text(msg.data.content),
+                          );
+                        });
+                      }),
                     );
                   },
                 ),

@@ -1,7 +1,24 @@
 import 'dart:async';
+import 'package:flutter/material.dart';
 import 'package:grpc/grpc_web.dart';
 
 import '../proto/service.pbgrpc.dart';
+
+class Message {
+  final MessagesResponse_MessageData data;
+  final GlobalKey key;
+  double? height;
+
+  void setHeight(double h) {
+    this.height = h;
+  }
+
+  Message({
+    required this.data,
+    required this.key,
+    this.height,
+  });
+}
 
 class WebChat {
   WebChat._privateConstructor();
@@ -10,13 +27,13 @@ class WebChat {
   late ChatServiceClient _service;
   String token = "";
   List<ChatsResponse_ChatData> chats = [];
-  List<MessagesResponse_MessageData> messages = [];
+  List<Message> messages = [];
 
   final StreamController<List<ChatsResponse_ChatData>> _chatController = StreamController<List<ChatsResponse_ChatData>>.broadcast();
   Stream<List<ChatsResponse_ChatData>> get chatStream => _chatController.stream;
 
-  final StreamController<List<MessagesResponse_MessageData>> _messageController = StreamController<List<MessagesResponse_MessageData>>.broadcast();
-  Stream<List<MessagesResponse_MessageData>> get messageStream => _messageController.stream;
+  final StreamController<List<Message>> _messageController = StreamController<List<Message>>.broadcast();
+  Stream<List<Message>> get messageStream => _messageController.stream;
 
   Future<void> start() async {
     try {
@@ -41,20 +58,60 @@ class WebChat {
     }
   }
 
-  void getMessages(int chatId, int readedMsgId, int nextCount, int prevCount) async {
+  final double pageSize = 150;
+
+  void getMessages(int chatId, int readedMsgId, int nextCount, int prevCount, Function(double) onComplete) async {
     final request = GetMessagesRequest(chatId: chatId, nextCount: nextCount, prevCount: prevCount, readedMsgId: readedMsgId);
+    double totalHeight = 0;
     _service.getMessages(request).listen((response) {
-      if (nextCount > 0 && prevCount==0) {
-        messages.insertAll(messages.length, response.data);
+      List<Message> msgs = [];
+      response.data.forEach(
+        (msg) {
+          msgs.add(Message(data: msg, key: new GlobalKey()));
+        },
+      );
+
+      totalHeight = 0;
+      print("debug 1 : " + totalHeight.toString());
+
+      if (nextCount > 0 && prevCount == 0) {
+        messages.insertAll(messages.length, msgs);
+        if (messages.length > pageSize) {
+          var count = messages.length - pageSize;
+
+          for (var i = 0; i <= count - 1; i++) {
+            if (messages[i].height != null) {
+              totalHeight += messages[i].height!;
+            }
+          }
+          print("totalHeight : " + totalHeight.toString());
+
+          messages.removeRange(0, count.toInt());
+        }
+      } else if (prevCount > 0 && nextCount == 0) {
+        messages.insertAll(0, msgs);
+        if (messages.length > pageSize) {
+          // var count = messages.length ;
+
+          // for (var i = messages.length - pageSize; i < count - 1; i++) {
+          //   if (messages[i].height != null) {
+          //     totalHeight += messages[i].height!;
+          //   }
+          // }
+          // print("totalHeight : " + totalHeight.toString());
+
+          messages.removeRange((messages.length - pageSize).toInt(), messages.length);
+        }
+      } else {
+        messages.insertAll(0, msgs);
       }
-      if (prevCount > 0 && nextCount==0) {
-        messages.insertAll(0, response.data);
-      }
+
       _messageController.sink.add(messages);
     }, onError: (error) {
       print("Error in get messages: $error");
     }, onDone: () {
       print('get messages closed');
+      onComplete(totalHeight);
     });
   }
 
