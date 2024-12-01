@@ -64,6 +64,8 @@ class WebChat {
     final request = GetMessagesRequest(chatId: chatId, nextCount: nextCount, prevCount: prevCount, readedMsgId: readedMsgId);
     double totalHeight = 0;
     _service.getMessages(request).listen((response) {
+      print("receive ${response.data.length} record");
+
       List<Message> msgs = [];
       response.data.forEach(
         (msg) {
@@ -72,35 +74,34 @@ class WebChat {
       );
 
       totalHeight = 0;
-      print("debug 1 : " + totalHeight.toString());
+      // print("debug 1 : " + totalHeight.toString());
 
       if (nextCount > 0 && prevCount == 0) {
         messages.insertAll(messages.length, msgs);
         if (messages.length > pageSize) {
           var count = messages.length - pageSize;
-
           for (var i = 0; i <= count - 1; i++) {
             if (messages[i].height != null) {
               totalHeight += messages[i].height!;
             }
           }
-          print("totalHeight : " + totalHeight.toString());
-
+          // print("remove from 0 to $count");
           messages.removeRange(0, count.toInt());
         }
       } else if (prevCount > 0 && nextCount == 0) {
         messages.insertAll(0, msgs);
         if (messages.length > pageSize) {
-          // var count = messages.length ;
+          var len = messages.length;
+          var rmCounts = (messages.length - pageSize).toInt();
 
-          // for (var i = messages.length - pageSize; i < count - 1; i++) {
-          //   if (messages[i].height != null) {
-          //     totalHeight += messages[i].height!;
-          //   }
-          // }
+          for (var i = len - 1; i > (len - rmCounts); i--) {
+            if (messages[i].height != null) {
+              totalHeight += messages[i].height!;
+            }
+          }
           // print("totalHeight : " + totalHeight.toString());
-
-          messages.removeRange((messages.length - pageSize).toInt(), messages.length);
+          // print("remove from $start to $count");
+          messages.removeRange(len - rmCounts, len);
         }
       } else {
         messages.insertAll(0, msgs);

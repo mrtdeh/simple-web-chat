@@ -26,16 +26,16 @@ class _ChatScreenState extends State<ChatScreen> {
   void _onScroll() {
     if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
       $WebChat.getMessages(chatId, lastMsgId, 50, 0, (totalHeight) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          _scrollController.jumpTo(_scrollController.position.pixels - totalHeight);
-        });
+        // WidgetsBinding.instance.addPostFrameCallback((_) {
+        _scrollController.jumpTo(_scrollController.position.pixels - totalHeight);
+        // });
       });
     }
     if (_scrollController.position.pixels == _scrollController.position.minScrollExtent) {
-      $WebChat.getMessages(chatId, lastMsgId, 0, 50, (totalHeight) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          _scrollController.jumpTo(_scrollController.position.pixels + totalHeight);
-        });
+      $WebChat.getMessages(chatId, firstMsgId, 0, 50, (totalHeight) {
+        // WidgetsBinding.instance.addPostFrameCallback((_) {
+        // _scrollController.jumpTo(_scrollController.position.pixels + totalHeight);
+        // });
       });
     }
   }
@@ -157,7 +157,7 @@ class _ChatScreenState extends State<ChatScreen> {
                               try {
                                 final RenderBox box = context.findRenderObject() as RenderBox;
                                 msg.height = box.size.height;
-                                print(msg.data.content + " " + msg.height.toString());
+                                // print(msg.data.content + " " + msg.height.toString());
                               } catch (err) {}
                             });
                           }

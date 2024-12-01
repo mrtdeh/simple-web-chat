@@ -9,8 +9,8 @@ import (
 func (db *ChatDatabase) GetMessages(chatID, msgID, nextCount, prevCount uint32) ([]models.Message, error) {
 	time.Sleep(time.Millisecond * 700)
 	// var messages []models.Message
-	fmt.Println("nextCount : ", nextCount)
-	fmt.Println("prevCount : ", prevCount)
+	// fmt.Println("nextCount : ", nextCount)
+	// fmt.Println("prevCount : ", prevCount)
 	var fromMsgID int
 	var toMsgID int
 	if prevCount > 0 && nextCount > 0 {
@@ -36,7 +36,7 @@ func (db *ChatDatabase) GetMessages(chatID, msgID, nextCount, prevCount uint32) 
 		return nil, fmt.Errorf("no valid range specified")
 	}
 
-	fmt.Println("get messages:", fromMsgID, toMsgID)
+	// fmt.Println("get messages:", fromMsgID, toMsgID)
 
 	// newFrom := int(msgID) - int(prevCount)
 	// if newFrom > 0 {
@@ -44,17 +44,17 @@ func (db *ChatDatabase) GetMessages(chatID, msgID, nextCount, prevCount uint32) 
 	// }
 	// toMsgID := msgID + nextCount
 	var result []models.Message
-	err := db.gormDB. //Debug().
-				Where("chat_id = ? AND id >= ? AND id <= ?", chatID, fromMsgID, toMsgID).
-				Order("id ASC").
-				Preload("Sender").
-				Preload("Replies").
-				Preload("Replies.ReplyMessage").
-				Preload("Replies.Thumbnails").
-				Preload("Replies.Thumbnails.Thumbnail").
-				Preload("Attachments").
-				Preload("Attachments.Thumbnails", "type = ?", "placeholder").
-				Find(&result).Error
+	err := db.gormDB.Debug().
+		Where("chat_id = ? AND id >= ? AND id <= ?", chatID, fromMsgID, toMsgID).
+		Order("id ASC").
+		Preload("Sender").
+		Preload("Replies").
+		Preload("Replies.ReplyMessage").
+		Preload("Replies.Thumbnails").
+		Preload("Replies.Thumbnails.Thumbnail").
+		Preload("Attachments").
+		Preload("Attachments.Thumbnails", "type = ?", "placeholder").
+		Find(&result).Error
 	if err != nil {
 		return nil, err
 	}
