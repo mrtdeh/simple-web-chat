@@ -25,16 +25,16 @@ class _ChatScreenState extends State<ChatScreen> {
 
   void _onScroll() {
     if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
-      $WebChat.getMessages(chatId, lastMsgId, 50, 0, (totalHeight) {
+      $WebChat.getMessages(chatId, lastMsgId, 50, 0, context, (totalHeight) {
         // WidgetsBinding.instance.addPostFrameCallback((_) {
         _scrollController.jumpTo(_scrollController.position.pixels - totalHeight);
         // });
       });
     }
     if (_scrollController.position.pixels == _scrollController.position.minScrollExtent) {
-      $WebChat.getMessages(chatId, firstMsgId, 0, 50, (totalHeight) {
+      $WebChat.getMessages(chatId, firstMsgId, 0, 50, context, (totalHeight) {
         // WidgetsBinding.instance.addPostFrameCallback((_) {
-        // _scrollController.jumpTo(_scrollController.position.pixels + totalHeight);
+        _scrollController.jumpTo(_scrollController.position.pixels + totalHeight);
         // });
       });
     }
@@ -47,6 +47,7 @@ class _ChatScreenState extends State<ChatScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Chat App"),
+        scrolledUnderElevation: 0,
       ),
       body: Row(
         children: [
@@ -99,7 +100,7 @@ class _ChatScreenState extends State<ChatScreen> {
                             subtitle: Text(chats[index].lastMessage, style: TextStyle(color: Colors.white)),
                             onTap: () {
                               chatId = chats[index].chatId;
-                              $WebChat.getMessages(chats[index].chatId, chats[index].lastReadedMessageId, 50, 50, (t) {});
+                              $WebChat.getMessages(chats[index].chatId, chats[index].lastReadedMessageId, 50, 50, context, (t) {});
                             },
                           );
                         },
@@ -139,11 +140,12 @@ class _ChatScreenState extends State<ChatScreen> {
                     // نمایش لیست چت‌ها
                     final messages = snapshot.data!;
                     // return Text("");
-                    return ListView(
-                      cacheExtent: 500,
+                    return ListView.builder(
+                      cacheExtent: double.maxFinite,
                       controller: _scrollController,
                       scrollDirection: Axis.vertical,
-                      children: List.generate(messages.length, (index) {
+                      itemCount: messages.length,
+                      itemBuilder: (context, index) {
                         if (index == 0) {
                           firstMsgId = messages[0].data.messageId;
                         }
@@ -151,29 +153,27 @@ class _ChatScreenState extends State<ChatScreen> {
                           lastMsgId = messages[messages.length - 1].data.messageId;
                         }
                         final msg = messages[index];
-                        return LayoutBuilder(builder: (context, constraints) {
-                          if (msg.height == null) {
-                            WidgetsBinding.instance.addPostFrameCallback((_) {
-                              try {
-                                final RenderBox box = context.findRenderObject() as RenderBox;
-                                msg.height = box.size.height;
-                                // print(msg.data.content + " " + msg.height.toString());
-                              } catch (err) {}
-                            });
-                          }
-                          return Container(
-                            height: 50,
-                            // key: msg.key,
-                            decoration: BoxDecoration(
-                                border: Border.all(
-                                  color: Colors.red,
-                                ),
-                                color: Colors.green),
-                            margin: EdgeInsets.all(10),
-                            child: Text(msg.data.content),
-                          );
-                        });
-                      }),
+                        return Container(
+                          key: msg.key,
+                          margin: const EdgeInsets.symmetric(vertical: 10),
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: Colors.blueAccent,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          width: double.infinity,
+                          height: msg.height,
+                          child: RichText(
+                            text: TextSpan(
+                              text: msg.data.content,
+                              style: defaultTextStyle,
+                            ),
+                          ),
+                        );
+                      },
+                      // children: List.generate(messages.length, (index) {
+
+                      // }),
                     );
                   },
                 ),
