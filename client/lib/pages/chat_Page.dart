@@ -15,27 +15,30 @@ class _ChatScreenState extends State<ChatScreen> {
   void initState() {
     $WebChat.startMessageChannel();
     _scrollController.addListener(_onScroll);
+    Future.delayed(Duration(microseconds: 1), () {
+      $WebChat.Init();
+    });
+
     super.initState();
   }
 
-  int lastMsgId = 0;
-  int firstMsgId = 0;
+  void switchToWaiting() {
+    setState(() {
+      $WebChat.ResetStream(); // استریم خالی برای حالت waiting
+    });
+  }
+
   int chatId = 0;
-  // double currentOffset = 0;
 
   void _onScroll() {
     if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
-      $WebChat.getMessages(chatId, lastMsgId, 50, 0, context, (totalHeight) {
-        // WidgetsBinding.instance.addPostFrameCallback((_) {
+      $WebChat.getMessages(chatId, RecordDirection.next, 50, context, onComplete: (totalHeight) {
         _scrollController.jumpTo(_scrollController.position.pixels - totalHeight);
-        // });
       });
     }
     if (_scrollController.position.pixels == _scrollController.position.minScrollExtent) {
-      $WebChat.getMessages(chatId, firstMsgId, 0, 50, context, (totalHeight) {
-        // WidgetsBinding.instance.addPostFrameCallback((_) {
+      $WebChat.getMessages(chatId, RecordDirection.previous, 50, context, onComplete: (totalHeight) {
         _scrollController.jumpTo(_scrollController.position.pixels + totalHeight);
-        // });
       });
     }
   }
@@ -98,9 +101,12 @@ class _ChatScreenState extends State<ChatScreen> {
                             ),
                             title: Text(chats[index].chatTitle),
                             subtitle: Text(chats[index].lastMessage, style: TextStyle(color: Colors.white)),
-                            onTap: () {
+                            onTap: () async {
+                              switchToWaiting();
                               chatId = chats[index].chatId;
-                              $WebChat.getMessages(chats[index].chatId, chats[index].lastReadedMessageId, 50, 50, context, (t) {});
+                              Future.delayed(Duration(seconds: 1), () {
+                                $WebChat.getMessages(chats[index].chatId, RecordDirection.none, 50, context);
+                              });
                             },
                           );
                         },
@@ -120,38 +126,44 @@ class _ChatScreenState extends State<ChatScreen> {
                 thumbColor: Colors.redAccent,
                 radius: Radius.circular(20),
                 thickness: 15,
-                child: StreamBuilder<List<Message>>(
+                child: StreamBuilder<List<Message>?>(
                   stream: $WebChat.messageStream,
+                  initialData: [],
                   builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Center(child: CircularProgressIndicator());
-                    }
-                    if (snapshot.hasError) {
-                      return Center(child: Text("Error: ${snapshot.error}"));
-                    }
-                    if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                      return Center(
-                          child: Text(
-                        "Select a chat to start messaging",
-                        style: TextStyle(fontSize: 18, color: Colors.grey),
-                      ));
+                    switch (snapshot.connectionState) {
+                      case ConnectionState.waiting:
+                        // While waiting for the data to load, show a loading spinner.
+                        return Center(child: CircularProgressIndicator());
+                      default:
+                        if (snapshot.hasError)
+                          return Center(child: Text('Error: ${snapshot.error}'));
+                        else if (!snapshot.hasData || snapshot.data!.isEmpty)
+                          return Center(
+                              child: Text(
+                            "Select a chat to start messaging",
+                            style: TextStyle(fontSize: 18, color: Colors.grey),
+                          ));
                     }
 
-                    // نمایش لیست چت‌ها
+                    // if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                    // return Center(
+                    //     child: Text(
+                    //   "Select a chat to start messaging",
+                    //   style: TextStyle(fontSize: 18, color: Colors.grey),
+                    // ));
+                    // } else if (snapshot.connectionState == ConnectionState.waiting) {
+                    //   return Center(child: CircularProgressIndicator());
+                    // } else if (snapshot.hasError) {
+                    //   return Center(child: Text("Error: ${snapshot.error}"));
+                    // }
+
                     final messages = snapshot.data!;
-                    // return Text("");
                     return ListView.builder(
-                      cacheExtent: double.maxFinite,
                       controller: _scrollController,
-                      scrollDirection: Axis.vertical,
+                      // scrollDirection: Axis.vertical,
+                      shrinkWrap: true,
                       itemCount: messages.length,
                       itemBuilder: (context, index) {
-                        if (index == 0) {
-                          firstMsgId = messages[0].data.messageId;
-                        }
-                        if (index == messages.length - 1) {
-                          lastMsgId = messages[messages.length - 1].data.messageId;
-                        }
                         final msg = messages[index];
                         return Container(
                           key: msg.key,

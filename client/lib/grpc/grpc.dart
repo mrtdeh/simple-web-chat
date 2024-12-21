@@ -20,6 +20,12 @@ class Message {
   });
 }
 
+enum RecordDirection {
+  previous,
+  next,
+  none
+}
+
 class WebChat {
   WebChat._privateConstructor();
   static final WebChat instance = WebChat._privateConstructor();
@@ -34,8 +40,23 @@ class WebChat {
   final StreamController<List<ChatsResponse_ChatData>> _chatController = StreamController<List<ChatsResponse_ChatData>>.broadcast();
   Stream<List<ChatsResponse_ChatData>> get chatStream => _chatController.stream;
 
-  final StreamController<List<Message>> _messageController = StreamController<List<Message>>.broadcast();
+  StreamController<List<Message>> _messageController = StreamController<List<Message>>.broadcast();
   Stream<List<Message>> get messageStream => _messageController.stream;
+
+  void Init() {
+    _messageController.sink.add([]);
+  }
+
+//   Stream<List<String>> getDelayedStream() async* {
+//   yield null; // حالت اولیه
+//   await Future.delayed(Duration(seconds: 2)); // تأخیر برای شبیه‌سازی انتظار
+//   yield ["Message 1", "Message 2"];
+// }
+
+  void ResetStream() {
+    _messageController = StreamController<List<Message>>.broadcast();
+    // _messageController.add(null);
+  }
 
   Future<void> start() async {
     try {
@@ -62,7 +83,25 @@ class WebChat {
 
   final double pageSize = 150;
 
-  void getMessages(int chatId, int readedMsgId, int nextCount, int prevCount, BuildContext context, Function(double) onComplete) async {
+  void getMessages(int chatId, RecordDirection direction, int count, BuildContext context, {Function(double)? onComplete}) async {
+    var readedMsgId = 0;
+    var nextCount = 0;
+    var prevCount = 0;
+
+    if (direction == RecordDirection.next) {
+      // Set parameters for get next page
+      nextCount = count;
+      readedMsgId = messages[messages.length - 1].data.messageId;
+    } else if (direction == RecordDirection.previous) {
+      // Set parameters for get previous page
+      prevCount = count;
+      readedMsgId = messages[0].data.messageId;
+    } else {
+      // Set parameters for get
+      nextCount = count;
+      prevCount = count;
+    }
+
     final request = GetMessagesRequest(chatId: chatId, nextCount: nextCount, prevCount: prevCount, readedMsgId: readedMsgId);
     double totalHeight = 0;
     List<Message> msgs = [];
@@ -113,7 +152,9 @@ class WebChat {
 
       _messageController.sink.add(messages);
       msgs = [];
-      onComplete(totalHeight);
+      if (onComplete != null) {
+        onComplete(totalHeight);
+      }
       print('get messages closed');
     }, onError: (error) {
       print("Error in get messages: $error");
