@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ffi';
 import 'package:flutter/material.dart';
 import 'package:grpc/grpc_web.dart';
 
@@ -43,19 +44,20 @@ class WebChat {
   StreamController<List<Message>> _messageController = StreamController<List<Message>>.broadcast();
   Stream<List<Message>> get messageStream => _messageController.stream;
 
-  void Init() {
+  void init() {
+    Future.delayed(Duration(microseconds: 1), () {
     _messageController.sink.add([]);
+    });
   }
 
-//   Stream<List<String>> getDelayedStream() async* {
-//   yield null; // حالت اولیه
-//   await Future.delayed(Duration(seconds: 2)); // تأخیر برای شبیه‌سازی انتظار
-//   yield ["Message 1", "Message 2"];
+//   Stream<List<Message>> getMessageStream() async* {
+//   yield null; 
+//   await Future.delayed(Duration(seconds: 2)); 
+//   yield await messageStream.;
 // }
 
-  void ResetStream() {
+  void resetStream() {
     _messageController = StreamController<List<Message>>.broadcast();
-    // _messageController.add(null);
   }
 
   Future<void> start() async {
@@ -106,19 +108,17 @@ class WebChat {
     double totalHeight = 0;
     List<Message> msgs = [];
     _service.getMessages(request).listen((response) {
-      print("receive ${response.data.length} record");
-
-      response.data.forEach((msg) {
+          for(var msg in response.data){
         var height = _calculateHeight(msg.content, context);
         var boxHeight = height + 20;
         msgs.add(Message(
           data: msg,
-          key: new GlobalKey(),
+          key:  GlobalKey(),
           height: height,
           boxHeight: boxHeight,
         ));
-        // totalHeight += boxHeight;
-      });
+      }
+
     }, onDone: () async {
       // totalHeight = 0;
       if (nextCount > 0 && prevCount == 0) {
@@ -126,12 +126,8 @@ class WebChat {
         if (messages.length > pageSize) {
           var count = messages.length - pageSize;
           for (var i = 0; i <= count - 1; i++) {
-            // var ctx = messages[i].key.currentContext!;
-            // final RenderBox box = ctx.findRenderObject() as RenderBox;
-
             totalHeight += messages[i].boxHeight!;
           }
-          // print("remove from 0 to $count");
           messages.removeRange(0, count.toInt());
         }
       } else if (prevCount > 0 && nextCount == 0) {
@@ -141,11 +137,9 @@ class WebChat {
           var rmCounts = (messages.length - pageSize).toInt();
           messages.removeRange(len - rmCounts, len);
         }
-        msgs.forEach(
-          (msg) {
+        for(var msg in msgs){
             totalHeight += msg.boxHeight!;
-          },
-        );
+        }
       } else {
         messages.insertAll(0, msgs);
       }
@@ -155,7 +149,6 @@ class WebChat {
       if (onComplete != null) {
         onComplete(totalHeight);
       }
-      print('get messages closed');
     }, onError: (error) {
       print("Error in get messages: $error");
     });
@@ -204,4 +197,4 @@ class WebChat {
   }
 }
 
-final $WebChat = WebChat.instance;
+final wc = WebChat.instance;
