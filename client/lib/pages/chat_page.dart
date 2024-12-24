@@ -57,9 +57,8 @@ class _ChatScreenState extends State<ChatScreen> {
       ),
       body: Row(
         children: [
-          // بخش سایدبار برای نمایش لیست چت‌ها
           Container(
-            width: 250, // عرض سایدبار
+            width: 250, 
             color: Colors.black54,
             child: Column(
               children: [
@@ -88,7 +87,6 @@ class _ChatScreenState extends State<ChatScreen> {
                         return Center(child: Text("No chats available"));
                       }
 
-                      // نمایش لیست چت‌ها
                       final chats = snapshot.data!;
                       return ListView.builder(
                         itemCount: chats.length,
@@ -122,7 +120,6 @@ class _ChatScreenState extends State<ChatScreen> {
               ],
             ),
           ),
-          // بخش اصلی چت
           Expanded(
             child: Container(
               color: Colors.white,
@@ -157,9 +154,9 @@ class _ChatScreenState extends State<ChatScreen> {
                     return ScrollConfiguration(
                       behavior: ScrollConfiguration.of(context)
                           .copyWith(scrollbars: false),
+
                       child: ListView.builder(
                         controller: _scrollController,
-
                         itemCount: messages.length,
                         itemBuilder: (context, index) {
                           final msg = messages[index];
@@ -181,9 +178,6 @@ class _ChatScreenState extends State<ChatScreen> {
                             ),
                           );
                         },
-                        // children: List.generate(messages.length, (index) {
-
-                        // }),
                       ),
                     );
                   },
