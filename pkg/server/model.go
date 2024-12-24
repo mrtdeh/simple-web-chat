@@ -7,6 +7,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/minio/minio-go/v7"
 	"google.golang.org/grpc"
 )
 
@@ -21,6 +22,7 @@ type Server struct {
 	listener   net.Listener
 	Sessions   *SessionManger
 	db         *database.ChatDatabase
+	fs         *minio.Client
 }
 type ServerOptions struct {
 	MaxTimeout           time.Duration

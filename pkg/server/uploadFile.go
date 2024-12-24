@@ -2,14 +2,16 @@ package server
 
 import (
 	"api-channel/pkg/conf"
-	"api-channel/pkg/helper"
 	"api-channel/pkg/models"
 	"api-channel/proto"
 	"context"
 	"encoding/base64"
 	"fmt"
+	"log"
 	"os"
 	"path"
+
+	"github.com/minio/minio-go/v7"
 )
 
 type File struct {
@@ -65,60 +67,77 @@ func (s *Server) UploadFile(ctx context.Context, req *proto.FileRequest) (*proto
 	if req.GetDone() {
 		// Check and validate file type
 		// ....
+		f, ok := files[reqId]
+		if !ok {
+			log.Fatal("file map not found : ", reqId)
+		}
+
+		objectName := f.d.Name()
+		bucketName := "uploads"
+		contentType := "application/octet-stream"
+
+		// Upload the test file with FPutObject
+		info, err := s.fs.FPutObject(ctx, bucketName, objectName, filepath, minio.PutObjectOptions{ContentType: contentType})
+		if err != nil {
+			log.Fatalln(err)
+		}
+		newPath := fmt.Sprintf("http://localhost:9001/%s/%s", bucketName, objectName)
+
+		log.Printf("Successfully uploaded %s of size %d\n", objectName, info.Size)
 
 		// Write file path in Attachments table
 		attachment = models.Attachment{
 			MessageID: req.MessageId,
-			FilePath:  filepath,
+			FilePath:  newPath,
 			FileType:  fileType,
 			FileSize:  fileSize,
 		}
-		err := s.db.GORM().Create(&attachment).Error
+		err = s.db.GORM().Create(&attachment).Error
 		if err != nil {
 			return nil, err
 		}
 
 		// If file is image, Generate thumbnail of it.
-		if fileType == "image" {
-			img, err := helper.OpenImage(filepath)
-			if err != nil {
-				fmt.Fprintln(os.Stderr, err)
-				return nil, err
-			}
+		// if fileType == "image" {
+		// 	img, err := helper.OpenImage(filepath)
+		// 	if err != nil {
+		// 		fmt.Fprintln(os.Stderr, err)
+		// 		return nil, err
+		// 	}
 
-			// generate small size 64x64
-			thum64 := helper.Thumbnail(img, 64)
-			err = s.db.GORM().Create(&models.Thumbnail{
-				AttachmentID: attachment.ID,
-				Base64:       helper.Base64Image(thum64, 1),
-				Type:         "small",
-			}).Error
-			if err != nil {
-				return nil, err
-			}
+		// 	// generate small size 64x64
+		// 	thum64 := helper.Thumbnail(img, 64)
+		// 	err = s.db.GORM().Create(&models.Thumbnail{
+		// 		AttachmentID: attachment.ID,
+		// 		Base64:       helper.Base64Image(thum64, 1),
+		// 		Type:         "small",
+		// 	}).Error
+		// 	if err != nil {
+		// 		return nil, err
+		// 	}
 
-			// generate mini size 32x32
-			thum32 := helper.Thumbnail(img, 32)
-			err = s.db.GORM().Create(&models.Thumbnail{
-				AttachmentID: attachment.ID,
-				Base64:       helper.Base64Image(thum32, 1),
-				Type:         "mini",
-			}).Error
-			if err != nil {
-				return nil, err
-			}
+		// 	// generate mini size 32x32
+		// 	thum32 := helper.Thumbnail(img, 32)
+		// 	err = s.db.GORM().Create(&models.Thumbnail{
+		// 		AttachmentID: attachment.ID,
+		// 		Base64:       helper.Base64Image(thum32, 1),
+		// 		Type:         "mini",
+		// 	}).Error
+		// 	if err != nil {
+		// 		return nil, err
+		// 	}
 
-			// generate image placeholder
-			placeholder := helper.Placeholder(img)
-			err = s.db.GORM().Create(&models.Thumbnail{
-				AttachmentID: attachment.ID,
-				Base64:       helper.Base64Image(placeholder, 1),
-				Type:         "placeholder",
-			}).Error
-			if err != nil {
-				return nil, err
-			}
-		}
+		// 	// generate image placeholder
+		// 	placeholder := helper.Placeholder(img)
+		// 	err = s.db.GORM().Create(&models.Thumbnail{
+		// 		AttachmentID: attachment.ID,
+		// 		Base64:       helper.Base64Image(placeholder, 1),
+		// 		Type:         "placeholder",
+		// 	}).Error
+		// 	if err != nil {
+		// 		return nil, err
+		// 	}
+		// }
 
 		if f, ok := files[reqId]; ok {
 			f.d.Close()

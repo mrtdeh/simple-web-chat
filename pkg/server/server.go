@@ -11,13 +11,15 @@ import (
 	"sync"
 	"time"
 
+	"github.com/minio/minio-go/v7"
 	"google.golang.org/grpc"
 )
 
 type Config struct {
-	Port     int
-	Options  ServerOptions
-	Database *database.ChatDatabase
+	Port       int
+	Options    ServerOptions
+	Database   *database.ChatDatabase
+	FileServer *minio.Client
 }
 
 func NewServer(cnf ...Config) *Server {
@@ -32,6 +34,7 @@ func NewServer(cnf ...Config) *Server {
 		status:  "unknown",
 		Options: &c.Options,
 		db:      c.Database,
+		fs:      c.FileServer,
 		Sessions: &SessionManger{
 			l:        &sync.RWMutex{},
 			sessions: make(map[string]*Session),
