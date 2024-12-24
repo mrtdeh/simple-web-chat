@@ -1,5 +1,5 @@
 import 'package:dashboard/grpc/grpc.dart';
-import 'package:dashboard/pages/chat_Page.dart';
+import 'package:dashboard/pages/chat_page.dart';
 import 'package:flutter/material.dart';
 
 class LoginPage extends StatelessWidget {
@@ -13,7 +13,7 @@ class LoginPage extends StatelessWidget {
     final password = _passwordController.text;
 
     // Call the login function from the singleton instance
-    return await $WebChat.login(username, password);
+    return await wc.login(username, password);
   }
 
   void _showError(BuildContext context, String error) {
@@ -43,7 +43,7 @@ class LoginPage extends StatelessWidget {
                   Text("Error: ${snapshot.error}"),
                   ElevatedButton(
                     onPressed: () {
-                      $WebChat.start();
+                      wc.start();
                     },
                     child: Text("Retry"),
                   ),

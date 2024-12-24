@@ -14,7 +14,7 @@ protoc:
 	protoc  --go-grpc_out=require_unimplemented_servers=false:./proto/ ./proto/*.proto --go_out=./proto
 	protoc  --dart_out=grpc:client/lib/ proto/service.proto
 
-run: protoc build
+run: build
 	./bin/server 
 asset-up:
 	@docker compose -f ./assets/postgres/docker-compose.yml up -d

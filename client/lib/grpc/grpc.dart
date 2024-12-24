@@ -43,19 +43,20 @@ class WebChat {
   StreamController<List<Message>> _messageController = StreamController<List<Message>>.broadcast();
   Stream<List<Message>> get messageStream => _messageController.stream;
 
-  void Init() {
+  void init() {
+    Future.delayed(Duration(microseconds: 1), () {
     _messageController.sink.add([]);
+    });
   }
 
-//   Stream<List<String>> getDelayedStream() async* {
-//   yield null; // حالت اولیه
-//   await Future.delayed(Duration(seconds: 2)); // تأخیر برای شبیه‌سازی انتظار
-//   yield ["Message 1", "Message 2"];
+//   Stream<List<Message>> getMessageStream() async* {
+//   yield null; 
+//   await Future.delayed(Duration(seconds: 2)); 
+//   yield await messageStream.;
 // }
 
-  void ResetStream() {
+  void resetStream() {
     _messageController = StreamController<List<Message>>.broadcast();
-    // _messageController.add(null);
   }
 
   Future<void> start() async {
@@ -106,56 +107,58 @@ class WebChat {
     double totalHeight = 0;
     List<Message> msgs = [];
     _service.getMessages(request).listen((response) {
-      print("receive ${response.data.length} record");
-
-      response.data.forEach((msg) {
+      for(var msg in response.data){
+        // Calculate the box height 
         var height = _calculateHeight(msg.content, context);
+        // Calculate the box height with margin
         var boxHeight = height + 20;
         msgs.add(Message(
           data: msg,
-          key: new GlobalKey(),
+          key:  GlobalKey(),
           height: height,
           boxHeight: boxHeight,
         ));
-        // totalHeight += boxHeight;
-      });
-    }, onDone: () async {
-      // totalHeight = 0;
-      if (nextCount > 0 && prevCount == 0) {
+      }
+
+    }, onDone: () {
+      if (direction == RecordDirection.next) {  // If do lazy-loading next message
+       // Add messages to end of list
         messages.insertAll(messages.length, msgs);
+        // Check if total messages reached maximum page size
         if (messages.length > pageSize) {
+          // Calculate total height of messages from top of list
           var count = messages.length - pageSize;
           for (var i = 0; i <= count - 1; i++) {
-            // var ctx = messages[i].key.currentContext!;
-            // final RenderBox box = ctx.findRenderObject() as RenderBox;
-
             totalHeight += messages[i].boxHeight!;
           }
-          // print("remove from 0 to $count");
+          // Removing messages from the top of list
           messages.removeRange(0, count.toInt());
         }
-      } else if (prevCount > 0 && nextCount == 0) {
+      } else if (direction == RecordDirection.previous) {  // If do lazy-loading previous message
+        // Add messages to the top of list
         messages.insertAll(0, msgs);
+        // Check if total messages reached maximum page size
         if (messages.length > pageSize) {
+          // Removing the messages from the down of list
           var len = messages.length;
           var rmCounts = (messages.length - pageSize).toInt();
           messages.removeRange(len - rmCounts, len);
         }
-        msgs.forEach(
-          (msg) {
+        // Calculate the total height of messages to be added to the top of the list.
+        for(var msg in msgs){
             totalHeight += msg.boxHeight!;
-          },
-        );
-      } else {
+        }
+      } else { // If do not lazy-loading messages
         messages.insertAll(0, msgs);
       }
-
+      // Update stream sink to update Listview of messages
       _messageController.sink.add(messages);
+      // reset incomming list
       msgs = [];
+      // call done callback if defined
       if (onComplete != null) {
         onComplete(totalHeight);
       }
-      print('get messages closed');
     }, onError: (error) {
       print("Error in get messages: $error");
     });
@@ -204,4 +207,4 @@ class WebChat {
   }
 }
 
-final $WebChat = WebChat.instance;
+final wc = WebChat.instance;

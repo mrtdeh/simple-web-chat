@@ -1,44 +1,47 @@
 import 'package:dashboard/grpc/grpc.dart';
 import 'package:dashboard/proto/service.pb.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
 
   @override
-  _ChatScreenState createState() => _ChatScreenState();
+  State<ChatScreen>  createState() => _ChatScreenState();
 }
 
 class _ChatScreenState extends State<ChatScreen> {
   @override
   void initState() {
-    $WebChat.startMessageChannel();
+    wc.startMessageChannel();
     _scrollController.addListener(_onScroll);
-    Future.delayed(Duration(microseconds: 1), () {
-      $WebChat.Init();
-    });
+    wc.init();
 
     super.initState();
   }
 
   void switchToWaiting() {
     setState(() {
-      $WebChat.ResetStream(); // استریم خالی برای حالت waiting
+      wc.resetStream();
     });
   }
 
   int chatId = 0;
 
   void _onScroll() {
-    if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
-      $WebChat.getMessages(chatId, RecordDirection.next, 50, context, onComplete: (totalHeight) {
-        _scrollController.jumpTo(_scrollController.position.pixels - totalHeight);
+    if (_scrollController.position.pixels ==
+        _scrollController.position.maxScrollExtent) {
+      wc.getMessages(chatId, RecordDirection.next, 50, context,
+          onComplete: (totalHeight) {
+        _scrollController
+            .jumpTo(_scrollController.position.pixels - totalHeight);
       });
     }
-    if (_scrollController.position.pixels == _scrollController.position.minScrollExtent) {
-      $WebChat.getMessages(chatId, RecordDirection.previous, 50, context, onComplete: (totalHeight) {
-        _scrollController.jumpTo(_scrollController.position.pixels + totalHeight);
+    if (_scrollController.position.pixels ==
+        _scrollController.position.minScrollExtent) {
+      wc.getMessages(chatId, RecordDirection.previous, 50, context,
+          onComplete: (totalHeight) {
+        _scrollController
+            .jumpTo(_scrollController.position.pixels + totalHeight);
       });
     }
   }
@@ -54,9 +57,8 @@ class _ChatScreenState extends State<ChatScreen> {
       ),
       body: Row(
         children: [
-          // بخش سایدبار برای نمایش لیست چت‌ها
           Container(
-            width: 250, // عرض سایدبار
+            width: 250, 
             color: Colors.black54,
             child: Column(
               children: [
@@ -73,7 +75,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 ),
                 Expanded(
                   child: StreamBuilder<List<ChatsResponse_ChatData>>(
-                    stream: $WebChat.chatStream,
+                    stream: wc.chatStream,
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return Center(child: CircularProgressIndicator());
@@ -85,7 +87,6 @@ class _ChatScreenState extends State<ChatScreen> {
                         return Center(child: Text("No chats available"));
                       }
 
-                      // نمایش لیست چت‌ها
                       final chats = snapshot.data!;
                       return ListView.builder(
                         itemCount: chats.length,
@@ -100,12 +101,14 @@ class _ChatScreenState extends State<ChatScreen> {
                               child: Icon(Icons.person),
                             ),
                             title: Text(chats[index].chatTitle),
-                            subtitle: Text(chats[index].lastMessage, style: TextStyle(color: Colors.white)),
+                            subtitle: Text(chats[index].lastMessage,
+                                style: TextStyle(color: Colors.white)),
                             onTap: () async {
                               switchToWaiting();
                               chatId = chats[index].chatId;
                               Future.delayed(Duration(seconds: 1), () {
-                                $WebChat.getMessages(chats[index].chatId, RecordDirection.none, 50, context);
+                                wc.getMessages(chats[index].chatId,
+                                    RecordDirection.none, 50, context);
                               });
                             },
                           );
@@ -117,7 +120,6 @@ class _ChatScreenState extends State<ChatScreen> {
               ],
             ),
           ),
-          // بخش اصلی چت
           Expanded(
             child: Container(
               color: Colors.white,
@@ -127,65 +129,56 @@ class _ChatScreenState extends State<ChatScreen> {
                 radius: Radius.circular(20),
                 thickness: 15,
                 child: StreamBuilder<List<Message>?>(
-                  stream: $WebChat.messageStream,
-                  initialData: [],
+                  stream: wc.messageStream,
+                  initialData: const [],
                   builder: (context, snapshot) {
                     switch (snapshot.connectionState) {
                       case ConnectionState.waiting:
                         // While waiting for the data to load, show a loading spinner.
                         return Center(child: CircularProgressIndicator());
                       default:
-                        if (snapshot.hasError)
-                          return Center(child: Text('Error: ${snapshot.error}'));
-                        else if (!snapshot.hasData || snapshot.data!.isEmpty)
+                        if (snapshot.hasError) {
+                          return Center(
+                              child: Text('Error: ${snapshot.error}'));
+                        } else if (!snapshot.hasData ||
+                            snapshot.data!.isEmpty) {
                           return Center(
                               child: Text(
                             "Select a chat to start messaging",
                             style: TextStyle(fontSize: 18, color: Colors.grey),
                           ));
+                        }
                     }
 
-                    // if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    // return Center(
-                    //     child: Text(
-                    //   "Select a chat to start messaging",
-                    //   style: TextStyle(fontSize: 18, color: Colors.grey),
-                    // ));
-                    // } else if (snapshot.connectionState == ConnectionState.waiting) {
-                    //   return Center(child: CircularProgressIndicator());
-                    // } else if (snapshot.hasError) {
-                    //   return Center(child: Text("Error: ${snapshot.error}"));
-                    // }
-
                     final messages = snapshot.data!;
-                    return ListView.builder(
-                      controller: _scrollController,
-                      // scrollDirection: Axis.vertical,
-                      shrinkWrap: true,
-                      itemCount: messages.length,
-                      itemBuilder: (context, index) {
-                        final msg = messages[index];
-                        return Container(
-                          key: msg.key,
-                          margin: const EdgeInsets.symmetric(vertical: 10),
-                          padding: const EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            color: Colors.blueAccent,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          width: double.infinity,
-                          height: msg.height,
-                          child: RichText(
-                            text: TextSpan(
-                              text: msg.data.content,
-                              style: defaultTextStyle,
-                            ),
-                          ),
-                        );
-                      },
-                      // children: List.generate(messages.length, (index) {
+                    return ScrollConfiguration(
+                      behavior: ScrollConfiguration.of(context)
+                          .copyWith(scrollbars: false),
 
-                      // }),
+                      child: ListView.builder(
+                        controller: _scrollController,
+                        itemCount: messages.length,
+                        itemBuilder: (context, index) {
+                          final msg = messages[index];
+                          return Container(
+                            key: msg.key,
+                            margin: const EdgeInsets.symmetric(vertical: 10),
+                            padding: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: Colors.blueAccent,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            width: double.infinity,
+                            height: msg.height,
+                            child: RichText(
+                              text: TextSpan(
+                                text: msg.data.content,
+                                style: defaultTextStyle,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
                     );
                   },
                 ),
