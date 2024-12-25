@@ -11,7 +11,6 @@ import (
 
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
-	"github.com/minio/minio-go/v7/pkg/policy"
 )
 
 func main() {
@@ -25,10 +24,10 @@ func main() {
 	}
 
 	ctx := context.Background()
-	endpoint := "play.min.io"
-	accessKeyID := "Q3AM3UQ867SPQQA43P2F"
-	secretAccessKey := "zuf+tfteSlswRu7BJ86wekitnifILbZam1KYY3TG"
-	useSSL := true
+	endpoint := "localhost:9000"
+	accessKeyID := "NBuUuCN7kveIlfaSF4G7"
+	secretAccessKey := "laUrHlrgBt8O2IryCLucWlUvkyk1E5McgTa3GFl1"
+	useSSL := false
 
 	fs, err := minio.New(endpoint, &minio.Options{
 		Creds:  credentials.NewStaticV4(accessKeyID, secretAccessKey, ""),
@@ -40,7 +39,6 @@ func main() {
 
 	bucketName := "uploads"
 	// location := "us-east-1"
-
 	err = fs.MakeBucket(ctx, bucketName, minio.MakeBucketOptions{}) // minio.MakeBucketOptions{Region: location})
 	if err != nil {
 		// Check to see if we already own this bucket (which happens if you run this twice)
@@ -54,7 +52,8 @@ func main() {
 		log.Printf("Successfully created %s\n", bucketName)
 	}
 
-	err = fs.SetBucketPolicy(ctx, bucketName, string(policy.BucketPolicyReadOnly))
+	//docker exec -it minio mc anonymous set download play/uploads
+	err = fs.SetBucketPolicy(ctx, bucketName, `{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Action":["s3:*"],"Resource":["arn:aws:s3:::*"]}]}`)
 	if err != nil {
 		log.Fatalln("Failed to set bucket policy:", err)
 	}
