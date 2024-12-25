@@ -2,7 +2,6 @@ package database
 
 import (
 	"api-channel/pkg/models"
-	"api-channel/seeds"
 	"fmt"
 
 	"gorm.io/driver/postgres"
@@ -22,8 +21,6 @@ func New() (*ChatDatabase, error) {
 		&models.Message{}, &models.Attachment{}, &models.Group{},
 		models.Thumbnail{}, models.Reply{}, models.ReplyThumbnails{},
 		&models.Sticker{})
-
-	seeds.SeedDatabase(db)
 
 	return &ChatDatabase{db}, nil
 

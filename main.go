@@ -3,6 +3,7 @@ package main
 import (
 	database "api-channel/pkg/db"
 	server "api-channel/pkg/server"
+	"api-channel/seeds"
 	"context"
 	"flag"
 	"log"
@@ -29,7 +30,7 @@ func main() {
 	secretAccessKey := "zuf+tfteSlswRu7BJ86wekitnifILbZam1KYY3TG"
 	useSSL := true
 
-	minioClient, err := minio.New(endpoint, &minio.Options{
+	fs, err := minio.New(endpoint, &minio.Options{
 		Creds:  credentials.NewStaticV4(accessKeyID, secretAccessKey, ""),
 		Secure: useSSL,
 	})
@@ -40,10 +41,10 @@ func main() {
 	bucketName := "uploads"
 	// location := "us-east-1"
 
-	err = minioClient.MakeBucket(ctx, bucketName, minio.MakeBucketOptions{}) // minio.MakeBucketOptions{Region: location})
+	err = fs.MakeBucket(ctx, bucketName, minio.MakeBucketOptions{}) // minio.MakeBucketOptions{Region: location})
 	if err != nil {
 		// Check to see if we already own this bucket (which happens if you run this twice)
-		exists, errBucketExists := minioClient.BucketExists(ctx, bucketName)
+		exists, errBucketExists := fs.BucketExists(ctx, bucketName)
 		if errBucketExists == nil && exists {
 			log.Printf("We already own %s\n", bucketName)
 		} else {
@@ -53,20 +54,22 @@ func main() {
 		log.Printf("Successfully created %s\n", bucketName)
 	}
 
-	err = minioClient.SetBucketPolicy(ctx, bucketName, string(policy.BucketPolicyReadOnly))
+	err = fs.SetBucketPolicy(ctx, bucketName, string(policy.BucketPolicyReadOnly))
 	if err != nil {
 		log.Fatalln("Failed to set bucket policy:", err)
 	}
 	log.Println("Bucket is now public:", bucketName)
 
 	s := server.NewServer(server.Config{
-		FileServer: minioClient,
+		FileServer: fs,
 		Database:   db,
 		Port:       *port,
 		Options: server.ServerOptions{
 			MaxTimeout: time.Second * 10,
 		},
 	})
+
+	seeds.SeedDatabase(db.GORM(), fs)
 
 	if err := s.Serve(); err != nil {
 		log.Fatal(err)
