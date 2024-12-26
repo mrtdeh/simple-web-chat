@@ -4,12 +4,12 @@ import (
 	"api-channel/pkg/models"
 	"fmt"
 
-	"github.com/minio/minio-go/v7"
 	"gorm.io/gorm"
 )
 
-func SeedDatabase(db *gorm.DB, fs *minio.Client) {
+func SeedDatabase(db *gorm.DB) {
 	// Clear records of table
+	truncate_table(db, models.Attachment{}, true)
 	truncate_table(db, models.Reply{}, true)
 	truncate_table(db, models.Message{}, true)
 	truncate_table(db, models.ChatMember{}, false)
@@ -29,7 +29,7 @@ func SeedDatabase(db *gorm.DB, fs *minio.Client) {
 	// Create message for private chat
 	msgId1 := new_message(db, chatId2, user1, "hello user2")
 
-	assign_attachment_to_user(db, fs, msgId1, "/tmp/file1.jpg", "image")
+	assign_attachment_to_user(db, msgId1, "file1.jpg", "image")
 
 	new_replay(db, chatId2, user2, msgId1, "thanks and you?")
 

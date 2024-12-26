@@ -6,7 +6,7 @@ class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
 
   @override
-  State<ChatScreen>  createState() => _ChatScreenState();
+  State<ChatScreen> createState() => _ChatScreenState();
 }
 
 class _ChatScreenState extends State<ChatScreen> {
@@ -28,20 +28,14 @@ class _ChatScreenState extends State<ChatScreen> {
   int chatId = 0;
 
   void _onScroll() {
-    if (_scrollController.position.pixels ==
-        _scrollController.position.maxScrollExtent) {
-      wc.getMessages(chatId, RecordDirection.next, 50, context,
-          onComplete: (totalHeight) {
-        _scrollController
-            .jumpTo(_scrollController.position.pixels - totalHeight);
+    if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
+      wc.getMessages(chatId, RecordDirection.next, 50, context, onComplete: (totalHeight) {
+        _scrollController.jumpTo(_scrollController.position.pixels - totalHeight);
       });
     }
-    if (_scrollController.position.pixels ==
-        _scrollController.position.minScrollExtent) {
-      wc.getMessages(chatId, RecordDirection.previous, 50, context,
-          onComplete: (totalHeight) {
-        _scrollController
-            .jumpTo(_scrollController.position.pixels + totalHeight);
+    if (_scrollController.position.pixels == _scrollController.position.minScrollExtent) {
+      wc.getMessages(chatId, RecordDirection.previous, 50, context, onComplete: (totalHeight) {
+        _scrollController.jumpTo(_scrollController.position.pixels + totalHeight);
       });
     }
   }
@@ -58,7 +52,7 @@ class _ChatScreenState extends State<ChatScreen> {
       body: Row(
         children: [
           Container(
-            width: 250, 
+            width: 250,
             color: Colors.black54,
             child: Column(
               children: [
@@ -101,14 +95,12 @@ class _ChatScreenState extends State<ChatScreen> {
                               child: Icon(Icons.person),
                             ),
                             title: Text(chats[index].chatTitle),
-                            subtitle: Text(chats[index].lastMessage,
-                                style: TextStyle(color: Colors.white)),
+                            subtitle: Text(chats[index].lastMessage, style: TextStyle(color: Colors.white)),
                             onTap: () async {
                               switchToWaiting();
                               chatId = chats[index].chatId;
                               Future.delayed(Duration(seconds: 1), () {
-                                wc.getMessages(chats[index].chatId,
-                                    RecordDirection.none, 50, context);
+                                wc.getMessages(chats[index].chatId, RecordDirection.none, 50, context);
                               });
                             },
                           );
@@ -138,10 +130,8 @@ class _ChatScreenState extends State<ChatScreen> {
                         return Center(child: CircularProgressIndicator());
                       default:
                         if (snapshot.hasError) {
-                          return Center(
-                              child: Text('Error: ${snapshot.error}'));
-                        } else if (!snapshot.hasData ||
-                            snapshot.data!.isEmpty) {
+                          return Center(child: Text('Error: ${snapshot.error}'));
+                        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                           return Center(
                               child: Text(
                             "Select a chat to start messaging",
@@ -152,9 +142,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
                     final messages = snapshot.data!;
                     return ScrollConfiguration(
-                      behavior: ScrollConfiguration.of(context)
-                          .copyWith(scrollbars: false),
-
+                      behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
                       child: ListView.builder(
                         controller: _scrollController,
                         itemCount: messages.length,

@@ -4,13 +4,9 @@ import (
 	database "api-channel/pkg/db"
 	server "api-channel/pkg/server"
 	"api-channel/seeds"
-	"context"
 	"flag"
 	"log"
 	"time"
-
-	"github.com/minio/minio-go/v7"
-	"github.com/minio/minio-go/v7/pkg/credentials"
 )
 
 func main() {
@@ -23,52 +19,15 @@ func main() {
 		log.Fatal(err)
 	}
 
-	ctx := context.Background()
-	endpoint := "localhost:9000"
-	accessKeyID := "NBuUuCN7kveIlfaSF4G7"
-	secretAccessKey := "laUrHlrgBt8O2IryCLucWlUvkyk1E5McgTa3GFl1"
-	useSSL := false
-
-	fs, err := minio.New(endpoint, &minio.Options{
-		Creds:  credentials.NewStaticV4(accessKeyID, secretAccessKey, ""),
-		Secure: useSSL,
-	})
-	if err != nil {
-		log.Fatalln(err)
-	}
-
-	bucketName := "uploads"
-	// location := "us-east-1"
-	err = fs.MakeBucket(ctx, bucketName, minio.MakeBucketOptions{}) // minio.MakeBucketOptions{Region: location})
-	if err != nil {
-		// Check to see if we already own this bucket (which happens if you run this twice)
-		exists, errBucketExists := fs.BucketExists(ctx, bucketName)
-		if errBucketExists == nil && exists {
-			log.Printf("We already own %s\n", bucketName)
-		} else {
-			log.Fatalln(err)
-		}
-	} else {
-		log.Printf("Successfully created %s\n", bucketName)
-	}
-
-	//docker exec -it minio mc anonymous set download play/uploads
-	err = fs.SetBucketPolicy(ctx, bucketName, `{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Action":["s3:*"],"Resource":["arn:aws:s3:::*"]}]}`)
-	if err != nil {
-		log.Fatalln("Failed to set bucket policy:", err)
-	}
-	log.Println("Bucket is now public:", bucketName)
-
 	s := server.NewServer(server.Config{
-		FileServer: fs,
-		Database:   db,
-		Port:       *port,
+		Database: db,
+		Port:     *port,
 		Options: server.ServerOptions{
 			MaxTimeout: time.Second * 10,
 		},
 	})
 
-	seeds.SeedDatabase(db.GORM(), fs)
+	seeds.SeedDatabase(db.GORM())
 
 	if err := s.Serve(); err != nil {
 		log.Fatal(err)

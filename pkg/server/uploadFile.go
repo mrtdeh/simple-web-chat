@@ -8,10 +8,9 @@ import (
 	"encoding/base64"
 	"fmt"
 	"log"
+	"net/url"
 	"os"
 	"path"
-
-	"github.com/minio/minio-go/v7"
 )
 
 type File struct {
@@ -72,27 +71,16 @@ func (s *Server) UploadFile(ctx context.Context, req *proto.FileRequest) (*proto
 			log.Fatal("file map not found : ", reqId)
 		}
 
-		objectName := f.d.Name()
-		bucketName := "uploads"
-		contentType := "application/octet-stream"
-
-		// Upload the test file with FPutObject
-		info, err := s.fs.FPutObject(ctx, bucketName, objectName, filepath, minio.PutObjectOptions{ContentType: contentType})
-		if err != nil {
-			log.Fatalln(err)
-		}
-		newPath := fmt.Sprintf("http://localhost:9001/%s/%s", bucketName, objectName)
-
-		log.Printf("Successfully uploaded %s of size %d\n", objectName, info.Size)
+		urlPath, _ := url.JoinPath(conf.UPLOAD_SERVER, f.d.Name())
 
 		// Write file path in Attachments table
 		attachment = models.Attachment{
 			MessageID: req.MessageId,
-			FilePath:  newPath,
+			FilePath:  urlPath,
 			FileType:  fileType,
 			FileSize:  fileSize,
 		}
-		err = s.db.GORM().Create(&attachment).Error
+		err := s.db.GORM().Create(&attachment).Error
 		if err != nil {
 			return nil, err
 		}

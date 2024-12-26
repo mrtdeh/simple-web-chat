@@ -2,15 +2,12 @@ package seeds
 
 import (
 	"api-channel/pkg/models"
-	"context"
 	"fmt"
 	"log"
-	"path/filepath"
 	"reflect"
 	"time"
 
 	"github.com/bxcodec/faker/v4"
-	"github.com/minio/minio-go/v7"
 	"gorm.io/gorm"
 )
 
@@ -93,27 +90,16 @@ func truncate_table(db *gorm.DB, model interface{}, resetId bool) error {
 	return nil
 }
 
-func assign_attachment_to_user(db *gorm.DB, fs *minio.Client, msgId uint32, filePath, fileType string) {
-
-	objectName := filepath.Base(filePath)
-	bucketName := "uploads"
-	contentType := "application/octet-stream"
-
-	// Upload the test file with FPutObject
-	info, err := fs.FPutObject(context.Background(), bucketName, objectName, filePath, minio.PutObjectOptions{ContentType: contentType})
-	if err != nil {
-		log.Fatalln(err)
-	}
-	newPath := fmt.Sprintf("http://localhost:9001/%s/%s", bucketName, objectName)
+func assign_attachment_to_user(db *gorm.DB, msgId uint32, urlpath, fileType string) {
 
 	// Write file path in Attachments table
 	attachment := models.Attachment{
 		MessageID: msgId,
-		FilePath:  newPath,
+		FilePath:  urlpath,
 		FileType:  fileType,
-		FileSize:  int(info.Size),
+		FileSize:  3200,
 	}
-	err = db.Create(&attachment).Error
+	err := db.Create(&attachment).Error
 	if err != nil {
 		log.Fatal(err)
 	}
