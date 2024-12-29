@@ -19,7 +19,6 @@ func (s *Server) GetMessages(req *proto.GetMessagesRequest, stream proto.ChatSer
 	for _, m := range messages {
 
 		// Fetch message attachment's placeholder
-		// var attachsPlaceholder []string
 		var attachs []*proto.MessagesResponse_Attachment
 		for _, att := range m.Attachments {
 			for _, t := range att.Thumbnails {

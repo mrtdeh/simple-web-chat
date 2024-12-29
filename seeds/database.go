@@ -11,6 +11,7 @@ import (
 
 func SeedDatabase(db *gorm.DB) {
 	// Clear records of table
+	truncate_table(db, models.Thumbnail{}, true)
 	truncate_table(db, models.Attachment{}, true)
 	truncate_table(db, models.Reply{}, true)
 	truncate_table(db, models.Message{}, true)

@@ -111,11 +111,11 @@ class WebChat {
         // Calculate the box height 
         var height = _calculateHeight(msg.content, context);
         // Calculate the box height with margin
-        var boxHeight = height + 20;
+        var boxHeight = height + 20+100;
         msgs.add(Message(
           data: msg,
           key:  GlobalKey(),
-          height: height,
+          height: height+100,
           boxHeight: boxHeight,
         ));
       }

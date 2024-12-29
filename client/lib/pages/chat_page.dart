@@ -160,10 +160,10 @@ class _ChatScreenState extends State<ChatScreen> {
                             height: msg.height,
                             child: Column(
                               children: [
-                                Text(msg.data.attachements.length.toString()),
                                 msg.data.attachements.isNotEmpty
                                     ? SizedBox(
                                         height: 100,
+                                        width: 100,
                                         child: Image.network(msg.data.attachements[0].url),
                                       )
                                     : SizedBox(),
