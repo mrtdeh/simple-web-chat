@@ -1,8 +1,10 @@
 package seeds
 
 import (
+	"api-channel/pkg/conf"
 	"api-channel/pkg/models"
 	"fmt"
+	"path"
 
 	"gorm.io/gorm"
 )
@@ -29,7 +31,7 @@ func SeedDatabase(db *gorm.DB) {
 	// Create message for private chat
 	msgId1 := new_message(db, chatId2, user1, "hello user2")
 
-	assign_attachment_to_user(db, msgId1, "file1.jpg", "image")
+	assign_attachment_to_user(db, msgId1, path.Join(conf.UPLOAD_DIR, "file1.jpg"), "image")
 
 	new_replay(db, chatId2, user2, msgId1, "thanks and you?")
 

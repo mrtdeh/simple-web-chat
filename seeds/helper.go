@@ -1,9 +1,14 @@
 package seeds
 
 import (
+	"api-channel/pkg/conf"
+	"api-channel/pkg/helper"
 	"api-channel/pkg/models"
 	"fmt"
 	"log"
+	"net/url"
+	"os"
+	"path"
 	"reflect"
 	"time"
 
@@ -90,12 +95,12 @@ func truncate_table(db *gorm.DB, model interface{}, resetId bool) error {
 	return nil
 }
 
-func assign_attachment_to_user(db *gorm.DB, msgId uint32, urlpath, fileType string) {
-
+func assign_attachment_to_user(db *gorm.DB, msgId uint32, filepath, fileType string) {
+	url, _ := url.JoinPath(conf.UPLOAD_SERVER, path.Base(filepath))
 	// Write file path in Attachments table
 	attachment := models.Attachment{
 		MessageID: msgId,
-		FilePath:  urlpath,
+		FilePath:  url,
 		FileType:  fileType,
 		FileSize:  3200,
 	}
@@ -103,4 +108,43 @@ func assign_attachment_to_user(db *gorm.DB, msgId uint32, urlpath, fileType stri
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	img, err := helper.OpenImage(filepath)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		log.Fatal(err)
+	}
+
+	// generate small size 64x64
+	thum64 := helper.Thumbnail(img, 64)
+	err = db.Create(&models.Thumbnail{
+		AttachmentID: attachment.ID,
+		Base64:       helper.Base64Image(thum64, 1),
+		Type:         "small",
+	}).Error
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// generate mini size 32x32
+	thum32 := helper.Thumbnail(img, 32)
+	err = db.Create(&models.Thumbnail{
+		AttachmentID: attachment.ID,
+		Base64:       helper.Base64Image(thum32, 1),
+		Type:         "mini",
+	}).Error
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	placeholder := helper.Placeholder(img)
+	err = db.Create(&models.Thumbnail{
+		AttachmentID: attachment.ID,
+		Base64:       helper.Base64Image(placeholder, 1),
+		Type:         "placeholder",
+	}).Error
+	if err != nil {
+		log.Fatal(err)
+	}
+
 }

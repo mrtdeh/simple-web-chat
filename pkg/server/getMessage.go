@@ -12,6 +12,9 @@ func (s *Server) GetMessages(req *proto.GetMessagesRequest, stream proto.ChatSer
 		return err
 	}
 
+	// d, _ := json.MarshalIndent(messages, " ", "")
+	// fmt.Println(string(d))
+
 	var data []*proto.MessagesResponse_MessageData
 	for _, m := range messages {
 

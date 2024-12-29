@@ -158,11 +158,22 @@ class _ChatScreenState extends State<ChatScreen> {
                             ),
                             width: double.infinity,
                             height: msg.height,
-                            child: RichText(
-                              text: TextSpan(
-                                text: msg.data.content,
-                                style: defaultTextStyle,
-                              ),
+                            child: Column(
+                              children: [
+                                Text(msg.data.attachements.length.toString()),
+                                msg.data.attachements.length > 0
+                                    ? SizedBox(
+                                        height: 100,
+                                        child: Image.network(msg.data.attachements[0].url),
+                                      )
+                                    : SizedBox(),
+                                RichText(
+                                  text: TextSpan(
+                                    text: msg.data.content,
+                                    style: defaultTextStyle,
+                                  ),
+                                ),
+                              ],
                             ),
                           );
                         },
