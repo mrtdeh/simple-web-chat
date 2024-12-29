@@ -161,7 +161,7 @@ class _ChatScreenState extends State<ChatScreen> {
                             child: Column(
                               children: [
                                 Text(msg.data.attachements.length.toString()),
-                                msg.data.attachements.length > 0
+                                msg.data.attachements.isNotEmpty
                                     ? SizedBox(
                                         height: 100,
                                         child: Image.network(msg.data.attachements[0].url),
