@@ -141,42 +141,48 @@ class _ChatScreenState extends State<ChatScreen> {
                     }
 
                     final messages = snapshot.data!;
-                    return ScrollConfiguration(
-                      behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
-                      child: ListView.builder(
-                        controller: _scrollController,
-                        itemCount: messages.length,
-                        itemBuilder: (context, index) {
-                          final msg = messages[index];
-                          return Container(
-                            key: msg.key,
-                            margin: const EdgeInsets.symmetric(vertical: 10),
-                            padding: const EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                              color: Colors.blueAccent,
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            width: double.infinity,
-                            height: msg.height,
-                            child: Column(
-                              children: [
-                                msg.data.attachements.isNotEmpty
-                                    ? SizedBox(
-                                        height: 100,
-                                        width: 100,
-                                        child: Image.network(msg.data.attachements[0].url),
-                                      )
-                                    : SizedBox(),
-                                RichText(
-                                  text: TextSpan(
-                                    text: msg.data.content,
-                                    style: defaultTextStyle,
-                                  ),
+                    return Center(
+                      child: Container(
+                        margin: EdgeInsets.symmetric(horizontal: 10),
+                        width: 728,
+                        child: ScrollConfiguration(
+                          behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
+                          child: ListView.builder(
+                            controller: _scrollController,
+                            itemCount: messages.length,
+                            itemBuilder: (context, index) {
+                              final msg = messages[index];
+                              return Container(
+                                key: msg.key,
+                                margin: const EdgeInsets.symmetric(vertical: 10),
+                                padding: const EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                  color: Colors.blueAccent,
+                                  borderRadius: BorderRadius.circular(10),
                                 ),
-                              ],
-                            ),
-                          );
-                        },
+                                width: double.infinity,
+                                height: msg.height,
+                                child: Column(
+                                  children: [
+                                    msg.data.attachements.isNotEmpty
+                                        ? SizedBox(
+                                            height: 100,
+                                            width: 100,
+                                            child: Image.network(msg.data.attachements[0].url),
+                                          )
+                                        : SizedBox(),
+                                    RichText(
+                                      text: TextSpan(
+                                        text: msg.data.content,
+                                        style: defaultTextStyle,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
+                        ),
                       ),
                     );
                   },
