@@ -30,7 +30,7 @@ func SeedDatabase(db *gorm.DB) {
 	join_chat(db, chatId2, user1)
 	join_chat(db, chatId2, user2)
 	// Create message for private chat
-	msgId1 := new_message(db, chatId2, user1, "hello user2")
+	msgId1 := new_message(db, chatId2, user1, "hello user2 sdkfj skds dkfsdjfks fksdjfksdj fkdsjf sdfjsdkf jsdfjkwejrewrkwjer wejrkwfksdjf ksdjfsdjfksdjf")
 
 	assign_attachment_to_user(db, msgId1, path.Join(conf.UPLOAD_DIR, "file1.jpg"), "image")
 

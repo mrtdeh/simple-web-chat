@@ -99,9 +99,9 @@ class _ChatScreenState extends State<ChatScreen> {
                             onTap: () async {
                               switchToWaiting();
                               chatId = chats[index].chatId;
-                              Future.delayed(Duration(seconds: 1), () {
-                                wc.getMessages(chats[index].chatId, RecordDirection.none, 50, context);
-                              });
+                              // Future.delayed(Duration(seconds: 1), () {
+                              wc.getMessages(chats[index].chatId, RecordDirection.none, 50, context);
+                              // });
                             },
                           );
                         },
@@ -114,7 +114,7 @@ class _ChatScreenState extends State<ChatScreen> {
           ),
           Expanded(
             child: Container(
-              color: Colors.white,
+              color: const Color.fromARGB(255, 19, 19, 19),
               child: RawScrollbar(
                 controller: _scrollController,
                 thumbColor: Colors.redAccent,
@@ -142,45 +142,70 @@ class _ChatScreenState extends State<ChatScreen> {
 
                     final messages = snapshot.data!;
                     return Center(
-                      child: Container(
-                        margin: EdgeInsets.symmetric(horizontal: 10),
-                        width: 728,
-                        child: ScrollConfiguration(
-                          behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
-                          child: ListView.builder(
-                            controller: _scrollController,
-                            itemCount: messages.length,
-                            itemBuilder: (context, index) {
-                              final msg = messages[index];
-                              return Container(
-                                key: msg.key,
-                                margin: const EdgeInsets.symmetric(vertical: 10),
-                                padding: const EdgeInsets.all(10),
-                                decoration: BoxDecoration(
-                                  color: Colors.blueAccent,
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                width: double.infinity,
-                                height: msg.height,
-                                child: Column(
-                                  children: [
-                                    msg.data.attachements.isNotEmpty
-                                        ? SizedBox(
-                                            height: 100,
-                                            width: 100,
-                                            child: Image.network(msg.data.attachements[0].url),
-                                          )
-                                        : SizedBox(),
-                                    RichText(
-                                      text: TextSpan(
-                                        text: msg.data.content,
-                                        style: defaultTextStyle,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              );
-                            },
+                      child: IntrinsicWidth(
+                        child: Container(
+                          margin: EdgeInsets.symmetric(horizontal: 10),
+                          width: 600,
+                          child: ScrollConfiguration(
+                            behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
+                            child: ListView.builder(
+                              // shrinkWrap: true,
+
+                              controller: _scrollController,
+                              itemCount: messages.length,
+                              itemBuilder: (context, index) {
+                                final msg = messages[index];
+                                return Container(
+                                  key: msg.key,
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        crossAxisAlignment: CrossAxisAlignment.end,
+                                        children: [
+                                          Container(
+                                            margin: EdgeInsets.symmetric(horizontal: 10),
+                                            child: CircleAvatar(
+                                              backgroundColor: Colors.amber,
+                                              radius: 25,
+                                            ),
+                                          ),
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                msg.data.attachements.isNotEmpty
+                                                    ? SizedBox(
+                                                        height: 100,
+                                                        width: 100,
+                                                        child: Image.network(msg.data.attachements[0].url),
+                                                      )
+                                                    : SizedBox(),
+                                                Container(
+                                                  margin: const EdgeInsets.symmetric(vertical: 10),
+                                                  padding: const EdgeInsets.all(10),
+                                                  decoration: BoxDecoration(
+                                                    color: const Color.fromARGB(255, 43, 43, 43),
+                                                    borderRadius: BorderRadius.circular(10),
+                                                  ),
+                                                  height: msg.height,
+                                                  child: RichText(
+                                                    text: TextSpan(
+                                                      text: msg.data.content,
+                                                      style: defaultTextStyle,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      )
+                                    ],
+                                  ),
+                                );
+                              },
+                            ),
                           ),
                         ),
                       ),

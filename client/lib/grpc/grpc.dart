@@ -45,13 +45,13 @@ class WebChat {
 
   void init() {
     Future.delayed(Duration(microseconds: 1), () {
-    _messageController.sink.add([]);
+      _messageController.sink.add([]);
     });
   }
 
 //   Stream<List<Message>> getMessageStream() async* {
-//   yield null; 
-//   await Future.delayed(Duration(seconds: 2)); 
+//   yield null;
+//   await Future.delayed(Duration(seconds: 2));
 //   yield await messageStream.;
 // }
 
@@ -107,22 +107,22 @@ class WebChat {
     double totalHeight = 0;
     List<Message> msgs = [];
     _service.getMessages(request).listen((response) {
-      for(var msg in response.data){
-        // Calculate the box height 
+      for (var msg in response.data) {
+        // Calculate the box height
         var height = _calculateHeight(msg.content, context);
         // Calculate the box height with margin
-        var boxHeight = height + 20+100;
+        var boxHeight = height + 20 + 100;
         msgs.add(Message(
           data: msg,
-          key:  GlobalKey(),
-          height: height+100,
+          key: GlobalKey(),
+          height: height,
           boxHeight: boxHeight,
         ));
       }
-
     }, onDone: () {
-      if (direction == RecordDirection.next) {  // If do lazy-loading next message
-       // Add messages to end of list
+      if (direction == RecordDirection.next) {
+        // If do lazy-loading next message
+        // Add messages to end of list
         messages.insertAll(messages.length, msgs);
         // Check if total messages reached maximum page size
         if (messages.length > pageSize) {
@@ -134,7 +134,8 @@ class WebChat {
           // Removing messages from the top of list
           messages.removeRange(0, count.toInt());
         }
-      } else if (direction == RecordDirection.previous) {  // If do lazy-loading previous message
+      } else if (direction == RecordDirection.previous) {
+        // If do lazy-loading previous message
         // Add messages to the top of list
         messages.insertAll(0, msgs);
         // Check if total messages reached maximum page size
@@ -145,10 +146,11 @@ class WebChat {
           messages.removeRange(len - rmCounts, len);
         }
         // Calculate the total height of messages to be added to the top of the list.
-        for(var msg in msgs){
-            totalHeight += msg.boxHeight!;
+        for (var msg in msgs) {
+          totalHeight += msg.boxHeight!;
         }
-      } else { // If do not lazy-loading messages
+      } else {
+        // If do not lazy-loading messages
         messages.insertAll(0, msgs);
       }
       // Update stream sink to update Listview of messages
@@ -191,7 +193,16 @@ class WebChat {
       maxLines: null,
     );
 
-    double maxWidth = MediaQuery.of(context).size.width - (250 + 40);
+    // double maxWidth = MediaQuery.of(context).size.width - (250 + 40);
+    double avatarWidth = 45; // with margins
+    double messagesViewPadding = 40;
+    double chatsWidth = 250;
+    double others = avatarWidth + messagesViewPadding + chatsWidth;
+    double maxWidth = MediaQuery.of(context).size.width - others;
+    if (maxWidth > 600) {
+      maxWidth = 600;
+    }
+
     textPainter.layout(maxWidth: maxWidth);
 
     totalHeight += textPainter.size.height;

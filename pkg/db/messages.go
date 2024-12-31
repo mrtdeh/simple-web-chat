@@ -3,14 +3,9 @@ package database
 import (
 	"api-channel/pkg/models"
 	"fmt"
-	"time"
 )
 
 func (db *ChatDatabase) GetMessages(chatID, msgID, nextCount, prevCount uint32) ([]models.Message, error) {
-	time.Sleep(time.Millisecond * 700)
-	// var messages []models.Message
-	// fmt.Println("nextCount : ", nextCount)
-	// fmt.Println("prevCount : ", prevCount)
 	var fromMsgID int
 	var toMsgID int
 	if prevCount > 0 && nextCount > 0 {
@@ -36,13 +31,6 @@ func (db *ChatDatabase) GetMessages(chatID, msgID, nextCount, prevCount uint32) 
 		return nil, fmt.Errorf("no valid range specified")
 	}
 
-	// fmt.Println("get messages:", fromMsgID, toMsgID)
-
-	// newFrom := int(msgID) - int(prevCount)
-	// if newFrom > 0 {
-	// 	fromMsgID = newFrom
-	// }
-	// toMsgID := msgID + nextCount
 	var result []models.Message
 	err := db.gormDB.Debug().
 		Where("chat_id = ? AND id >= ? AND id <= ?", chatID, fromMsgID, toMsgID).
@@ -59,21 +47,7 @@ func (db *ChatDatabase) GetMessages(chatID, msgID, nextCount, prevCount uint32) 
 		return nil, err
 	}
 	return result, nil
-	// }
 
-	// Lazy-Loading prev messages
-	// prevMessages, err := fetchMessages("chat_id = ? AND id < ?", "id DESC", int(prevCount))
-	// if err != nil {
-	// 	return nil, err
-	// }
-	// Lazy-Loading next messages
-	// nextMessages, err := fetchMessages("chat_id = ? AND id+? < ?", "id ASC", int(nextCount))
-	// if err != nil {
-	// 	return nil, err
-	// }
-	// Merge all messages
-	// messages = nextMessages //append(prevMessages, nextMessages...)
-	// return messages, nil
 }
 
 func (db *ChatDatabase) CreateMessage(chatID, userID uint32, content string) (uint32, error) {
