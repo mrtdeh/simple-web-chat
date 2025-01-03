@@ -9,10 +9,10 @@ func (db *ChatDatabase) GetChats(userId uint32) (*sql.Rows, error) {
 	rows, err := db.gormDB.Table("chats").
 		// Get Chats of user with details from chat_member table
 		InnerJoins("JOIN chat_members cm1 ON chats.id = cm1.chat_id AND cm1.user_id = ?", userId).
-		// Find the private chat if it exists
-		Joins("LEFT JOIN chat_members cm2 ON chats.id = cm2.chat_id AND chats.is_group = false AND cm2.user_id <> ?", userId).
-		// Find users of private chat if it exists
-		Joins("LEFT JOIN users u ON cm2.user_id = u.id").
+		// Find the left user of private chat if it exists
+		Joins("LEFT JOIN chat_members cm2 ON chats.id = cm2.chat_id AND chats.type = 'personal' AND cm2.user_id <> ?", userId).
+		// Find left user information from users table
+		Joins("LEFT JOIN users leftUser ON cm2.user_id = leftUser.id").
 		// Find the group chat if it exists
 		Joins("LEFT JOIN groups g ON chats.id = g.chat_id").
 		// Find last readed message of chats
@@ -38,17 +38,13 @@ func (db *ChatDatabase) GetChats(userId uint32) (*sql.Rows, error) {
 		
 		chats.id AS chat_id,
 		CASE
-			WHEN chats.is_group THEN g.name            
-			WHEN u.id > 0 THEN u.username      
+			WHEN chats.type <> 'personal' THEN g.name            
+			WHEN leftUser.id > 0 THEN leftUser.username      
 		END AS chat_title,
-		CASE 
-			WHEN chats.is_group THEN 'group'          
-			ELSE 'private'                            
-		END AS type,
 		cm1.mute AS mute,
 		CASE 
-			WHEN chats.is_group THEN g.avatar_url  
-			WHEN u.id > 0 THEN u.profile_picture        
+			WHEN chats.type <> 'personal' THEN g.avatar_url  
+			WHEN leftUser.id > 0 THEN leftUser.profile_picture        
 		END AS avatar_url,
 		latest_message.content AS last_message,
 		unread_msg_count.count AS unreaded_messages_count,

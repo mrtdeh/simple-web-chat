@@ -25,16 +25,14 @@ class _ChatScreenState extends State<ChatScreen> {
     });
   }
 
-  int chatId = 0;
-
   void _onScroll() {
     if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
-      wc.getMessages(chatId, RecordDirection.next, 50, context, onComplete: (totalHeight) {
+      wc.getMessages(RecordDirection.next, 50, context, onComplete: (totalHeight) {
         _scrollController.jumpTo(_scrollController.position.pixels - totalHeight);
       });
     }
     if (_scrollController.position.pixels == _scrollController.position.minScrollExtent) {
-      wc.getMessages(chatId, RecordDirection.previous, 50, context, onComplete: (totalHeight) {
+      wc.getMessages(RecordDirection.previous, 50, context, onComplete: (totalHeight) {
         _scrollController.jumpTo(_scrollController.position.pixels + totalHeight);
       });
     }
@@ -98,10 +96,8 @@ class _ChatScreenState extends State<ChatScreen> {
                             subtitle: Text(chats[index].lastMessage, style: TextStyle(color: Colors.white)),
                             onTap: () async {
                               switchToWaiting();
-                              chatId = chats[index].chatId;
-                              // Future.delayed(Duration(seconds: 1), () {
-                              wc.getMessages(chats[index].chatId, RecordDirection.none, 50, context);
-                              // });
+                              wc.setChat(index);
+                              wc.getMessages(RecordDirection.none, 50, context);
                             },
                           );
                         },
@@ -172,7 +168,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                           ),
                                           Expanded(
                                             child: Column(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              crossAxisAlignment: CrossAxisAlignment.end,
                                               children: [
                                                 msg.data.attachements.isNotEmpty
                                                     ? SizedBox(
@@ -188,10 +184,10 @@ class _ChatScreenState extends State<ChatScreen> {
                                                     color: const Color.fromARGB(255, 43, 43, 43),
                                                     borderRadius: BorderRadius.circular(10),
                                                   ),
-                                                  height: msg.height,
+                                                  height: msg.textHeight,
                                                   child: RichText(
                                                     text: TextSpan(
-                                                      text: msg.data.content,
+                                                      text: msg.data.content + " height: ${msg.textHeight} boxHeight: ${msg.boxHeight}",
                                                       style: defaultTextStyle,
                                                     ),
                                                   ),

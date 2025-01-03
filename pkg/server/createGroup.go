@@ -12,7 +12,7 @@ func (s *Server) CreateGroup(ctx context.Context, req *proto.CreateGroupRequest)
 		return nil, err
 	}
 
-	chatId, err := s.db.CreateChat(true)
+	chatId, err := s.db.CreateChat("public")
 	if err != nil {
 		return nil, err
 	}

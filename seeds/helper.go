@@ -27,18 +27,22 @@ func join_chat(db *gorm.DB, chatId, member uint32) {
 	db.Create(&models.ChatMember{ChatID: chatId, UserID: member, Role: "member", JoinedAt: now})
 }
 
-func new_chat(db *gorm.DB, isGroup bool) (chatId uint32) {
-	c := models.Chat{IsGroup: isGroup}
+func new_chat(db *gorm.DB, chatType string) (chatId uint32) {
+	c := models.Chat{Type: chatType}
 	db.Create(&c)
 
 	chatId = c.ID
 	return
 }
 
-func new_group(db *gorm.DB, name string, owner uint32) (chatId uint32) {
+func new_personal_chat(db *gorm.DB) (chatId uint32) {
+	return new_chat(db, "personal")
+}
+
+func new_group(db *gorm.DB, name, groupType string, owner uint32) (chatId uint32) {
 	now := time.Now()
 
-	chatId = new_chat(db, true)
+	chatId = new_chat(db, groupType)
 
 	g := models.Group{Name: name, OwnerID: owner, ChatID: chatId}
 	db.Create(&g)

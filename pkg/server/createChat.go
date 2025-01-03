@@ -7,7 +7,7 @@ import (
 
 func (s *Server) CreateChat(ctx context.Context, req *proto.CreateChatRequest) (*proto.CreateChatResponse, error) {
 
-	chatId, err := s.db.CreateChat(req.IsGroup)
+	chatId, err := s.db.CreateChat(req.Type)
 	if err != nil {
 		return nil, err
 	}

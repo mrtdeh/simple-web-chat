@@ -6,12 +6,10 @@ import (
 
 func (s *Server) GetMessages(req *proto.GetMessagesRequest, stream proto.ChatService_GetMessagesServer) error {
 
-	// return &proto.Messages{Data: data}, nil
-	messages, err := s.db.GetMessages(req.ChatId, req.ReadedMsgId, req.NextCount, req.PrevCount)
+	messages, err := s.db.GetMessages(req.ChatId, req.ReadedMsgId, req.Direction, req.Count,)
 	if err != nil {
 		return err
 	}
-
 	// d, _ := json.MarshalIndent(messages, " ", "")
 	// fmt.Println(string(d))
 

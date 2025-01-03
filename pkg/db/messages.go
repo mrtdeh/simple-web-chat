@@ -3,38 +3,53 @@ package database
 import (
 	"api-channel/pkg/models"
 	"fmt"
+	"sort"
+
+	"gorm.io/gorm"
 )
 
-func (db *ChatDatabase) GetMessages(chatID, msgID, nextCount, prevCount uint32) ([]models.Message, error) {
-	var fromMsgID int
-	var toMsgID int
-	if prevCount > 0 && nextCount > 0 {
-		// اگر هر دو مقدار وجود داشته باشند
-		fromMsgID = int(msgID) - int(prevCount)
-		if fromMsgID < 1 {
-			fromMsgID = 1 // جلوگیری از مقدار منفی
-		}
-		toMsgID = int(msgID) + int(nextCount)
-	} else if nextCount > 0 {
-		// فقط پیام‌های جدیدتر (next)
-		fromMsgID = int(msgID)
-		toMsgID = int(msgID) + int(nextCount)
-	} else if prevCount > 0 {
-		// فقط پیام‌های قدیمی‌تر (previous)
-		toMsgID = int(msgID)
-		fromMsgID = int(msgID) - int(prevCount)
-		if fromMsgID < 1 {
-			fromMsgID = 1 // جلوگیری از مقدار منفی
-		}
-	} else {
-		// هیچ داده‌ای برای بازه مشخص نشده است
-		return nil, fmt.Errorf("no valid range specified")
+func (db *ChatDatabase) GetMessages(chatID, fromMsgID uint32, direction string, count int32) ([]models.Message, error) {
+	var result []models.Message
+
+	// Base queries for next and previous
+	nextQuery := db.gormDB.Table("messages").Select("*").
+		Where("chat_id = ? AND id > ?", chatID, fromMsgID).
+		Order("id ASC").
+		Limit(int(count))
+
+	previousQuery := db.gormDB.Table("messages").Select("*").
+		Where("chat_id = ? AND id < ?", chatID, fromMsgID).
+		Order("id DESC").
+		Limit(int(count))
+
+	var finalQuery *gorm.DB
+
+	fmt.Println("direction : ", direction)
+	switch direction {
+	case "RecordDirection.next":
+		// Only next query
+		finalQuery = nextQuery
+	case "RecordDirection.previous":
+		// Only previous query
+		finalQuery = previousQuery
+	case "RecordDirection.none":
+		// Combine both with UNION
+		// finalQuery = db.gormDB.Debug().Raw("? UNION ? ORDER BY id ASC", previousQuery, nextQuery)
+		finalQuery = db.gormDB.Raw(`
+		(SELECT * FROM "messages" WHERE chat_id = ? AND id < ? ORDER BY id DESC LIMIT ?)
+		UNION
+		(SELECT * FROM "messages" WHERE chat_id = ? AND id > ? ORDER BY id ASC LIMIT ?)
+		ORDER BY id ASC
+		`,
+			chatID, fromMsgID, count, // For previous
+			chatID, fromMsgID, count, // For next
+		)
+	default:
+		return nil, fmt.Errorf("invalid mode: %s", direction)
 	}
 
-	var result []models.Message
-	err := db.gormDB.Debug().
-		Where("chat_id = ? AND id >= ? AND id <= ?", chatID, fromMsgID, toMsgID).
-		Order("id ASC").
+	// Apply preloads and execute the query
+	err := finalQuery.
 		Preload("Sender").
 		Preload("Replies").
 		Preload("Replies.ReplyMessage").
@@ -43,9 +58,19 @@ func (db *ChatDatabase) GetMessages(chatID, msgID, nextCount, prevCount uint32) 
 		Preload("Attachments").
 		Preload("Attachments.Thumbnails", "type = ?", "placeholder").
 		Find(&result).Error
+
 	if err != nil {
 		return nil, err
 	}
+
+	// For "both" or "previous", make sure results are ordered correctly
+	// if direction == "previous" {
+	// 	result = reverseMessages(result)
+	// }
+
+	sort.Slice(result, func(i, j int) bool {
+		return result[i].ID < result[j].ID
+	})
 	return result, nil
 
 }

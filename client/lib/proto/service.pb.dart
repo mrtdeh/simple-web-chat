@@ -275,10 +275,14 @@ class LoginRequest extends $pb.GeneratedMessage {
 class LoginResponse extends $pb.GeneratedMessage {
   factory LoginResponse({
     $core.String? token,
+    $core.int? userId,
   }) {
     final $result = create();
     if (token != null) {
       $result.token = token;
+    }
+    if (userId != null) {
+      $result.userId = userId;
     }
     return $result;
   }
@@ -288,6 +292,7 @@ class LoginResponse extends $pb.GeneratedMessage {
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'LoginResponse', package: const $pb.PackageName(_omitMessageNames ? '' : 'proto'), createEmptyInstance: create)
     ..aOS(1, _omitFieldNames ? '' : 'token')
+    ..a<$core.int>(2, _omitFieldNames ? '' : 'userId', $pb.PbFieldType.OU3, protoName: 'userId')
     ..hasRequiredFields = false
   ;
 
@@ -320,6 +325,15 @@ class LoginResponse extends $pb.GeneratedMessage {
   $core.bool hasToken() => $_has(0);
   @$pb.TagNumber(1)
   void clearToken() => clearField(1);
+
+  @$pb.TagNumber(2)
+  $core.int get userId => $_getIZ(1);
+  @$pb.TagNumber(2)
+  set userId($core.int v) { $_setUnsignedInt32(1, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasUserId() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearUserId() => clearField(2);
 }
 
 class MessageStream extends $pb.GeneratedMessage {
@@ -1376,14 +1390,14 @@ class AddUserResponse extends $pb.GeneratedMessage {
 class CreateChatRequest extends $pb.GeneratedMessage {
   factory CreateChatRequest({
     $core.String? name,
-    $core.bool? isGroup,
+    $core.String? type,
   }) {
     final $result = create();
     if (name != null) {
       $result.name = name;
     }
-    if (isGroup != null) {
-      $result.isGroup = isGroup;
+    if (type != null) {
+      $result.type = type;
     }
     return $result;
   }
@@ -1393,7 +1407,7 @@ class CreateChatRequest extends $pb.GeneratedMessage {
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'CreateChatRequest', package: const $pb.PackageName(_omitMessageNames ? '' : 'proto'), createEmptyInstance: create)
     ..aOS(1, _omitFieldNames ? '' : 'name')
-    ..aOB(2, _omitFieldNames ? '' : 'isGroup', protoName: 'isGroup')
+    ..aOS(2, _omitFieldNames ? '' : 'type')
     ..hasRequiredFields = false
   ;
 
@@ -1428,13 +1442,13 @@ class CreateChatRequest extends $pb.GeneratedMessage {
   void clearName() => clearField(1);
 
   @$pb.TagNumber(2)
-  $core.bool get isGroup => $_getBF(1);
+  $core.String get type => $_getSZ(1);
   @$pb.TagNumber(2)
-  set isGroup($core.bool v) { $_setBool(1, v); }
+  set type($core.String v) { $_setString(1, v); }
   @$pb.TagNumber(2)
-  $core.bool hasIsGroup() => $_has(1);
+  $core.bool hasType() => $_has(1);
   @$pb.TagNumber(2)
-  void clearIsGroup() => clearField(2);
+  void clearType() => clearField(2);
 }
 
 class CreateChatResponse extends $pb.GeneratedMessage {
@@ -1624,8 +1638,8 @@ class GetMessagesRequest extends $pb.GeneratedMessage {
   factory GetMessagesRequest({
     $core.int? chatId,
     $core.int? readedMsgId,
-    $core.int? nextCount,
-    $core.int? prevCount,
+    $core.String? direction,
+    $core.int? count,
   }) {
     final $result = create();
     if (chatId != null) {
@@ -1634,11 +1648,11 @@ class GetMessagesRequest extends $pb.GeneratedMessage {
     if (readedMsgId != null) {
       $result.readedMsgId = readedMsgId;
     }
-    if (nextCount != null) {
-      $result.nextCount = nextCount;
+    if (direction != null) {
+      $result.direction = direction;
     }
-    if (prevCount != null) {
-      $result.prevCount = prevCount;
+    if (count != null) {
+      $result.count = count;
     }
     return $result;
   }
@@ -1649,8 +1663,8 @@ class GetMessagesRequest extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'GetMessagesRequest', package: const $pb.PackageName(_omitMessageNames ? '' : 'proto'), createEmptyInstance: create)
     ..a<$core.int>(1, _omitFieldNames ? '' : 'chatId', $pb.PbFieldType.OU3)
     ..a<$core.int>(2, _omitFieldNames ? '' : 'readedMsgId', $pb.PbFieldType.OU3)
-    ..a<$core.int>(3, _omitFieldNames ? '' : 'nextCount', $pb.PbFieldType.OU3)
-    ..a<$core.int>(4, _omitFieldNames ? '' : 'prevCount', $pb.PbFieldType.OU3)
+    ..aOS(3, _omitFieldNames ? '' : 'direction')
+    ..a<$core.int>(4, _omitFieldNames ? '' : 'count', $pb.PbFieldType.O3)
     ..hasRequiredFields = false
   ;
 
@@ -1694,22 +1708,22 @@ class GetMessagesRequest extends $pb.GeneratedMessage {
   void clearReadedMsgId() => clearField(2);
 
   @$pb.TagNumber(3)
-  $core.int get nextCount => $_getIZ(2);
+  $core.String get direction => $_getSZ(2);
   @$pb.TagNumber(3)
-  set nextCount($core.int v) { $_setUnsignedInt32(2, v); }
+  set direction($core.String v) { $_setString(2, v); }
   @$pb.TagNumber(3)
-  $core.bool hasNextCount() => $_has(2);
+  $core.bool hasDirection() => $_has(2);
   @$pb.TagNumber(3)
-  void clearNextCount() => clearField(3);
+  void clearDirection() => clearField(3);
 
   @$pb.TagNumber(4)
-  $core.int get prevCount => $_getIZ(3);
+  $core.int get count => $_getIZ(3);
   @$pb.TagNumber(4)
-  set prevCount($core.int v) { $_setUnsignedInt32(3, v); }
+  set count($core.int v) { $_setSignedInt32(3, v); }
   @$pb.TagNumber(4)
-  $core.bool hasPrevCount() => $_has(3);
+  $core.bool hasCount() => $_has(3);
   @$pb.TagNumber(4)
-  void clearPrevCount() => clearField(4);
+  void clearCount() => clearField(4);
 }
 
 class MessagesResponse_MessageData extends $pb.GeneratedMessage {

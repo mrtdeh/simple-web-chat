@@ -28,7 +28,7 @@ type User struct {
 type Chat struct {
 	Model
 	Name          string
-	IsGroup       bool   `gorm:"default:false"`
+	Type          string `gorm:"not null"` // e.g., "channel", "private", "public", "personal"
 	Members       []User `gorm:"many2many:chat_members;"`
 	Messages      []Message
 	Group         *Group `gorm:"foreignKey:ChatID"` // رابطه با جدول گروه

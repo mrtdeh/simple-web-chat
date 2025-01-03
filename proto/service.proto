@@ -27,6 +27,7 @@ message LoginRequest{
 }
 message LoginResponse{
   string token = 1;
+  uint32 userId = 2;
 }
 
 
@@ -125,7 +126,8 @@ message AddUserResponse{
 
 message CreateChatRequest{
   string name = 1;
-  bool isGroup = 2;
+  string type = 2; // private, public, channel, personal
+  // bool isGroup = 2;
 }
 message CreateChatResponse{
   uint32 chat_id = 1;
@@ -146,8 +148,8 @@ message MessageChannelResponse{
 message GetMessagesRequest{
   uint32 chat_id = 1;
   uint32 readed_msg_id = 2;
-  uint32 next_count = 3;
-  uint32 prev_count = 4;
+  string direction = 3; // next , previous
+  int32 count = 4;
 }
 message MessagesResponse{
   repeated MessageData data = 1;

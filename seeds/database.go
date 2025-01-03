@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"path"
 
+	"github.com/bxcodec/faker/v4"
 	"gorm.io/gorm"
 )
 
@@ -23,21 +24,19 @@ func SeedDatabase(db *gorm.DB) {
 	user1 := new_user(db, "ali", "12345")
 	user2 := new_user(db, "reza", "12345")
 	// Create group with admin user1 and member user2
-	chatId := new_group(db, "test-group", user1)
+	chatId := new_group(db, "test-group", "public", user1)
 	join_chat(db, chatId, user2)
-	// Create private chat with user1 , user2
-	chatId2 := new_chat(db, false)
-	join_chat(db, chatId2, user1)
-	join_chat(db, chatId2, user2)
-	// Create message for private chat
-	msgId1 := new_message(db, chatId2, user1, "hello user2 sdkfj skds dkfsdjfks fksdjfksdj fkdsjf sdfjsdkf jsdfjkwejrewrkwjer wejrkwfksdjf ksdjfsdjfksdjf")
-
-	assign_attachment_to_user(db, msgId1, path.Join(conf.UPLOAD_DIR, "file1.jpg"), "image")
-
-	new_replay(db, chatId2, user2, msgId1, "thanks and you?")
-
 	for i := 0; i < 500; i++ {
 		new_message(db, chatId, user1, fmt.Sprintf("message %d", i+1))
 	}
+
+	// Create private chat with user1 , user2
+	chatId2 := new_personal_chat(db)
+	join_chat(db, chatId2, user1)
+	join_chat(db, chatId2, user2)
+	// Create message for private chat
+	msgId1 := new_message(db, chatId2, user1, faker.Paragraph())
+	assign_attachment_to_user(db, msgId1, path.Join(conf.UPLOAD_DIR, "file1.jpg"), "image")
+	new_replay(db, chatId2, user2, msgId1, "thanks and you?")
 
 }

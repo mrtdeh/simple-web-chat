@@ -82,12 +82,14 @@ const LoginResponse$json = {
   '1': 'LoginResponse',
   '2': [
     {'1': 'token', '3': 1, '4': 1, '5': 9, '10': 'token'},
+    {'1': 'userId', '3': 2, '4': 1, '5': 13, '10': 'userId'},
   ],
 };
 
 /// Descriptor for `LoginResponse`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List loginResponseDescriptor = $convert.base64Decode(
-    'Cg1Mb2dpblJlc3BvbnNlEhQKBXRva2VuGAEgASgJUgV0b2tlbg==');
+    'Cg1Mb2dpblJlc3BvbnNlEhQKBXRva2VuGAEgASgJUgV0b2tlbhIWCgZ1c2VySWQYAiABKA1SBn'
+    'VzZXJJZA==');
 
 @$core.Deprecated('Use messageStreamDescriptor instead')
 const MessageStream$json = {
@@ -290,14 +292,14 @@ const CreateChatRequest$json = {
   '1': 'CreateChatRequest',
   '2': [
     {'1': 'name', '3': 1, '4': 1, '5': 9, '10': 'name'},
-    {'1': 'isGroup', '3': 2, '4': 1, '5': 8, '10': 'isGroup'},
+    {'1': 'type', '3': 2, '4': 1, '5': 9, '10': 'type'},
   ],
 };
 
 /// Descriptor for `CreateChatRequest`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List createChatRequestDescriptor = $convert.base64Decode(
-    'ChFDcmVhdGVDaGF0UmVxdWVzdBISCgRuYW1lGAEgASgJUgRuYW1lEhgKB2lzR3JvdXAYAiABKA'
-    'hSB2lzR3JvdXA=');
+    'ChFDcmVhdGVDaGF0UmVxdWVzdBISCgRuYW1lGAEgASgJUgRuYW1lEhIKBHR5cGUYAiABKAlSBH'
+    'R5cGU=');
 
 @$core.Deprecated('Use createChatResponseDescriptor instead')
 const CreateChatResponse$json = {
@@ -347,16 +349,16 @@ const GetMessagesRequest$json = {
   '2': [
     {'1': 'chat_id', '3': 1, '4': 1, '5': 13, '10': 'chatId'},
     {'1': 'readed_msg_id', '3': 2, '4': 1, '5': 13, '10': 'readedMsgId'},
-    {'1': 'next_count', '3': 3, '4': 1, '5': 13, '10': 'nextCount'},
-    {'1': 'prev_count', '3': 4, '4': 1, '5': 13, '10': 'prevCount'},
+    {'1': 'direction', '3': 3, '4': 1, '5': 9, '10': 'direction'},
+    {'1': 'count', '3': 4, '4': 1, '5': 5, '10': 'count'},
   ],
 };
 
 /// Descriptor for `GetMessagesRequest`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List getMessagesRequestDescriptor = $convert.base64Decode(
     'ChJHZXRNZXNzYWdlc1JlcXVlc3QSFwoHY2hhdF9pZBgBIAEoDVIGY2hhdElkEiIKDXJlYWRlZF'
-    '9tc2dfaWQYAiABKA1SC3JlYWRlZE1zZ0lkEh0KCm5leHRfY291bnQYAyABKA1SCW5leHRDb3Vu'
-    'dBIdCgpwcmV2X2NvdW50GAQgASgNUglwcmV2Q291bnQ=');
+    '9tc2dfaWQYAiABKA1SC3JlYWRlZE1zZ0lkEhwKCWRpcmVjdGlvbhgDIAEoCVIJZGlyZWN0aW9u'
+    'EhQKBWNvdW50GAQgASgFUgVjb3VudA==');
 
 @$core.Deprecated('Use messagesResponseDescriptor instead')
 const MessagesResponse$json = {
