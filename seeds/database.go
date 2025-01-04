@@ -27,7 +27,8 @@ func SeedDatabase(db *gorm.DB) {
 	chatId := new_group(db, "test-group", "public", user1)
 	join_chat(db, chatId, user2)
 	for i := 0; i < 500; i++ {
-		new_message(db, chatId, user1, fmt.Sprintf("message %d", i+1))
+		new_message(db, chatId, user1, fmt.Sprintf("user1 message %d", i+1))
+		new_message(db, chatId, user2, fmt.Sprintf("user2 message %d", i+1))
 	}
 
 	// Create private chat with user1 , user2

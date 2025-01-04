@@ -37,6 +37,7 @@ func (db *ChatDatabase) GetChats(userId uint32) (*sql.Rows, error) {
 		Select(`
 		
 		chats.id AS chat_id,
+		chats.type AS type,
 		CASE
 			WHEN chats.type <> 'personal' THEN g.name            
 			WHEN leftUser.id > 0 THEN leftUser.username      

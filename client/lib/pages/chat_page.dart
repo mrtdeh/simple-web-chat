@@ -153,51 +153,54 @@ class _ChatScreenState extends State<ChatScreen> {
                                 final msg = messages[index];
                                 return Container(
                                   key: msg.key,
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        crossAxisAlignment: CrossAxisAlignment.end,
-                                        children: [
-                                          Container(
-                                            margin: EdgeInsets.symmetric(horizontal: 10),
-                                            child: CircleAvatar(
-                                              backgroundColor: Colors.amber,
-                                              radius: 25,
-                                            ),
+                                  child: Directionality(
+                                    textDirection: msg.toLeft! ? TextDirection.ltr : TextDirection.rtl,
+                                    child: Row(
+                                      crossAxisAlignment: CrossAxisAlignment.end,
+                                      children: [
+                                        Container(
+                                          margin: EdgeInsets.symmetric(horizontal: 10),
+                                          child: CircleAvatar(
+                                            backgroundColor: Colors.amber,
+                                            radius: 25,
                                           ),
-                                          Expanded(
-                                            child: Column(
-                                              crossAxisAlignment: CrossAxisAlignment.end,
-                                              children: [
-                                                msg.data.attachements.isNotEmpty
-                                                    ? SizedBox(
-                                                        height: 100,
-                                                        width: 100,
-                                                        child: Image.network(msg.data.attachements[0].url),
-                                                      )
-                                                    : SizedBox(),
-                                                Container(
-                                                  margin: const EdgeInsets.symmetric(vertical: 10),
-                                                  padding: const EdgeInsets.all(10),
-                                                  decoration: BoxDecoration(
-                                                    color: const Color.fromARGB(255, 43, 43, 43),
-                                                    borderRadius: BorderRadius.circular(10),
-                                                  ),
-                                                  height: msg.textHeight,
-                                                  child: RichText(
-                                                    text: TextSpan(
-                                                      text: msg.data.content + " height: ${msg.textHeight} boxHeight: ${msg.boxHeight}",
-                                                      style: defaultTextStyle,
-                                                    ),
+                                        ),
+                                        Flexible(
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.end,
+                                            children: [
+                                              msg.data.attachements.isNotEmpty
+                                                  ? SizedBox(
+                                                      height: 100,
+                                                      width: 100,
+                                                      child: Image.network(msg.data.attachements[0].url),
+                                                    )
+                                                  : SizedBox(),
+                                              Container(
+                                                margin: const EdgeInsets.symmetric(vertical: 10),
+                                                padding: const EdgeInsets.all(10),
+                                                decoration: BoxDecoration(
+                                                  color: const Color.fromARGB(255, 43, 43, 43),
+                                                  borderRadius: BorderRadius.only(
+                                                    bottomLeft: msg.toLeft! ? Radius.zero : Radius.circular(10),
+                                                    bottomRight: msg.toLeft! ? Radius.circular(10) : Radius.zero,
+                                                    topLeft: Radius.circular(10),
+                                                    topRight: Radius.circular(10),
                                                   ),
                                                 ),
-                                              ],
-                                            ),
+                                                height: msg.textHeight,
+                                                child: RichText(
+                                                  text: TextSpan(
+                                                    text: msg.data.content + "avatar: ${msg.haveAvatar} height: ${msg.textHeight} boxHeight: ${msg.boxHeight}",
+                                                    style: defaultTextStyle,
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
                                           ),
-                                        ],
-                                      )
-                                    ],
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 );
                               },

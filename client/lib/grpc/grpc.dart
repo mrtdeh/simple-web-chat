@@ -227,7 +227,7 @@ class WebChat {
       key: GlobalKey(),
       textHeight: textHeight,
       boxHeight: boxHeight,
-      haveAvatar: false,
+      haveAvatar: chat.type == "public",
       toLeft: msg.senderId != userID,
     );
   }
