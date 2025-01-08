@@ -163,7 +163,7 @@ message MessagesResponse{
     int64 sendAt = 6;
   }
   message Attachment{
-    string placeholder = 1; // image placeholder of the attachment
+    bytes placeholder = 1; // image placeholder of the attachment
     string type = 2; // image|video|audio|other
     string url = 3; // URL of attachment
   }

@@ -1836,7 +1836,7 @@ class MessagesResponse_MessageData extends $pb.GeneratedMessage {
 
 class MessagesResponse_Attachment extends $pb.GeneratedMessage {
   factory MessagesResponse_Attachment({
-    $core.String? placeholder,
+    $core.List<$core.int>? placeholder,
     $core.String? type,
     $core.String? url,
   }) {
@@ -1857,7 +1857,7 @@ class MessagesResponse_Attachment extends $pb.GeneratedMessage {
   factory MessagesResponse_Attachment.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'MessagesResponse.Attachment', package: const $pb.PackageName(_omitMessageNames ? '' : 'proto'), createEmptyInstance: create)
-    ..aOS(1, _omitFieldNames ? '' : 'placeholder')
+    ..a<$core.List<$core.int>>(1, _omitFieldNames ? '' : 'placeholder', $pb.PbFieldType.OY)
     ..aOS(2, _omitFieldNames ? '' : 'type')
     ..aOS(3, _omitFieldNames ? '' : 'url')
     ..hasRequiredFields = false
@@ -1885,9 +1885,9 @@ class MessagesResponse_Attachment extends $pb.GeneratedMessage {
   static MessagesResponse_Attachment? _defaultInstance;
 
   @$pb.TagNumber(1)
-  $core.String get placeholder => $_getSZ(0);
+  $core.List<$core.int> get placeholder => $_getN(0);
   @$pb.TagNumber(1)
-  set placeholder($core.String v) { $_setString(0, v); }
+  set placeholder($core.List<$core.int> v) { $_setBytes(0, v); }
   @$pb.TagNumber(1)
   $core.bool hasPlaceholder() => $_has(0);
   @$pb.TagNumber(1)

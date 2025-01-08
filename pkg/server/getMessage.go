@@ -6,7 +6,7 @@ import (
 
 func (s *Server) GetMessages(req *proto.GetMessagesRequest, stream proto.ChatService_GetMessagesServer) error {
 
-	messages, err := s.db.GetMessages(req.ChatId, req.ReadedMsgId, req.Direction, req.Count,)
+	messages, err := s.db.GetMessages(req.ChatId, req.ReadedMsgId, req.Direction, req.Count)
 	if err != nil {
 		return err
 	}
@@ -22,9 +22,9 @@ func (s *Server) GetMessages(req *proto.GetMessagesRequest, stream proto.ChatSer
 			for _, t := range att.Thumbnails {
 				if t.Type == "placeholder" {
 					attachs = append(attachs, &proto.MessagesResponse_Attachment{
-						Placeholder: t.Base64,     // Base64 of the attachment placeholder
-						Type:        att.FileType, // NOTE: most be image|video|audio|other...
-						Url:         att.FilePath, // TODO: replace with http URL
+						Placeholder: []byte(t.Base64), // Base64 of the attachment placeholder
+						Type:        att.FileType,     // NOTE: most be image|video|audio|other...
+						Url:         att.FilePath,     // TODO: replace with http URL
 					})
 					break
 				}
