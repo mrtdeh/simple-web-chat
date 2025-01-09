@@ -1,4 +1,4 @@
-import 'dart:typed_data';
+import 'dart:convert';
 
 import 'package:dashboard/grpc/grpc.dart';
 import 'package:dashboard/proto/service.pb.dart';
@@ -28,20 +28,14 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   void _onScroll() {
-    if (_scrollController.position.pixels ==
-        _scrollController.position.maxScrollExtent) {
-      wc.getMessages(RecordDirection.next, 50, context,
-          onComplete: (totalHeight) {
-        _scrollController
-            .jumpTo(_scrollController.position.pixels - totalHeight);
+    if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
+      wc.getMessages(RecordDirection.next, 50, context, onComplete: (totalHeight) {
+        _scrollController.jumpTo(_scrollController.position.pixels - totalHeight);
       });
     }
-    if (_scrollController.position.pixels ==
-        _scrollController.position.minScrollExtent) {
-      wc.getMessages(RecordDirection.previous, 50, context,
-          onComplete: (totalHeight) {
-        _scrollController
-            .jumpTo(_scrollController.position.pixels + totalHeight);
+    if (_scrollController.position.pixels == _scrollController.position.minScrollExtent) {
+      wc.getMessages(RecordDirection.previous, 50, context, onComplete: (totalHeight) {
+        _scrollController.jumpTo(_scrollController.position.pixels + totalHeight);
       });
     }
   }
@@ -101,8 +95,7 @@ class _ChatScreenState extends State<ChatScreen> {
                               child: Icon(Icons.person),
                             ),
                             title: Text(chats[index].chatTitle),
-                            subtitle: Text(chats[index].lastMessage,
-                                style: TextStyle(color: Colors.white)),
+                            subtitle: Text(chats[index].lastMessage, style: TextStyle(color: Colors.white)),
                             onTap: () async {
                               switchToWaiting();
                               wc.setChat(index);
@@ -135,10 +128,8 @@ class _ChatScreenState extends State<ChatScreen> {
                         return Center(child: CircularProgressIndicator());
                       default:
                         if (snapshot.hasError) {
-                          return Center(
-                              child: Text('Error: ${snapshot.error}'));
-                        } else if (!snapshot.hasData ||
-                            snapshot.data!.isEmpty) {
+                          return Center(child: Text('Error: ${snapshot.error}'));
+                        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                           return Center(
                               child: Text(
                             "Select a chat to start messaging",
@@ -154,8 +145,7 @@ class _ChatScreenState extends State<ChatScreen> {
                           margin: EdgeInsets.symmetric(horizontal: 10),
                           width: 600,
                           child: ScrollConfiguration(
-                            behavior: ScrollConfiguration.of(context)
-                                .copyWith(scrollbars: false),
+                            behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
                             child: ListView.builder(
                               // shrinkWrap: true,
 
@@ -166,16 +156,12 @@ class _ChatScreenState extends State<ChatScreen> {
                                 return Container(
                                   key: msg.key,
                                   child: Directionality(
-                                    textDirection: msg.toLeft!
-                                        ? TextDirection.ltr
-                                        : TextDirection.rtl,
+                                    textDirection: msg.toLeft! ? TextDirection.ltr : TextDirection.rtl,
                                     child: Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.end,
+                                      crossAxisAlignment: CrossAxisAlignment.end,
                                       children: [
                                         Container(
-                                          margin: EdgeInsets.symmetric(
-                                              horizontal: 10),
+                                          margin: EdgeInsets.symmetric(horizontal: 10),
                                           child: CircleAvatar(
                                             backgroundColor: Colors.amber,
                                             radius: 25,
@@ -183,8 +169,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                         ),
                                         Flexible(
                                           child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.end,
+                                            crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
                                               msg.data.attachements.isNotEmpty
                                                   ? SizedBox(
@@ -192,41 +177,26 @@ class _ChatScreenState extends State<ChatScreen> {
                                                       width: 100,
                                                       // child: Image.network(msg.data.attachements[0].url),
                                                       child: Image.memory(
-                                                        Uint8List.fromList(msg
-                                                            .data
-                                                            .attachements[0]
-                                                            .placeholder),
+                                                        base64Decode(msg.data.attachements[0].placeholder),
                                                       ),
                                                     )
                                                   : SizedBox(),
                                               Container(
-                                                margin:
-                                                    const EdgeInsets.symmetric(
-                                                        vertical: 10),
-                                                padding:
-                                                    const EdgeInsets.all(10),
+                                                margin: const EdgeInsets.symmetric(vertical: 10),
+                                                padding: const EdgeInsets.all(10),
                                                 decoration: BoxDecoration(
-                                                  color: const Color.fromARGB(
-                                                      255, 43, 43, 43),
-                                                  borderRadius:
-                                                      BorderRadius.only(
-                                                    bottomLeft: msg.toLeft!
-                                                        ? Radius.zero
-                                                        : Radius.circular(10),
-                                                    bottomRight: msg.toLeft!
-                                                        ? Radius.circular(10)
-                                                        : Radius.zero,
-                                                    topLeft:
-                                                        Radius.circular(10),
-                                                    topRight:
-                                                        Radius.circular(10),
+                                                  color: const Color.fromARGB(255, 43, 43, 43),
+                                                  borderRadius: BorderRadius.only(
+                                                    bottomLeft: msg.toLeft! ? Radius.zero : Radius.circular(10),
+                                                    bottomRight: msg.toLeft! ? Radius.circular(10) : Radius.zero,
+                                                    topLeft: Radius.circular(10),
+                                                    topRight: Radius.circular(10),
                                                   ),
                                                 ),
                                                 height: msg.textHeight,
                                                 child: RichText(
                                                   text: TextSpan(
-                                                    text: msg.data.content +
-                                                        "avatar: ${msg.haveAvatar} height: ${msg.textHeight} boxHeight: ${msg.boxHeight}",
+                                                    text: msg.data.content + "avatar: ${msg.haveAvatar} height: ${msg.textHeight} boxHeight: ${msg.boxHeight}",
                                                     style: defaultTextStyle,
                                                   ),
                                                 ),

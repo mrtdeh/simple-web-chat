@@ -386,7 +386,7 @@ const MessagesResponse_MessageData$json = {
 const MessagesResponse_Attachment$json = {
   '1': 'Attachment',
   '2': [
-    {'1': 'placeholder', '3': 1, '4': 1, '5': 12, '10': 'placeholder'},
+    {'1': 'placeholder', '3': 1, '4': 1, '5': 9, '10': 'placeholder'},
     {'1': 'type', '3': 2, '4': 1, '5': 9, '10': 'type'},
     {'1': 'url', '3': 3, '4': 1, '5': 9, '10': 'url'},
   ],
@@ -410,7 +410,7 @@ final $typed_data.Uint8List messagesResponseDescriptor = $convert.base64Decode(
     'IHY29udGVudBJGCgxhdHRhY2hlbWVudHMYBCADKAsyIi5wcm90by5NZXNzYWdlc1Jlc3BvbnNl'
     'LkF0dGFjaG1lbnRSDGF0dGFjaGVtZW50cxJQCg9yZXBsaWVkTWVzc2FnZXMYBSADKAsyJi5wcm'
     '90by5NZXNzYWdlc1Jlc3BvbnNlLlJlcGxpZWRNZXNzYWdlUg9yZXBsaWVkTWVzc2FnZXMSFgoG'
-    'c2VuZEF0GAYgASgDUgZzZW5kQXQaVAoKQXR0YWNobWVudBIgCgtwbGFjZWhvbGRlchgBIAEoDF'
+    'c2VuZEF0GAYgASgDUgZzZW5kQXQaVAoKQXR0YWNobWVudBIgCgtwbGFjZWhvbGRlchgBIAEoCV'
     'ILcGxhY2Vob2xkZXISEgoEdHlwZRgCIAEoCVIEdHlwZRIQCgN1cmwYAyABKAlSA3VybBpoCg5S'
     'ZXBsaWVkTWVzc2FnZRIcCgltZXNzYWdlSWQYASABKA1SCW1lc3NhZ2VJZBIYCgdjb250ZW50GA'
     'IgASgJUgdjb250ZW50Eh4KCnRodW1ibmFpbHMYAyADKAlSCnRodW1ibmFpbHM=');

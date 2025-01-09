@@ -22,9 +22,9 @@ func (s *Server) GetMessages(req *proto.GetMessagesRequest, stream proto.ChatSer
 			for _, t := range att.Thumbnails {
 				if t.Type == "placeholder" {
 					attachs = append(attachs, &proto.MessagesResponse_Attachment{
-						Placeholder: []byte(t.Base64), // Base64 of the attachment placeholder
-						Type:        att.FileType,     // NOTE: most be image|video|audio|other...
-						Url:         att.FilePath,     // TODO: replace with http URL
+						Placeholder: t.Base64,     // Base64 of the attachment placeholder
+						Type:        att.FileType, // NOTE: most be image|video|audio|other...
+						Url:         att.FilePath, // TODO: replace with http URL
 					})
 					break
 				}
