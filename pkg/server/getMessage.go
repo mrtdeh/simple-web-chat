@@ -2,10 +2,11 @@ package server
 
 import (
 	"api-channel/proto"
+	"time"
 )
 
 func (s *Server) GetMessages(req *proto.GetMessagesRequest, stream proto.ChatService_GetMessagesServer) error {
-
+	time.Sleep(time.Second * 1)
 	messages, err := s.db.GetMessages(req.ChatId, req.ReadedMsgId, req.Direction, req.Count)
 	if err != nil {
 		return err

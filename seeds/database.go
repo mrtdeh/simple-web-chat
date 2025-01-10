@@ -27,8 +27,8 @@ func SeedDatabase(db *gorm.DB) {
 	chatId := new_group(db, "test-group", "public", user1)
 	join_chat(db, chatId, user2)
 	for i := 0; i < 500; i++ {
-		new_message(db, chatId, user1, fmt.Sprintf("user1 message %d", i+1))
-		new_message(db, chatId, user2, fmt.Sprintf("user2 message %d", i+1))
+		new_message(db, chatId, user1, fmt.Sprintf("user1 message %d : %s@", i+1, faker.Paragraph()))
+		new_message(db, chatId, user2, fmt.Sprintf("user2 message %d : %s@", i+1, faker.Paragraph()))
 	}
 
 	// Create private chat with user1 , user2
@@ -37,6 +37,25 @@ func SeedDatabase(db *gorm.DB) {
 	join_chat(db, chatId2, user2)
 	// Create message for private chat
 	msgId1 := new_message(db, chatId2, user1, faker.Paragraph())
+	assign_attachment_to_user(db, msgId1, path.Join(conf.UPLOAD_DIR, "file1.jpg"), "image")
+	assign_attachment_to_user(db, msgId1, path.Join(conf.UPLOAD_DIR, "file1.jpg"), "image")
+	assign_attachment_to_user(db, msgId1, path.Join(conf.UPLOAD_DIR, "file1.jpg"), "image")
+	assign_attachment_to_user(db, msgId1, path.Join(conf.UPLOAD_DIR, "file1.jpg"), "image")
+	assign_attachment_to_user(db, msgId1, path.Join(conf.UPLOAD_DIR, "file1.jpg"), "image")
+	assign_attachment_to_user(db, msgId1, path.Join(conf.UPLOAD_DIR, "file1.jpg"), "image")
+	assign_attachment_to_user(db, msgId1, path.Join(conf.UPLOAD_DIR, "file1.jpg"), "image")
+	assign_attachment_to_user(db, msgId1, path.Join(conf.UPLOAD_DIR, "file1.jpg"), "image")
+	assign_attachment_to_user(db, msgId1, path.Join(conf.UPLOAD_DIR, "file1.jpg"), "image")
+	assign_attachment_to_user(db, msgId1, path.Join(conf.UPLOAD_DIR, "file1.jpg"), "image")
+	assign_attachment_to_user(db, msgId1, path.Join(conf.UPLOAD_DIR, "file1.jpg"), "image")
+	assign_attachment_to_user(db, msgId1, path.Join(conf.UPLOAD_DIR, "file1.jpg"), "image")
+	assign_attachment_to_user(db, msgId1, path.Join(conf.UPLOAD_DIR, "file1.jpg"), "image")
+	assign_attachment_to_user(db, msgId1, path.Join(conf.UPLOAD_DIR, "file1.jpg"), "image")
+	assign_attachment_to_user(db, msgId1, path.Join(conf.UPLOAD_DIR, "file1.jpg"), "image")
+	assign_attachment_to_user(db, msgId1, path.Join(conf.UPLOAD_DIR, "file1.jpg"), "image")
+	assign_attachment_to_user(db, msgId1, path.Join(conf.UPLOAD_DIR, "file1.jpg"), "image")
+	assign_attachment_to_user(db, msgId1, path.Join(conf.UPLOAD_DIR, "file1.jpg"), "image")
+	assign_attachment_to_user(db, msgId1, path.Join(conf.UPLOAD_DIR, "file1.jpg"), "image")
 	assign_attachment_to_user(db, msgId1, path.Join(conf.UPLOAD_DIR, "file1.jpg"), "image")
 	new_replay(db, chatId2, user2, msgId1, "thanks and you?")
 

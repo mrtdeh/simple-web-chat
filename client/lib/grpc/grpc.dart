@@ -126,6 +126,10 @@ class WebChat {
         msgs.add(newMsg);
       }
     }, onDone: () {
+      if (msgs.length == 0) {
+        // Return on empty messages received
+        return;
+      }
       if (direction == RecordDirection.next) {
         // If do lazy-loading next message
         // Add messages to end of list
@@ -202,13 +206,17 @@ class WebChat {
     );
 
     // double maxWidth = MediaQuery.of(context).size.width - (250 + 40);
-    double avatarWidth = 45; // with margins
-    double viewHorizontalPadding = 40;
-    double chatsWidth = 250;
-    double others = avatarWidth + viewHorizontalPadding + chatsWidth;
-    double maxWidth = MediaQuery.of(context).size.width - others;
-    if (maxWidth > 600) {
-      maxWidth = 600;
+    double windowWidth = MediaQuery.of(context).size.width;
+    double maxWidth = windowWidth;
+    double textBoxPadding = 20; // text box (left + right) padding
+    double viewInnerWidth = 600; // without margins
+    double viewOutterWidth = 620; // with margins
+    double avatarWidth = 70; // (radius * 2) + left/right margins
+    double leftPanelWidth = 250;
+    // double others = avatarWidth + viewHorizontalPadding + chatsWidth;
+    double messagesViewWidth = windowWidth - leftPanelWidth;
+    if (messagesViewWidth > viewOutterWidth) {
+      maxWidth = viewInnerWidth - avatarWidth - textBoxPadding;
     }
 
     textPainter.layout(maxWidth: maxWidth);

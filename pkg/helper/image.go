@@ -25,7 +25,7 @@ func Thumbnail(img image.Image, size int) *image.RGBA {
 }
 
 func Placeholder(img image.Image) *image.RGBA {
-	return blur.Gaussian(img, .5)
+	return blur.Gaussian(Thumbnail(img, 360), 50)
 }
 
 func ImageAsBytes(img image.Image, quality int) []byte {

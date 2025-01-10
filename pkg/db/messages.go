@@ -24,7 +24,6 @@ func (db *ChatDatabase) GetMessages(chatID, fromMsgID uint32, direction string, 
 
 	var finalQuery *gorm.DB
 
-	fmt.Println("direction : ", direction)
 	switch direction {
 	case "RecordDirection.next":
 		// Only next query

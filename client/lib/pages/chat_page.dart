@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:dashboard/grpc/grpc.dart';
 import 'package:dashboard/proto/service.pb.dart';
 import 'package:flutter/material.dart';
+import 'package:super_sliver_list/super_sliver_list.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
@@ -139,79 +140,85 @@ class _ChatScreenState extends State<ChatScreen> {
                     }
 
                     final messages = snapshot.data!;
-                    return Center(
-                      child: IntrinsicWidth(
-                        child: Container(
-                          margin: EdgeInsets.symmetric(horizontal: 10),
-                          width: 600,
-                          child: ScrollConfiguration(
-                            behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
-                            child: ListView.builder(
-                              // shrinkWrap: true,
-
-                              controller: _scrollController,
-                              itemCount: messages.length,
-                              itemBuilder: (context, index) {
-                                final msg = messages[index];
-                                return Container(
-                                  key: msg.key,
-                                  child: Directionality(
-                                    textDirection: msg.toLeft! ? TextDirection.ltr : TextDirection.rtl,
-                                    child: Row(
-                                      crossAxisAlignment: CrossAxisAlignment.end,
-                                      children: [
-                                        Container(
-                                          margin: EdgeInsets.symmetric(horizontal: 10),
-                                          child: CircleAvatar(
-                                            backgroundColor: Colors.amber,
-                                            radius: 25,
-                                          ),
-                                        ),
-                                        Flexible(
-                                          child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              msg.data.attachements.isNotEmpty
-                                                  ? SizedBox(
-                                                      height: 100,
-                                                      width: 100,
-                                                      // child: Image.network(msg.data.attachements[0].url),
-                                                      child: Image.memory(
-                                                        base64Decode(msg.data.attachements[0].placeholder),
-                                                      ),
-                                                    )
-                                                  : SizedBox(),
-                                              Container(
-                                                margin: const EdgeInsets.symmetric(vertical: 10),
-                                                padding: const EdgeInsets.all(10),
-                                                decoration: BoxDecoration(
-                                                  color: const Color.fromARGB(255, 43, 43, 43),
-                                                  borderRadius: BorderRadius.only(
-                                                    bottomLeft: msg.toLeft! ? Radius.zero : Radius.circular(10),
-                                                    bottomRight: msg.toLeft! ? Radius.circular(10) : Radius.zero,
-                                                    topLeft: Radius.circular(10),
-                                                    topRight: Radius.circular(10),
+                    return ScrollConfiguration(
+                      behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
+                      child: SuperListView.builder(
+                        shrinkWrap: true,
+                        controller: _scrollController,
+                        itemCount: messages.length,
+                        itemBuilder: (context, index) {
+                          final msg = messages[index];
+                          return Center(
+                            child: Container(
+                              key: msg.key,
+                              width: 600,
+                              margin: EdgeInsets.symmetric(horizontal: 10),
+                              child: Directionality(
+                                textDirection: msg.toLeft! ? TextDirection.ltr : TextDirection.rtl,
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                    msg.haveAvatar!
+                                        ? Container(
+                                            margin: EdgeInsets.symmetric(horizontal: 10),
+                                            child: CircleAvatar(
+                                              backgroundColor: Colors.amber,
+                                              radius: 25,
+                                            ),
+                                          )
+                                        : SizedBox(),
+                                    Flexible(
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          msg.data.attachements.isNotEmpty
+                                              ? SizedBox(
+                                                  width: 300,
+                                                  child: GridView.builder(
+                                                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3, crossAxisSpacing: 5, mainAxisSpacing: 5),
+                                                    controller: new ScrollController(keepScrollOffset: false),
+                                                    shrinkWrap: true,
+                                                    scrollDirection: Axis.vertical,
+                                                    itemCount: msg.data.attachements.length,
+                                                    itemBuilder: (context, index) {
+                                                      return SizedBox(
+                                                        child: Image.memory(
+                                                          base64Decode(msg.data.attachements[index].placeholder),
+                                                        ),
+                                                      );
+                                                    },
                                                   ),
-                                                ),
-                                                height: msg.textHeight,
-                                                child: RichText(
-                                                  text: TextSpan(
-                                                    text: msg.data.content + "avatar: ${msg.haveAvatar} height: ${msg.textHeight} boxHeight: ${msg.boxHeight}",
-                                                    style: defaultTextStyle,
-                                                  ),
-                                                ),
+                                                )
+                                              : SizedBox(),
+                                          Container(
+                                            margin: const EdgeInsets.symmetric(vertical: 10),
+                                            padding: const EdgeInsets.all(10),
+                                            decoration: BoxDecoration(
+                                              color: const Color.fromARGB(255, 43, 43, 43),
+                                              borderRadius: BorderRadius.only(
+                                                bottomLeft: msg.toLeft! ? Radius.zero : Radius.circular(10),
+                                                bottomRight: msg.toLeft! ? Radius.circular(10) : Radius.zero,
+                                                topLeft: Radius.circular(10),
+                                                topRight: Radius.circular(10),
                                               ),
-                                            ],
+                                            ),
+                                            height: msg.textHeight,
+                                            child: RichText(
+                                              text: TextSpan(
+                                                text: msg.data.content,
+                                                style: defaultTextStyle,
+                                              ),
+                                            ),
                                           ),
-                                        ),
-                                      ],
+                                        ],
+                                      ),
                                     ),
-                                  ),
-                                );
-                              },
+                                  ],
+                                ),
+                              ),
                             ),
-                          ),
-                        ),
+                          );
+                        },
                       ),
                     );
                   },
