@@ -29,19 +29,23 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   void _onScroll() {
+    // print("${_scrollController.position.pixels} : ${_scrollController.position.maxScrollExtent}");
     if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
       wc.getMessages(RecordDirection.next, 50, context, onComplete: (totalHeight) {
-        _scrollController.jumpTo(_scrollController.position.pixels - totalHeight);
+        // _scrollController.jumpTo(_scrollController.position.pixels - totalHeight);
+        _listController.jumpToItem(index: 99, scrollController: _scrollController, alignment: 1);
       });
     }
     if (_scrollController.position.pixels == _scrollController.position.minScrollExtent) {
       wc.getMessages(RecordDirection.previous, 50, context, onComplete: (totalHeight) {
-        _scrollController.jumpTo(_scrollController.position.pixels + totalHeight);
+        // _scrollController.jumpTo(_scrollController.position.pixels + totalHeight);
+        _listController.jumpToItem(index: 50, scrollController: _scrollController, alignment: 0);
       });
     }
   }
 
   final _scrollController = ScrollController();
+  final _listController = ListController();
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +57,7 @@ class _ChatScreenState extends State<ChatScreen> {
       body: Row(
         children: [
           Container(
-            width: 250,
+            width: CHATS_WIDTH,
             color: Colors.black54,
             child: Column(
               children: [
@@ -86,17 +90,18 @@ class _ChatScreenState extends State<ChatScreen> {
                       return ListView.builder(
                         itemCount: chats.length,
                         itemBuilder: (context, index) {
+                          final c = chats[index];
                           return ListTile(
                             trailing: Badge(
                               backgroundColor: Colors.red,
                               textColor: Colors.white,
-                              label: Text(chats[index].unreadedMessagesCount),
+                              label: Text(c.unreadedMessagesCount),
                             ),
                             leading: CircleAvatar(
                               child: Icon(Icons.person),
                             ),
-                            title: Text(chats[index].chatTitle),
-                            subtitle: Text(chats[index].lastMessage, style: TextStyle(color: Colors.white)),
+                            title: Text(c.chatTitle),
+                            subtitle: Text(c.lastMessage, style: TextStyle(color: Colors.white)),
                             onTap: () async {
                               switchToWaiting();
                               wc.setChat(index);
@@ -143,8 +148,11 @@ class _ChatScreenState extends State<ChatScreen> {
                     return ScrollConfiguration(
                       behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
                       child: SuperListView.builder(
+                        // cacheExtent: double.infinity,
+
                         shrinkWrap: true,
                         controller: _scrollController,
+                        listController: _listController,
                         itemCount: messages.length,
                         itemBuilder: (context, index) {
                           final msg = messages[index];
@@ -171,6 +179,11 @@ class _ChatScreenState extends State<ChatScreen> {
                                       child: Column(
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
+                                          index == 0
+                                              ? SizedBox(
+                                                  height: 40,
+                                                )
+                                              : SizedBox(),
                                           msg.data.attachements.isNotEmpty
                                               ? SizedBox(
                                                   width: 300,
@@ -210,6 +223,11 @@ class _ChatScreenState extends State<ChatScreen> {
                                               ),
                                             ),
                                           ),
+                                          index == messages.length - 1
+                                              ? SizedBox(
+                                                  height: 40,
+                                                )
+                                              : SizedBox(),
                                         ],
                                       ),
                                     ),

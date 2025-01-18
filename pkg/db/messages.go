@@ -12,7 +12,7 @@ func (db *ChatDatabase) GetMessages(chatID, fromMsgID uint32, direction string, 
 	var result []models.Message
 
 	// Base queries for next and previous
-	nextQuery := db.gormDB.Table("messages").Select("*").
+	nextQuery := db.gormDB.Debug().Table("messages").Select("*").
 		Where("chat_id = ? AND id > ?", chatID, fromMsgID).
 		Order("id ASC").
 		Limit(int(count))
