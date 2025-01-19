@@ -13,6 +13,7 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
+  double wh = 0;
   @override
   void initState() {
     wc.startMessageChannel();
@@ -31,15 +32,23 @@ class _ChatScreenState extends State<ChatScreen> {
   void _onScroll() {
     // print("${_scrollController.position.pixels} : ${_scrollController.position.maxScrollExtent}");
     if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
-      wc.getMessages(RecordDirection.next, 50, context, onComplete: (totalHeight) {
-        // _scrollController.jumpTo(_scrollController.position.pixels - totalHeight);
-        _listController.jumpToItem(index: 99, scrollController: _scrollController, alignment: 1);
+      wc.getMessages(RecordDirection.next, 50, context, onComplete: () {
+        print("okkkkkkkkkkkk");
+        if (_listController.numberOfItems > 100) {
+          _listController.jumpToItem(
+            // duration: (estimatedDistance) => Duration(milliseconds: 1000),
+            // curve: (estimatedDistance) => Curves.easeInOut,
+            index: 99,
+            scrollController: _scrollController,
+            alignment: 1 - wh,
+          );
+        }
       });
     }
     if (_scrollController.position.pixels == _scrollController.position.minScrollExtent) {
-      wc.getMessages(RecordDirection.previous, 50, context, onComplete: (totalHeight) {
+      wc.getMessages(RecordDirection.previous, 50, context, onComplete: () {
         // _scrollController.jumpTo(_scrollController.position.pixels + totalHeight);
-        _listController.jumpToItem(index: 50, scrollController: _scrollController, alignment: 0);
+        _listController.jumpToItem(index: 50, scrollController: _scrollController, alignment: 0 + (40 / MediaQuery.of(context).size.height));
       });
     }
   }
@@ -49,11 +58,15 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
+    wh = 40 / (MediaQuery.of(context).size.height);
+    print("wh : ${wh}");
+
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Chat App"),
-        scrolledUnderElevation: 0,
-      ),
+      // appBar: AppBar(
+      //   title: Text("Chat App"),
+      //   scrolledUnderElevation: 0,
+
+      // ),
       body: Row(
         children: [
           Container(

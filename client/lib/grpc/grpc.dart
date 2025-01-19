@@ -106,7 +106,7 @@ class WebChat {
     RecordDirection direction,
     int count,
     BuildContext context, {
-    Function(double)? onComplete,
+    Function()? onComplete,
   }) async {
     if (_lock) {
       print("Task is locked!");
@@ -129,8 +129,13 @@ class WebChat {
 
     var chatId = chats[_selectedChatIndex].chatId;
 
-    final request = GetMessagesRequest(chatId: chatId, direction: direction.toString(), count: count, readedMsgId: readedMsgId);
-    double totalHeight = 0;
+    final request = GetMessagesRequest(
+      chatId: chatId,
+      direction: direction.toString(),
+      count: count,
+      readedMsgId: readedMsgId,
+    );
+    // double totalHeight = 0;
     List<Message> msgs = [];
 
     _service.getMessages(request).listen((response) {
@@ -154,9 +159,9 @@ class WebChat {
           if (messages.length > pageSize) {
             // Calculate total height of messages from top of list
             var count = messages.length - pageSize;
-            for (var i = 0; i <= count - 1; i++) {
-              totalHeight += messages[i].boxHeight!;
-            }
+            // for (var i = 0; i <= count - 1; i++) {
+            //   totalHeight += messages[i].boxHeight!;
+            // }
             // Removing messages from the top of list
             messages.removeRange(0, count.toInt());
           }
@@ -172,9 +177,9 @@ class WebChat {
             messages.removeRange(len - rmCounts, len);
           }
           // Calculate the total height of messages to be added to the top of the list.
-          for (var msg in msgs) {
-            totalHeight += msg.boxHeight!;
-          }
+          // for (var msg in msgs) {
+          //   totalHeight += msg.boxHeight!;
+          // }
         } else {
           // If do not lazy-loading messages
           messages.insertAll(0, msgs);
@@ -185,7 +190,7 @@ class WebChat {
         msgs = [];
         // call done callback if defined
         if (onComplete != null) {
-          onComplete(totalHeight);
+          onComplete();
         }
       } finally {
         _lock = false;
