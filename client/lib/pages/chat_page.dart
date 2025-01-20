@@ -33,15 +33,26 @@ class _ChatScreenState extends State<ChatScreen> {
     // print("${_scrollController.position.pixels} : ${_scrollController.position.maxScrollExtent}");
     if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
       wc.getMessages(RecordDirection.next, 50, context, onComplete: () {
-        print("okkkkkkkkkkkk");
+        //  wh = 40 / (MediaQuery.of(context).size.height);
+
         if (_listController.numberOfItems > 100) {
           _listController.jumpToItem(
-            // duration: (estimatedDistance) => Duration(milliseconds: 1000),
-            // curve: (estimatedDistance) => Curves.easeInOut,
             index: 99,
             scrollController: _scrollController,
             alignment: 1 - wh,
           );
+
+            // TODO: animate to next page with delay before
+           Future.delayed(Duration(microseconds: 500),() {
+             _listController.animateToItem(
+                duration: (estimatedDistance) => Duration(milliseconds: 1000),
+                curve: (estimatedDistance) => Curves.easeInOut,
+                index: 100,
+                scrollController: _scrollController,
+                alignment: 1+0.5 ,
+              );
+           },);
+          
         }
       });
     }
@@ -58,8 +69,6 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
-    wh = 40 / (MediaQuery.of(context).size.height);
-    print("wh : ${wh}");
 
     return Scaffold(
       // appBar: AppBar(
@@ -192,11 +201,11 @@ class _ChatScreenState extends State<ChatScreen> {
                                       child: Column(
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
-                                          index == 0
-                                              ? SizedBox(
-                                                  height: 40,
-                                                )
-                                              : SizedBox(),
+                                          // index == 0
+                                          //     ? SizedBox(
+                                          //         height: 40,
+                                          //       )
+                                          //     : SizedBox(),
                                           msg.data.attachements.isNotEmpty
                                               ? SizedBox(
                                                   width: 300,
@@ -228,7 +237,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                                 topRight: Radius.circular(10),
                                               ),
                                             ),
-                                            height: msg.textHeight,
+                                            // height: msg.textHeight,
                                             child: RichText(
                                               text: TextSpan(
                                                 text: msg.data.content,
@@ -236,11 +245,11 @@ class _ChatScreenState extends State<ChatScreen> {
                                               ),
                                             ),
                                           ),
-                                          index == messages.length - 1
-                                              ? SizedBox(
-                                                  height: 40,
-                                                )
-                                              : SizedBox(),
+                                          // index == messages.length - 1
+                                          //     ? SizedBox(
+                                          //         height: 40,
+                                          //       )
+                                          //     : SizedBox(),
                                         ],
                                       ),
                                     ),
