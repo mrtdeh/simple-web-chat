@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 class ChatSidebar extends StatelessWidget {
   final VoidCallback? onChange;
   final String? title;
-  ChatSidebar({this.title, this.onChange});
+  const ChatSidebar({super.key, this.title, this.onChange});
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +65,7 @@ class ChatListItem extends StatelessWidget {
   final int index;
   final VoidCallback? onTap;
 
-  ChatListItem({required this.chat, required this.index, this.onTap});
+  const ChatListItem({super.key, required this.chat, required this.index, this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -81,7 +81,7 @@ class ChatListItem extends StatelessWidget {
       title: Text(chat.chatTitle),
       subtitle: Text(chat.lastMessage, style: TextStyle(color: Colors.white)),
       onTap: () async {
-        if (this.onTap != null) {
+        if (onTap != null) {
           onTap!();
         }
         wc.setChat(index);

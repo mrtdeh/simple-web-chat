@@ -125,7 +125,7 @@ class WebChat {
     } else {
       readedMsgId = 0;
     }
-    print("get message : ${direction} ${count} from ${readedMsgId}");
+    print("get message : $direction $count from $readedMsgId");
 
     var chatId = chats[_selectedChatIndex].chatId;
 
@@ -147,7 +147,7 @@ class WebChat {
       }
     }, onDone: () {
       try {
-        if (msgs.length == 0) {
+        if (msgs.isEmpty) {
           // Return on empty messages received
           return;
         }

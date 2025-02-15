@@ -1,6 +1,6 @@
 module api-channel
 
-go 1.23.3
+go 1.23.2
 
 require (
 	github.com/anthonynsimon/bild v0.14.0

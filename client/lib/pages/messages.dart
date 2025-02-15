@@ -8,7 +8,7 @@ class ChatMessages extends StatelessWidget {
   final ScrollController? scrollController;
   final ListController? listController;
 
-  ChatMessages({this.listController, this.scrollController});
+  const ChatMessages({super.key, this.listController, this.scrollController});
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +55,7 @@ class MessagesList extends StatelessWidget {
   final ScrollController? scrollController;
   final ListController? listController;
 
-  MessagesList({required this.messages, this.listController, this.scrollController});
+  const MessagesList({super.key, required this.messages, this.listController, this.scrollController});
 
   @override
   Widget build(BuildContext context) {
@@ -78,7 +78,7 @@ class MessageBubble extends StatelessWidget {
   final Message message;
   final int index;
 
-  MessageBubble({required this.message, required this.index});
+  const MessageBubble({super.key, required this.message, required this.index});
 
   @override
   Widget build(BuildContext context) {
