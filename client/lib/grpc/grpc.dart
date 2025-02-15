@@ -72,6 +72,7 @@ class WebChat {
 // }
 
   void resetStream() {
+    messages = [];
     _messageController = StreamController<List<Message>>.broadcast();
   }
 
