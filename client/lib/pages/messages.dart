@@ -139,7 +139,7 @@ class MessageBubble extends StatelessWidget {
                       ),
                       child: RichText(
                         text: TextSpan(
-                          text: "$index : ${message.data.content}",
+                          text: "${message.data.content} - ${message.status}",
                           style: defaultTextStyle,
                         ),
                       ),

@@ -5,12 +5,13 @@ import 'package:flutter/material.dart';
 class ChatSidebar extends StatelessWidget {
   final VoidCallback? onChange;
   final String? title;
-  const ChatSidebar({super.key, this.title, this.onChange});
+  final double? width;
+  const ChatSidebar({super.key, this.title, this.width, this.onChange});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: CHATS_WIDTH,
+      width: width,
       color: Colors.black54,
       child: Column(
         children: [

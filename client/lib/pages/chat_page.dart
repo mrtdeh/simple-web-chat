@@ -29,7 +29,8 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   void _onScroll() {
-    if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
+    if (_scrollController.position.pixels ==
+        _scrollController.position.maxScrollExtent) {
       wc.getMessages(RecordDirection.next, 50, context, onComplete: () {
         var t = wc.messages.length - 50;
         print("t : $t");
@@ -52,7 +53,8 @@ class _ChatScreenState extends State<ChatScreen> {
       });
     }
 
-    if (_scrollController.position.pixels == _scrollController.position.minScrollExtent) {
+    if (_scrollController.position.pixels ==
+        _scrollController.position.minScrollExtent) {
       wc.getMessages(RecordDirection.previous, 50, context, onComplete: () {
         _listController.jumpToItem(
           index: 50,
@@ -76,6 +78,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
   final _scrollController = ScrollController();
   final _listController = ListController();
+  TextEditingController _textController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -84,13 +87,56 @@ class _ChatScreenState extends State<ChatScreen> {
         children: [
           ChatSidebar(
             title: "Chats View",
+            width: CHATS_WIDTH,
             onChange: () => switchToWaiting(),
           ),
           Expanded(
-              child: ChatMessages(
-            listController: _listController,
-            scrollController: _scrollController,
-          )),
+            child: Column(
+              children: [
+                Expanded(
+                  child: ChatMessages(
+                    listController: _listController,
+                    scrollController: _scrollController,
+                  ),
+                ),
+                SizedBox(
+                  height: 50,
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: TextFormField(
+                          maxLines: 5,
+                          controller: _textController,
+                        ),
+                      ),
+                      ElevatedButton(
+                        onPressed: () async {
+                          // Create new message object
+                          var msg = wc.newMessage(
+                              content: _textController.text,
+                              senderId: wc.userID);
+                          // Add new message bubble to messages list with sending status
+                          wc.addMessage(msg);
+                          // Send new message to server
+                          var chatId = wc.getActiveChatID(); 
+                          print("chatId : $chatId");
+
+                          wc.sendMessage(
+                            chatId: chatId,
+                            message: msg,
+                          );
+                          setState(() {
+                            
+                          });
+                        },
+                        child: Text("Send"),
+                      )
+                    ],
+                  ),
+                )
+              ],
+            ),
+          ),
         ],
       ),
     );

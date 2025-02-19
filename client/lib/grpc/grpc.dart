@@ -4,7 +4,8 @@ import 'package:grpc/grpc_web.dart';
 
 import '../proto/service.pbgrpc.dart';
 
-TextStyle defaultTextStyle = const TextStyle(color: Colors.white, fontSize: 16, height: 2);
+TextStyle defaultTextStyle =
+    const TextStyle(color: Colors.white, fontSize: 16, height: 2);
 
 class Message {
   final MessagesResponse_MessageData data;
@@ -13,72 +14,96 @@ class Message {
   double? boxHeight;
   bool? haveAvatar;
   bool? toLeft;
+  MessageStatus? status;
 
-  Message({
-    required this.data,
-    required this.key,
-    this.textHeight,
-    this.boxHeight,
-    this.haveAvatar,
-    this.toLeft,
-  });
+  Message(
+      {required this.data,
+      required this.key,
+      this.textHeight,
+      this.boxHeight,
+      this.haveAvatar,
+      this.toLeft,
+      this.status});
+
+  void setStatus(MessageStatus s) {
+    status = s;
+  }
+
+  void setID(int id) {
+    data.messageId = id;
+  }
 }
+
 
 const double CHATS_WIDTH = 400;
 
-enum RecordDirection {
-  previous,
-  next,
-  none
-}
+enum MessageStatus { sending, sended, received, failed }
+
+enum RecordDirection { previous, next, none }
 
 class WebChat {
   WebChat._privateConstructor();
   static final WebChat instance = WebChat._privateConstructor();
 
   late ChatServiceClient _service;
-  String token = "";
-  int userID = 0;
-  // ChatsResponse_ChatData? chat;
   int _selectedChatIndex = 0;
+  double jumpHeight = 0;
+  int userID = 0;
+  String token = "";
+  List<Message> messages = [];
+  List<ChatsResponse_ChatData> chats = [];
+  // ChatsResponse_ChatData? chat;
+  int getActiveChatID() {
+    return chats[_selectedChatIndex].chatId;
+  }
+
   void setChat(int index) {
     _selectedChatIndex = index;
   }
 
-  // ChatsResponse_ChatData getChat(int index){
+  void addMessage(Message msg) {
+    messages.add(msg);
+    _messageStream.add(messages);
+  }
 
-  // }
 
-  List<ChatsResponse_ChatData> chats = [];
-  List<Message> messages = [];
-  double jumpHeight = 0;
+  Message newMessage({String? content, int? senderId}) {
+    var chat = chats[_selectedChatIndex];
+    var msg = Message(
+        data: MessagesResponse_MessageData(
+          content: content,
+          senderId: senderId,
+        ),
+        key: GlobalKey(),
+        haveAvatar: chat.type == "public",
+        toLeft: false);
 
-  final StreamController<List<ChatsResponse_ChatData>> _chatController = StreamController<List<ChatsResponse_ChatData>>.broadcast();
-  Stream<List<ChatsResponse_ChatData>> get chatStream => _chatController.stream;
+    return msg;
+  }
 
-  StreamController<List<Message>> _messageController = StreamController<List<Message>>.broadcast();
-  Stream<List<Message>> get messageStream => _messageController.stream;
+  final StreamController<List<ChatsResponse_ChatData>> _chatStream =
+      StreamController<List<ChatsResponse_ChatData>>.broadcast();
+  Stream<List<ChatsResponse_ChatData>> get chatStream => _chatStream.stream;
+
+  StreamController<List<Message>> _messageStream =
+      StreamController<List<Message>>.broadcast();
+  Stream<List<Message>> get messageStream => _messageStream.stream;
 
   void init() {
     Future.delayed(Duration(microseconds: 1), () {
-      _messageController.sink.add([]);
+      _messageStream.sink.add([]);
     });
   }
 
-//   Stream<List<Message>> getMessageStream() async* {
-//   yield null;
-//   await Future.delayed(Duration(seconds: 2));
-//   yield await messageStream.;
-// }
-
   void resetStream() {
     messages = [];
-    _messageController = StreamController<List<Message>>.broadcast();
+    _messageStream = StreamController<List<Message>>.broadcast();
   }
 
   Future<void> start() async {
     try {
-      final channel = GrpcWebClientChannel.xhr(Uri.parse('http://localhost:8081'));
+      final channel =
+          GrpcWebClientChannel.xhr(Uri.parse('http://localhost:8081'));
       _service = ChatServiceClient(channel);
     } catch (err) {
       print("connect to server failed : " + err.toString());
@@ -186,7 +211,7 @@ class WebChat {
           messages.insertAll(0, msgs);
         }
         // Update stream sink to update Listview of messages
-        _messageController.sink.add(messages);
+        _messageStream.sink.add(messages);
         // reset incomming list
         msgs = [];
         // call done callback if defined
@@ -202,6 +227,27 @@ class WebChat {
     });
   }
 
+  void sendMessage({Message? message, int? chatId, Function()? onComplete}) async {
+    final request = MessageRequest(
+      chatId: chatId,
+      content: message!.data.content,
+      token: token,
+    );
+
+    try {
+      var res = await _service.sendMessage(request);
+      message.setStatus(MessageStatus.sended);
+      message.setID(res.messageId);
+      if (onComplete != null) {
+        onComplete();
+      }
+    } catch (e) {
+      message.setStatus(MessageStatus.failed);
+      print(e);
+    }
+    //  res.messageId
+  }
+
   void startMessageChannel() {
     print("start listening...");
     final request = MessageChannelRequest()..token = token;
@@ -210,7 +256,7 @@ class WebChat {
         for (var chat in response.chats.data) {
           chats.add(chat);
         }
-        _chatController.sink.add(chats);
+        _chatStream.sink.add(chats);
       }
     }, onError: (error) {
       print("Error in message channel: $error");
@@ -220,7 +266,8 @@ class WebChat {
     });
   }
 
-  Message newBoxMessage(MessagesResponse_MessageData msg, BuildContext context) {
+  Message newBoxMessage(
+      MessagesResponse_MessageData msg, BuildContext context) {
     var text = msg.content;
     var attLen = msg.attachements.length;
     double textHeight = 0.0;
