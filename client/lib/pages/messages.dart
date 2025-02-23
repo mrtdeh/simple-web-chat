@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:dashboard/grpc/grpc.dart';
+import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
 
@@ -84,7 +85,7 @@ class MessageBubble extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Container(
-        key: message.key,
+        // key: message.key,
         width: 600,
         margin: EdgeInsets.symmetric(horizontal: 10),
         child: Directionality(
@@ -109,6 +110,8 @@ class MessageBubble extends StatelessWidget {
                         ? SizedBox(
                             width: 300,
                             child: GridView.builder(
+                              // addAutomaticKeepAlives: true,
+                              // key: GlobalKey(),
                               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                                 crossAxisCount: 3,
                                 crossAxisSpacing: 5,
@@ -118,8 +121,10 @@ class MessageBubble extends StatelessWidget {
                               shrinkWrap: true,
                               itemCount: message.data.attachements.length,
                               itemBuilder: (context, index) {
-                                return Image.memory(
+                                return ExtendedImage.memory(
                                   base64Decode(message.data.attachements[index].placeholder),
+
+                                  // mode: ,
                                 );
                               },
                             ),

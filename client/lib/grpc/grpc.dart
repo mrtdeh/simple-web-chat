@@ -4,8 +4,7 @@ import 'package:grpc/grpc_web.dart';
 
 import '../proto/service.pbgrpc.dart';
 
-TextStyle defaultTextStyle =
-    const TextStyle(color: Colors.white, fontSize: 16, height: 2);
+TextStyle defaultTextStyle = const TextStyle(color: Colors.white, fontSize: 16, height: 2);
 
 class Message {
   final MessagesResponse_MessageData data;
@@ -16,14 +15,7 @@ class Message {
   bool? toLeft;
   MessageStatus? status;
 
-  Message(
-      {required this.data,
-      required this.key,
-      this.textHeight,
-      this.boxHeight,
-      this.haveAvatar,
-      this.toLeft,
-      this.status});
+  Message({required this.data, required this.key, this.textHeight, this.boxHeight, this.haveAvatar, this.toLeft, this.status});
 
   void setStatus(MessageStatus s) {
     status = s;
@@ -34,12 +26,20 @@ class Message {
   }
 }
 
-
 const double CHATS_WIDTH = 400;
 
-enum MessageStatus { sending, sended, received, failed }
+enum MessageStatus {
+  sending,
+  sended,
+  received,
+  failed
+}
 
-enum RecordDirection { previous, next, none }
+enum RecordDirection {
+  previous,
+  next,
+  none
+}
 
 class WebChat {
   WebChat._privateConstructor();
@@ -66,6 +66,13 @@ class WebChat {
     _messageStream.add(messages);
   }
 
+  void updateMessage(Message msg) {
+    final updatedMessages = messages.map((m) {
+      return m.data.messageId == msg.data.messageId ? msg : m;
+    }).toList();
+    messages = updatedMessages;
+    _messageStream.sink.add(messages);
+  }
 
   Message newMessage({String? content, int? senderId}) {
     var chat = chats[_selectedChatIndex];
@@ -81,12 +88,10 @@ class WebChat {
     return msg;
   }
 
-  final StreamController<List<ChatsResponse_ChatData>> _chatStream =
-      StreamController<List<ChatsResponse_ChatData>>.broadcast();
+  final StreamController<List<ChatsResponse_ChatData>> _chatStream = StreamController<List<ChatsResponse_ChatData>>.broadcast();
   Stream<List<ChatsResponse_ChatData>> get chatStream => _chatStream.stream;
 
-  StreamController<List<Message>> _messageStream =
-      StreamController<List<Message>>.broadcast();
+  StreamController<List<Message>> _messageStream = StreamController<List<Message>>.broadcast();
   Stream<List<Message>> get messageStream => _messageStream.stream;
 
   void init() {
@@ -102,8 +107,7 @@ class WebChat {
 
   Future<void> start() async {
     try {
-      final channel =
-          GrpcWebClientChannel.xhr(Uri.parse('http://localhost:8081'));
+      final channel = GrpcWebClientChannel.xhr(Uri.parse('http://localhost:8081'));
       _service = ChatServiceClient(channel);
     } catch (err) {
       print("connect to server failed : " + err.toString());
@@ -266,8 +270,7 @@ class WebChat {
     });
   }
 
-  Message newBoxMessage(
-      MessagesResponse_MessageData msg, BuildContext context) {
+  Message newBoxMessage(MessagesResponse_MessageData msg, BuildContext context) {
     var text = msg.content;
     var attLen = msg.attachements.length;
     double textHeight = 0.0;

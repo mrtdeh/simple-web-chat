@@ -29,8 +29,7 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   void _onScroll() {
-    if (_scrollController.position.pixels ==
-        _scrollController.position.maxScrollExtent) {
+    if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
       wc.getMessages(RecordDirection.next, 50, context, onComplete: () {
         var t = wc.messages.length - 50;
         print("t : $t");
@@ -53,8 +52,7 @@ class _ChatScreenState extends State<ChatScreen> {
       });
     }
 
-    if (_scrollController.position.pixels ==
-        _scrollController.position.minScrollExtent) {
+    if (_scrollController.position.pixels == _scrollController.position.minScrollExtent) {
       wc.getMessages(RecordDirection.previous, 50, context, onComplete: () {
         _listController.jumpToItem(
           index: 50,
@@ -112,22 +110,21 @@ class _ChatScreenState extends State<ChatScreen> {
                       ElevatedButton(
                         onPressed: () async {
                           // Create new message object
-                          var msg = wc.newMessage(
-                              content: _textController.text,
-                              senderId: wc.userID);
+                          var msg = wc.newMessage(content: _textController.text, senderId: wc.userID);
                           // Add new message bubble to messages list with sending status
                           wc.addMessage(msg);
                           // Send new message to server
-                          var chatId = wc.getActiveChatID(); 
+                          var chatId = wc.getActiveChatID();
                           print("chatId : $chatId");
 
                           wc.sendMessage(
                             chatId: chatId,
                             message: msg,
+                            onComplete: () {
+                              wc.updateMessage(msg);
+                            },
                           );
-                          setState(() {
-                            
-                          });
+                          // setState(() {});
                         },
                         child: Text("Send"),
                       )
