@@ -56,7 +56,11 @@ class MessagesList extends StatelessWidget {
   final ScrollController? scrollController;
   final ListController? listController;
 
-  const MessagesList({super.key, required this.messages, this.listController, this.scrollController});
+  const MessagesList(
+      {super.key,
+      required this.messages,
+      this.listController,
+      this.scrollController});
 
   @override
   Widget build(BuildContext context) {
@@ -89,7 +93,8 @@ class MessageBubble extends StatelessWidget {
         width: 600,
         margin: EdgeInsets.symmetric(horizontal: 10),
         child: Directionality(
-          textDirection: message.toLeft! ? TextDirection.ltr : TextDirection.rtl,
+          textDirection:
+              message.toLeft! ? TextDirection.ltr : TextDirection.rtl,
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
@@ -112,19 +117,25 @@ class MessageBubble extends StatelessWidget {
                             child: GridView.builder(
                               // addAutomaticKeepAlives: true,
                               // key: GlobalKey(),
-                              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                              gridDelegate:
+                                  SliverGridDelegateWithFixedCrossAxisCount(
                                 crossAxisCount: 3,
                                 crossAxisSpacing: 5,
                                 mainAxisSpacing: 5,
                               ),
-                              controller: ScrollController(keepScrollOffset: false),
+                              controller:
+                                  ScrollController(keepScrollOffset: false),
                               shrinkWrap: true,
                               itemCount: message.data.attachements.length,
                               itemBuilder: (context, index) {
-                                return ExtendedImage.memory(
-                                  base64Decode(message.data.attachements[index].placeholder),
-
-                                  // mode: ,
+                                // return ExtendedImage.memory(
+                                //   base64Decode(message.data.attachements[index].placeholder),
+                                //        gaplessPlayback: true,
+                                // );
+                                return Image(
+                                  image: MemoryImage(base64Decode(message
+                                      .data.attachements[index].placeholder)),
+                                  gaplessPlayback: true,
                                 );
                               },
                             ),
@@ -136,8 +147,12 @@ class MessageBubble extends StatelessWidget {
                       decoration: BoxDecoration(
                         color: const Color.fromARGB(255, 43, 43, 43),
                         borderRadius: BorderRadius.only(
-                          bottomLeft: message.toLeft! ? Radius.zero : Radius.circular(10),
-                          bottomRight: message.toLeft! ? Radius.circular(10) : Radius.zero,
+                          bottomLeft: message.toLeft!
+                              ? Radius.zero
+                              : Radius.circular(10),
+                          bottomRight: message.toLeft!
+                              ? Radius.circular(10)
+                              : Radius.zero,
                           topLeft: Radius.circular(10),
                           topRight: Radius.circular(10),
                         ),
