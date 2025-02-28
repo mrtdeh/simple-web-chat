@@ -28,11 +28,29 @@ class _ChatScreenState extends State<ChatScreen> {
     });
   }
 
+  void scrollToBottom(bool withAnimate) {
+    if (withAnimate) {
+      _listController.animateToItem(
+        index: wc.messages.length - 2,
+        scrollController: _scrollController,
+        alignment: 0,
+        duration: (estimatedDistance) => Duration(milliseconds: 1000),
+        curve: (estimatedDistance) => Curves.easeInOut,
+      );
+    } else {
+      _listController.jumpToItem(
+        index: wc.messages.length - 2,
+        scrollController: _scrollController,
+        alignment: 0,
+      );
+    }
+  }
+
   void _onScroll() {
     if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
-      wc.getMessages(RecordDirection.next, 50, context, onComplete: () {
+      wc.getMessages(RecordDirection.next, 50, context, onComplete: (x) {
         var t = wc.messages.length - 50;
-        print("t : $t");
+        // print("t : $t");
         _listController.jumpToItem(
           index: t - 1,
           scrollController: _scrollController,
@@ -53,7 +71,7 @@ class _ChatScreenState extends State<ChatScreen> {
     }
 
     if (_scrollController.position.pixels == _scrollController.position.minScrollExtent) {
-      wc.getMessages(RecordDirection.previous, 50, context, onComplete: () {
+      wc.getMessages(RecordDirection.previous, 50, context, onComplete: (x) {
         _listController.jumpToItem(
           index: 50,
           scrollController: _scrollController,
@@ -109,21 +127,30 @@ class _ChatScreenState extends State<ChatScreen> {
                       ),
                       ElevatedButton(
                         onPressed: () async {
-                          // Create new message object
-                          var msg = wc.newMessage(content: _textController.text, senderId: wc.userID);
-                          // Add new message bubble to messages list with sending status
-                          wc.addMessage(msg);
-                          // Send new message to server
-                          var chatId = wc.getActiveChatID();
-                          print("chatId : $chatId");
-
-                          wc.sendMessage(
-                            chatId: chatId,
-                            message: msg,
-                            onComplete: () {
-                              wc.updateMessage(msg);
-                            },
-                          );
+                          try {
+                            // Create new message object
+                            var msg = wc.newMessage(content: _textController.text, senderId: wc.userID);
+                            // Check page position
+                            wc.getMessages(RecordDirection.last, 50, context, onComplete: (x) {
+                              // Add new message bubble to messages list with sending status
+                              wc.addMessage(msg);
+                              // Scroll to bottom of screen
+                              scrollToBottom(x == 0);
+                              // Send new message to server
+                              wc.sendMessage(
+                                chatId: wc.getActiveChatID(),
+                                message: msg,
+                                onComplete: () {
+                                  Future.delayed(Duration(seconds: 5), () {
+                                    wc.updateMessage(msg);
+                                    setState(() {});
+                                  });
+                                },
+                              );
+                            });
+                          } catch (e) {
+                            print("error : $e");
+                          }
                           // setState(() {});
                         },
                         child: Text("Send"),

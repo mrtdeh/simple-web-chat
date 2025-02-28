@@ -1638,7 +1638,7 @@ class GetMessagesRequest extends $pb.GeneratedMessage {
   factory GetMessagesRequest({
     $core.int? chatId,
     $core.int? readedMsgId,
-    $core.String? direction,
+    $core.int? direction,
     $core.int? count,
   }) {
     final $result = create();
@@ -1663,7 +1663,7 @@ class GetMessagesRequest extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'GetMessagesRequest', package: const $pb.PackageName(_omitMessageNames ? '' : 'proto'), createEmptyInstance: create)
     ..a<$core.int>(1, _omitFieldNames ? '' : 'chatId', $pb.PbFieldType.OU3)
     ..a<$core.int>(2, _omitFieldNames ? '' : 'readedMsgId', $pb.PbFieldType.OU3)
-    ..aOS(3, _omitFieldNames ? '' : 'direction')
+    ..a<$core.int>(3, _omitFieldNames ? '' : 'direction', $pb.PbFieldType.O3)
     ..a<$core.int>(4, _omitFieldNames ? '' : 'count', $pb.PbFieldType.O3)
     ..hasRequiredFields = false
   ;
@@ -1708,9 +1708,9 @@ class GetMessagesRequest extends $pb.GeneratedMessage {
   void clearReadedMsgId() => clearField(2);
 
   @$pb.TagNumber(3)
-  $core.String get direction => $_getSZ(2);
+  $core.int get direction => $_getIZ(2);
   @$pb.TagNumber(3)
-  set direction($core.String v) { $_setString(2, v); }
+  set direction($core.int v) { $_setSignedInt32(2, v); }
   @$pb.TagNumber(3)
   $core.bool hasDirection() => $_has(2);
   @$pb.TagNumber(3)
@@ -1987,10 +1987,18 @@ class MessagesResponse_RepliedMessage extends $pb.GeneratedMessage {
 class MessagesResponse extends $pb.GeneratedMessage {
   factory MessagesResponse({
     $core.Iterable<MessagesResponse_MessageData>? data,
+    $core.int? pageIndex,
+    $core.int? pageLast,
   }) {
     final $result = create();
     if (data != null) {
       $result.data.addAll(data);
+    }
+    if (pageIndex != null) {
+      $result.pageIndex = pageIndex;
+    }
+    if (pageLast != null) {
+      $result.pageLast = pageLast;
     }
     return $result;
   }
@@ -2000,6 +2008,8 @@ class MessagesResponse extends $pb.GeneratedMessage {
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'MessagesResponse', package: const $pb.PackageName(_omitMessageNames ? '' : 'proto'), createEmptyInstance: create)
     ..pc<MessagesResponse_MessageData>(1, _omitFieldNames ? '' : 'data', $pb.PbFieldType.PM, subBuilder: MessagesResponse_MessageData.create)
+    ..a<$core.int>(2, _omitFieldNames ? '' : 'pageIndex', $pb.PbFieldType.O3)
+    ..a<$core.int>(3, _omitFieldNames ? '' : 'pageLast', $pb.PbFieldType.O3)
     ..hasRequiredFields = false
   ;
 
@@ -2026,6 +2036,24 @@ class MessagesResponse extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(1)
   $core.List<MessagesResponse_MessageData> get data => $_getList(0);
+
+  @$pb.TagNumber(2)
+  $core.int get pageIndex => $_getIZ(1);
+  @$pb.TagNumber(2)
+  set pageIndex($core.int v) { $_setSignedInt32(1, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasPageIndex() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearPageIndex() => clearField(2);
+
+  @$pb.TagNumber(3)
+  $core.int get pageLast => $_getIZ(2);
+  @$pb.TagNumber(3)
+  set pageLast($core.int v) { $_setSignedInt32(2, v); }
+  @$pb.TagNumber(3)
+  $core.bool hasPageLast() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearPageLast() => clearField(3);
 }
 
 class GetChatsRequest extends $pb.GeneratedMessage {

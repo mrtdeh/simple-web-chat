@@ -148,11 +148,13 @@ message MessageChannelResponse{
 message GetMessagesRequest{
   uint32 chat_id = 1;
   uint32 readed_msg_id = 2;
-  string direction = 3; // next , previous
+  int32 direction = 3; // next , previous
   int32 count = 4;
 }
 message MessagesResponse{
   repeated MessageData data = 1;
+  int32 page_index = 2;
+  int32 page_last = 3; 
 
   message MessageData{
     uint32 senderId = 1; // Sender user id

@@ -38,6 +38,7 @@ enum MessageStatus {
 enum RecordDirection {
   previous,
   next,
+  last,
   none
 }
 
@@ -136,7 +137,7 @@ class WebChat {
     RecordDirection direction,
     int count,
     BuildContext context, {
-    Function()? onComplete,
+    Function(int)? onComplete,
   }) async {
     if (_lock) {
       print("Task is locked!");
@@ -146,22 +147,25 @@ class WebChat {
 
     var readedMsgId = 0;
 
-    if (direction == RecordDirection.next) {
-      // Set parameters for get next page
-      readedMsgId = messages[messages.length - 1].data.messageId;
-    } else if (direction == RecordDirection.previous) {
-      // Set parameters for get previous page
-      readedMsgId = messages[0].data.messageId;
-    } else {
-      readedMsgId = 0;
+    switch (direction) {
+      case RecordDirection.next || RecordDirection.last:
+        // Set parameters for get next page
+        readedMsgId = messages[messages.length - 1].data.messageId;
+      // break;
+      case RecordDirection.previous:
+        // Set parameters for get previous page
+        readedMsgId = messages[0].data.messageId;
+      // break;
+      default:
     }
+
     print("get message : $direction $count from $readedMsgId");
 
     var chatId = chats[_selectedChatIndex].chatId;
 
     final request = GetMessagesRequest(
       chatId: chatId,
-      direction: direction.toString(),
+      direction: direction.index,
       count: count,
       readedMsgId: readedMsgId,
     );
@@ -181,48 +185,50 @@ class WebChat {
           // Return on empty messages received
           return;
         }
-        if (direction == RecordDirection.next) {
-          // If do lazy-loading next message
-          // Add messages to end of list
-          messages.insertAll(messages.length, msgs);
-          // Check if total messages reached maximum page size
-          if (messages.length > pageSize) {
-            // Calculate total height of messages from top of list
-            var count = messages.length - pageSize;
-            // for (var i = 0; i <= count - 1; i++) {
-            //   totalHeight += messages[i].boxHeight!;
-            // }
-            // Removing messages from the top of list
-            messages.removeRange(0, count.toInt());
-          }
-        } else if (direction == RecordDirection.previous) {
-          // If do lazy-loading previous message
-          // Add messages to the top of list
-          messages.insertAll(0, msgs);
-          // Check if total messages reached maximum page size
-          if (messages.length > pageSize) {
-            // Removing the messages from the down of list
-            var len = messages.length;
-            var rmCounts = (messages.length - pageSize).toInt();
-            messages.removeRange(len - rmCounts, len);
-          }
-          // Calculate the total height of messages to be added to the top of the list.
-          // for (var msg in msgs) {
-          //   totalHeight += msg.boxHeight!;
-          // }
-        } else {
-          // If do not lazy-loading messages
-          messages.insertAll(0, msgs);
+        switch (direction) {
+          case RecordDirection.next:
+            // If do lazy-loading next message
+            // Add messages to end of list
+            messages.insertAll(messages.length, msgs);
+            // Check if total messages reached maximum page size
+            if (messages.length > pageSize) {
+              // Calculate total height of messages from top of list
+              var count = messages.length - pageSize;
+              // for (var i = 0; i <= count - 1; i++) {
+              //   totalHeight += messages[i].boxHeight!;
+              // }
+              // Removing messages from the top of list
+              messages.removeRange(0, count.toInt());
+            }
+          // break;
+          case RecordDirection.previous:
+            // If do lazy-loading previous message
+            // Add messages to the top of list
+            messages.insertAll(0, msgs);
+            // Check if total messages reached maximum page size
+            if (messages.length > pageSize) {
+              // Removing the messages from the down of list
+              var len = messages.length;
+              var rmCounts = (messages.length - pageSize).toInt();
+              messages.removeRange(len - rmCounts, len);
+            }
+          // break;
+          case RecordDirection.last:
+            messages = msgs;
+          // break;
+          default:
+            // If do not lazy-loading messages
+            messages.insertAll(0, msgs);
         }
         // Update stream sink to update Listview of messages
         _messageStream.sink.add(messages);
-        // reset incomming list
-        msgs = [];
+      } finally {
         // call done callback if defined
         if (onComplete != null) {
-          onComplete();
+          onComplete(msgs.length);
         }
-      } finally {
+        // reset incomming list
+        msgs = [];
         _lock = false;
       }
     }, onError: (error) {

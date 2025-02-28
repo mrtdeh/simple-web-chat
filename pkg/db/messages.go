@@ -8,32 +8,72 @@ import (
 	"gorm.io/gorm"
 )
 
-func (db *ChatDatabase) GetMessages(chatID, fromMsgID uint32, direction string, count int32) ([]models.Message, error) {
+func getPageNumber(recordIndex, pageSize int) int {
+	return (recordIndex-1)/pageSize + 1
+}
+
+func (db *ChatDatabase) GetLastMessageID(chatId int) int {
+	var lastID int
+	db.gormDB.Model(&models.Message{}).
+		Select("id").
+		Where("chat_id = ?", chatId).
+		Order("id DESC").
+		Limit(1).
+		Scan(&lastID)
+	return lastID
+}
+
+const (
+	DirectionPrev int32 = iota
+	DirectionNext
+	DirectionLast
+	DirectionNone
+)
+
+func (db *ChatDatabase) GetMessages(chatID, fromMsgID uint32, direction int32, count int32) ([]models.Message, error) {
 	var result []models.Message
 
 	// Base queries for next and previous
-	nextQuery := db.gormDB.Debug().Table("messages").Select("*").
-		Where("chat_id = ? AND id > ?", chatID, fromMsgID).
-		Order("id ASC").
-		Limit(int(count))
-
-	previousQuery := db.gormDB.Table("messages").Select("*").
-		Where("chat_id = ? AND id < ?", chatID, fromMsgID).
-		Order("id DESC").
-		Limit(int(count))
+	// nextQuery := db.gormDB.ToSQL(func(tx *gorm.DB) *gorm.DB {
+	// 	return tx.Table("messages").Select("*").
+	// 		Where("chat_id = ? AND id > ?", chatID, fromMsgID).
+	// 		Order("id ASC").
+	// 		Limit(int(count))
+	// })
+	// previousQuery := db.gormDB.ToSQL(func(tx *gorm.DB) *gorm.DB {
+	// 	return tx.Table("messages").Select("*").
+	// 		Where("chat_id = ? AND id < ?", chatID, fromMsgID).
+	// 		Order("id DESC").
+	// 		Limit(int(count))
+	// })
 
 	var finalQuery *gorm.DB
 
 	switch direction {
-	case "RecordDirection.next":
-		// Only next query
-		finalQuery = nextQuery
-	case "RecordDirection.previous":
+	case DirectionPrev:
 		// Only previous query
-		finalQuery = previousQuery
-	case "RecordDirection.none":
+		finalQuery = db.gormDB.Table("messages").Select("*").
+			Where("chat_id = ? AND id < ?", chatID, fromMsgID).
+			Order("id DESC").
+			Limit(int(count))
+
+	case DirectionNext:
+		// Only next query
+		finalQuery = db.gormDB.Table("messages").Select("*").
+			Where("chat_id = ? AND id > ?", chatID, fromMsgID).
+			Order("id ASC").
+			Limit(int(count))
+
+	case DirectionLast:
+		// Last messages
+		finalQuery = db.gormDB.Debug().Table("messages").Select("*").
+			Where("chat_id = ? AND id > ?", chatID, fromMsgID).
+			Order("id DESC").
+			Limit(int(count))
+
+	case DirectionNone:
 		// Combine both with UNION
-		// finalQuery = db.gormDB.Debug().Raw("? UNION ? ORDER BY id ASC", previousQuery, nextQuery)
+		// finalQuery = db.gormDB.Raw(fmt.Sprintf("(%s) UNION (%s)", previousQuery, nextQuery))
 		finalQuery = db.gormDB.Raw(`
 		(SELECT * FROM "messages" WHERE chat_id = ? AND id < ? ORDER BY id DESC LIMIT ?)
 		UNION
@@ -43,8 +83,9 @@ func (db *ChatDatabase) GetMessages(chatID, fromMsgID uint32, direction string, 
 			chatID, fromMsgID, count, // For previous
 			chatID, fromMsgID, count, // For next
 		)
+
 	default:
-		return nil, fmt.Errorf("invalid mode: %s", direction)
+		return nil, fmt.Errorf("invalid mode: %v", direction)
 	}
 
 	// Apply preloads and execute the query
@@ -61,11 +102,6 @@ func (db *ChatDatabase) GetMessages(chatID, fromMsgID uint32, direction string, 
 	if err != nil {
 		return nil, err
 	}
-
-	// For "both" or "previous", make sure results are ordered correctly
-	// if direction == "previous" {
-	// 	result = reverseMessages(result)
-	// }
 
 	sort.Slice(result, func(i, j int) bool {
 		return result[i].ID < result[j].ID
