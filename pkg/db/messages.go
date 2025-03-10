@@ -32,21 +32,6 @@ const (
 
 func (db *ChatDatabase) GetMessages(chatID, fromMsgID uint32, direction int32, count int32) ([]models.Message, error) {
 	var result []models.Message
-
-	// Base queries for next and previous
-	// nextQuery := db.gormDB.ToSQL(func(tx *gorm.DB) *gorm.DB {
-	// 	return tx.Table("messages").Select("*").
-	// 		Where("chat_id = ? AND id > ?", chatID, fromMsgID).
-	// 		Order("id ASC").
-	// 		Limit(int(count))
-	// })
-	// previousQuery := db.gormDB.ToSQL(func(tx *gorm.DB) *gorm.DB {
-	// 	return tx.Table("messages").Select("*").
-	// 		Where("chat_id = ? AND id < ?", chatID, fromMsgID).
-	// 		Order("id DESC").
-	// 		Limit(int(count))
-	// })
-
 	var finalQuery *gorm.DB
 
 	switch direction {

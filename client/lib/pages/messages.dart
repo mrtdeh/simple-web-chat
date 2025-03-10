@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:dashboard/grpc/grpc.dart';
-import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
 

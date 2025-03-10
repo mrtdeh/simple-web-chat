@@ -28,34 +28,37 @@ class _ChatScreenState extends State<ChatScreen> {
     });
   }
 
-  void scrollToBottom(bool withAnimate) {
-    if (withAnimate) {
-      _listController.animateToItem(
-        index: wc.messages.length - 2,
-        scrollController: _scrollController,
-        alignment: 0,
-        duration: (estimatedDistance) => Duration(milliseconds: 1000),
-        curve: (estimatedDistance) => Curves.easeInOut,
-      );
-    } else {
-      _listController.jumpToItem(
-        index: wc.messages.length - 2,
-        scrollController: _scrollController,
-        alignment: 0,
-      );
-    }
+  void scrollToBottom() {
+    // if (withAnimate) {
+    //   _listController.animateToItem(
+    //     index: wc.messages.length - 2,
+    //     scrollController: _scrollController,
+    //     alignment: 0,
+    //     duration: (estimatedDistance) => Duration(milliseconds: 400),
+    //     curve: (estimatedDistance) => Curves.easeInOut,
+    //   );
+    // } else {
+    _listController.jumpToItem(
+      // index: wc.messages.length - 1,
+      index: _listController.numberOfItems - 1,
+      scrollController: _scrollController,
+      alignment: 0,
+    );
+    // }
   }
 
   void _onScroll() {
     if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
       wc.getMessages(RecordDirection.next, 50, context, onComplete: (x) {
-        var t = wc.messages.length - 50;
-        // print("t : $t");
-        _listController.jumpToItem(
-          index: t - 1,
-          scrollController: _scrollController,
-          alignment: 1,
-        );
+        if (wc.messages.length > 50 && x > 0) {
+          var t = wc.messages.length - 50;
+
+          _listController.jumpToItem(
+            index: t - 1,
+            scrollController: _scrollController,
+            alignment: 1,
+          );
+        }
 
         // WidgetsBinding.instance.addPostFrameCallback((_) {
         //   double targetAlignment = 1 - 0.5;
@@ -132,10 +135,11 @@ class _ChatScreenState extends State<ChatScreen> {
                             var msg = wc.newMessage(content: _textController.text, senderId: wc.userID);
                             // Check page position
                             wc.getMessages(RecordDirection.last, 50, context, onComplete: (x) {
+                              _textController.text = "";
                               // Add new message bubble to messages list with sending status
                               wc.addMessage(msg);
                               // Scroll to bottom of screen
-                              scrollToBottom(x == 0);
+                              scrollToBottom();
                               // Send new message to server
                               wc.sendMessage(
                                 chatId: wc.getActiveChatID(),

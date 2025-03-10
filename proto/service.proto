@@ -153,8 +153,7 @@ message GetMessagesRequest{
 }
 message MessagesResponse{
   repeated MessageData data = 1;
-  int32 page_index = 2;
-  int32 page_last = 3; 
+  
 
   message MessageData{
     uint32 senderId = 1; // Sender user id

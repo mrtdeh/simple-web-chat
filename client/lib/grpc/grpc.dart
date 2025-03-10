@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:dashboard/utils/locker.dart';
 import 'package:flutter/material.dart';
 import 'package:grpc/grpc_web.dart';
 
@@ -131,7 +132,7 @@ class WebChat {
   }
 
   final double pageSize = 150;
-  bool _lock = false;
+  final locker = Locker<String>();
 
   void getMessages(
     RecordDirection direction,
@@ -139,11 +140,10 @@ class WebChat {
     BuildContext context, {
     Function(int)? onComplete,
   }) async {
-    if (_lock) {
+    if (locker.isLocked("getMessage")) {
       print("Task is locked!");
       return;
     }
-    _lock = true;
 
     var readedMsgId = 0;
 
@@ -151,6 +151,9 @@ class WebChat {
       case RecordDirection.next || RecordDirection.last:
         // Set parameters for get next page
         readedMsgId = messages[messages.length - 1].data.messageId;
+        if (readedMsgId == 0) {
+          return;
+        }
       // break;
       case RecordDirection.previous:
         // Set parameters for get previous page
@@ -158,6 +161,11 @@ class WebChat {
       // break;
       default:
     }
+
+    print("readedMsgId : $readedMsgId");
+
+    // _lock = true;
+    locker.lock("getMessage");
 
     print("get message : $direction $count from $readedMsgId");
 
@@ -182,6 +190,10 @@ class WebChat {
     }, onDone: () {
       try {
         if (msgs.isEmpty) {
+          // call done callback if defined
+          if (onComplete != null) {
+            onComplete(msgs.length);
+          }
           // Return on empty messages received
           return;
         }
@@ -222,17 +234,20 @@ class WebChat {
         }
         // Update stream sink to update Listview of messages
         _messageStream.sink.add(messages);
-      } finally {
+
         // call done callback if defined
         if (onComplete != null) {
           onComplete(msgs.length);
         }
+      } finally {
         // reset incomming list
         msgs = [];
-        _lock = false;
+        // _lock = false;
+        locker.unlock("getMessage");
       }
     }, onError: (error) {
-      _lock = false;
+      // _lock = false;
+      locker.unlock("getMessage");
       print("Error in get messages: $error");
     });
   }
