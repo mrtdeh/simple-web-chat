@@ -8,7 +8,7 @@ import '../proto/service.pbgrpc.dart';
 TextStyle defaultTextStyle = const TextStyle(color: Colors.white, fontSize: 16, height: 2);
 
 class Message {
-  final MessagesResponse_MessageData data;
+  final MessageData data;
   final GlobalKey key;
   double? textHeight;
   double? boxHeight;
@@ -79,7 +79,7 @@ class WebChat {
   Message newMessage({String? content, int? senderId}) {
     var chat = chats[_selectedChatIndex];
     var msg = Message(
-        data: MessagesResponse_MessageData(
+        data: MessageData(
           content: content,
           senderId: senderId,
         ),
@@ -275,8 +275,8 @@ class WebChat {
 
   void startMessageChannel() {
     print("start listening...");
-    final request = MessageChannelRequest()..token = token;
-    _service.messageChannel(request).listen((response) {
+    final request = NotificationRequest()..token = token;
+    _service.notificationChannel(request).listen((response) {
       if (response.hasChats()) {
         for (var chat in response.chats.data) {
           chats.add(chat);
@@ -291,7 +291,7 @@ class WebChat {
     });
   }
 
-  Message newBoxMessage(MessagesResponse_MessageData msg, BuildContext context) {
+  Message newBoxMessage(MessageData msg, BuildContext context) {
     var text = msg.content;
     var attLen = msg.attachements.length;
     double textHeight = 0.0;

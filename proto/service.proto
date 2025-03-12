@@ -135,10 +135,10 @@ message CreateChatResponse{
 
 // =================================================================
 
-message MessageChannelRequest {
+message NotificationRequest {
   string token = 1;
 }
-message MessageChannelResponse{
+message NotificationResponse{
   oneof data{
     MessagesResponse messages = 1;
     ChatsResponse chats = 2;
@@ -153,26 +153,26 @@ message GetMessagesRequest{
 }
 message MessagesResponse{
   repeated MessageData data = 1;
-  
+  bool follow = 2;
+}
 
-  message MessageData{
-    uint32 senderId = 1; // Sender user id
-    uint32 messageId = 2; // Message id
-    string content = 3; // Message content
-    repeated Attachment attachements = 4;
-    repeated RepliedMessage repliedMessages = 5; // Message replied messages
-    int64 sendAt = 6;
-  }
-  message Attachment{
-    string placeholder = 1; // image placeholder of the attachment
-    string type = 2; // image|video|audio|other
-    string url = 3; // URL of attachment
-  }
-  message RepliedMessage{
-    uint32 messageId = 1; // Replied message id
-    string content = 2; // Replied message content
-    repeated string thumbnails = 3; // Replied message thumbnails
-  }
+message MessageData{
+  uint32 senderId = 1; // Sender user id
+  uint32 messageId = 2; // Message id
+  string content = 3; // Message content
+  repeated Attachment attachements = 4;
+  repeated RepliedMessage repliedMessages = 5; // Message replied messages
+  int64 sendAt = 6;
+}
+message Attachment{
+  string placeholder = 1; // image placeholder of the attachment
+  string type = 2; // image|video|audio|other
+  string url = 3; // URL of attachment
+}
+message RepliedMessage{
+  uint32 messageId = 1; // Replied message id
+  string content = 2; // Replied message content
+  repeated string thumbnails = 3; // Replied message thumbnails
 }
 
 
@@ -240,7 +240,9 @@ message SelectChatRequest{
 }
 
 service ChatService {
-  rpc MessageChannel(MessageChannelRequest) returns (stream MessageChannelResponse);
+  rpc NotificationChannel(NotificationRequest) returns (stream NotificationResponse);
+  rpc GetMessages(GetMessagesRequest) returns (stream MessagesResponse);
+
   rpc AddUser(AddUserRequest) returns (AddUserResponse);
   rpc AddMember(AddMemberRequest) returns (AddMemberResponse);
   rpc Login(LoginRequest) returns (LoginResponse);
@@ -252,7 +254,6 @@ service ChatService {
   rpc JoinGroup(JoinGroupRequest) returns (JoinGroupResponse);
   rpc SendMessage(MessageRequest) returns (MessageResponse);
   rpc UploadFile(FileRequest) returns (FileResponse);
-  rpc GetMessages(GetMessagesRequest) returns (stream MessagesResponse);
 
   // Just for test
   rpc GetChats(GetChatsRequest) returns (ChatsResponse);

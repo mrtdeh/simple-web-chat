@@ -13,7 +13,7 @@ var tm = &TokenManager{
 	l:      sync.RWMutex{},
 }
 
-func (s *Server) MessageChannel(pc *proto.MessageChannelRequest, stream proto.ChatService_MessageChannelServer) error {
+func (s *Server) NotificationChannel(pc *proto.NotificationRequest, stream proto.ChatService_NotificationChannelServer) error {
 	// Check authorize user
 	token := pc.Token
 	ctx := stream.Context()
@@ -73,8 +73,8 @@ func (s *Server) sendChats(username string) error {
 	if err != nil {
 		return err
 	}
-	return session.stream.Send(&proto.MessageChannelResponse{
-		Data: &proto.MessageChannelResponse_Chats{
+	return session.stream.Send(&proto.NotificationResponse{
+		Data: &proto.NotificationResponse_Chats{
 			Chats: &proto.ChatsResponse{
 				Data: chats,
 			},
@@ -90,8 +90,8 @@ func (s *Server) sendChats(username string) error {
 // 	if err != nil {
 // 		return err
 // 	}
-// 	return session.stream.Send(&proto.MessageChannelResponse{
-// 		Data: &proto.MessageChannelResponse_Messages{
+// 	return session.stream.Send(&proto.NotificationResponse{
+// 		Data: &proto.NotificationResponse_Messages{
 // 			Messages: &proto.MessagesResponse{
 // 				Data: res.Data,
 // 			},

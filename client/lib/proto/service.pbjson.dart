@@ -313,21 +313,21 @@ const CreateChatResponse$json = {
 final $typed_data.Uint8List createChatResponseDescriptor = $convert.base64Decode(
     'ChJDcmVhdGVDaGF0UmVzcG9uc2USFwoHY2hhdF9pZBgBIAEoDVIGY2hhdElk');
 
-@$core.Deprecated('Use messageChannelRequestDescriptor instead')
-const MessageChannelRequest$json = {
-  '1': 'MessageChannelRequest',
+@$core.Deprecated('Use notificationRequestDescriptor instead')
+const NotificationRequest$json = {
+  '1': 'NotificationRequest',
   '2': [
     {'1': 'token', '3': 1, '4': 1, '5': 9, '10': 'token'},
   ],
 };
 
-/// Descriptor for `MessageChannelRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List messageChannelRequestDescriptor = $convert.base64Decode(
-    'ChVNZXNzYWdlQ2hhbm5lbFJlcXVlc3QSFAoFdG9rZW4YASABKAlSBXRva2Vu');
+/// Descriptor for `NotificationRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List notificationRequestDescriptor = $convert.base64Decode(
+    'ChNOb3RpZmljYXRpb25SZXF1ZXN0EhQKBXRva2VuGAEgASgJUgV0b2tlbg==');
 
-@$core.Deprecated('Use messageChannelResponseDescriptor instead')
-const MessageChannelResponse$json = {
-  '1': 'MessageChannelResponse',
+@$core.Deprecated('Use notificationResponseDescriptor instead')
+const NotificationResponse$json = {
+  '1': 'NotificationResponse',
   '2': [
     {'1': 'messages', '3': 1, '4': 1, '5': 11, '6': '.proto.MessagesResponse', '9': 0, '10': 'messages'},
     {'1': 'chats', '3': 2, '4': 1, '5': 11, '6': '.proto.ChatsResponse', '9': 0, '10': 'chats'},
@@ -337,11 +337,11 @@ const MessageChannelResponse$json = {
   ],
 };
 
-/// Descriptor for `MessageChannelResponse`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List messageChannelResponseDescriptor = $convert.base64Decode(
-    'ChZNZXNzYWdlQ2hhbm5lbFJlc3BvbnNlEjUKCG1lc3NhZ2VzGAEgASgLMhcucHJvdG8uTWVzc2'
-    'FnZXNSZXNwb25zZUgAUghtZXNzYWdlcxIsCgVjaGF0cxgCIAEoCzIULnByb3RvLkNoYXRzUmVz'
-    'cG9uc2VIAFIFY2hhdHNCBgoEZGF0YQ==');
+/// Descriptor for `NotificationResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List notificationResponseDescriptor = $convert.base64Decode(
+    'ChROb3RpZmljYXRpb25SZXNwb25zZRI1CghtZXNzYWdlcxgBIAEoCzIXLnByb3RvLk1lc3NhZ2'
+    'VzUmVzcG9uc2VIAFIIbWVzc2FnZXMSLAoFY2hhdHMYAiABKAsyFC5wcm90by5DaGF0c1Jlc3Bv'
+    'bnNlSABSBWNoYXRzQgYKBGRhdGE=');
 
 @$core.Deprecated('Use getMessagesRequestDescriptor instead')
 const GetMessagesRequest$json = {
@@ -364,28 +364,39 @@ final $typed_data.Uint8List getMessagesRequestDescriptor = $convert.base64Decode
 const MessagesResponse$json = {
   '1': 'MessagesResponse',
   '2': [
-    {'1': 'data', '3': 1, '4': 3, '5': 11, '6': '.proto.MessagesResponse.MessageData', '10': 'data'},
-    {'1': 'page_index', '3': 2, '4': 1, '5': 5, '10': 'pageIndex'},
-    {'1': 'page_last', '3': 3, '4': 1, '5': 5, '10': 'pageLast'},
+    {'1': 'data', '3': 1, '4': 3, '5': 11, '6': '.proto.MessageData', '10': 'data'},
+    {'1': 'follow', '3': 2, '4': 1, '5': 8, '10': 'follow'},
   ],
-  '3': [MessagesResponse_MessageData$json, MessagesResponse_Attachment$json, MessagesResponse_RepliedMessage$json],
 };
 
-@$core.Deprecated('Use messagesResponseDescriptor instead')
-const MessagesResponse_MessageData$json = {
+/// Descriptor for `MessagesResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List messagesResponseDescriptor = $convert.base64Decode(
+    'ChBNZXNzYWdlc1Jlc3BvbnNlEiYKBGRhdGEYASADKAsyEi5wcm90by5NZXNzYWdlRGF0YVIEZG'
+    'F0YRIWCgZmb2xsb3cYAiABKAhSBmZvbGxvdw==');
+
+@$core.Deprecated('Use messageDataDescriptor instead')
+const MessageData$json = {
   '1': 'MessageData',
   '2': [
     {'1': 'senderId', '3': 1, '4': 1, '5': 13, '10': 'senderId'},
     {'1': 'messageId', '3': 2, '4': 1, '5': 13, '10': 'messageId'},
     {'1': 'content', '3': 3, '4': 1, '5': 9, '10': 'content'},
-    {'1': 'attachements', '3': 4, '4': 3, '5': 11, '6': '.proto.MessagesResponse.Attachment', '10': 'attachements'},
-    {'1': 'repliedMessages', '3': 5, '4': 3, '5': 11, '6': '.proto.MessagesResponse.RepliedMessage', '10': 'repliedMessages'},
+    {'1': 'attachements', '3': 4, '4': 3, '5': 11, '6': '.proto.Attachment', '10': 'attachements'},
+    {'1': 'repliedMessages', '3': 5, '4': 3, '5': 11, '6': '.proto.RepliedMessage', '10': 'repliedMessages'},
     {'1': 'sendAt', '3': 6, '4': 1, '5': 3, '10': 'sendAt'},
   ],
 };
 
-@$core.Deprecated('Use messagesResponseDescriptor instead')
-const MessagesResponse_Attachment$json = {
+/// Descriptor for `MessageData`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List messageDataDescriptor = $convert.base64Decode(
+    'CgtNZXNzYWdlRGF0YRIaCghzZW5kZXJJZBgBIAEoDVIIc2VuZGVySWQSHAoJbWVzc2FnZUlkGA'
+    'IgASgNUgltZXNzYWdlSWQSGAoHY29udGVudBgDIAEoCVIHY29udGVudBI1CgxhdHRhY2hlbWVu'
+    'dHMYBCADKAsyES5wcm90by5BdHRhY2htZW50UgxhdHRhY2hlbWVudHMSPwoPcmVwbGllZE1lc3'
+    'NhZ2VzGAUgAygLMhUucHJvdG8uUmVwbGllZE1lc3NhZ2VSD3JlcGxpZWRNZXNzYWdlcxIWCgZz'
+    'ZW5kQXQYBiABKANSBnNlbmRBdA==');
+
+@$core.Deprecated('Use attachmentDescriptor instead')
+const Attachment$json = {
   '1': 'Attachment',
   '2': [
     {'1': 'placeholder', '3': 1, '4': 1, '5': 9, '10': 'placeholder'},
@@ -394,8 +405,13 @@ const MessagesResponse_Attachment$json = {
   ],
 };
 
-@$core.Deprecated('Use messagesResponseDescriptor instead')
-const MessagesResponse_RepliedMessage$json = {
+/// Descriptor for `Attachment`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List attachmentDescriptor = $convert.base64Decode(
+    'CgpBdHRhY2htZW50EiAKC3BsYWNlaG9sZGVyGAEgASgJUgtwbGFjZWhvbGRlchISCgR0eXBlGA'
+    'IgASgJUgR0eXBlEhAKA3VybBgDIAEoCVIDdXJs');
+
+@$core.Deprecated('Use repliedMessageDescriptor instead')
+const RepliedMessage$json = {
   '1': 'RepliedMessage',
   '2': [
     {'1': 'messageId', '3': 1, '4': 1, '5': 13, '10': 'messageId'},
@@ -404,19 +420,10 @@ const MessagesResponse_RepliedMessage$json = {
   ],
 };
 
-/// Descriptor for `MessagesResponse`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List messagesResponseDescriptor = $convert.base64Decode(
-    'ChBNZXNzYWdlc1Jlc3BvbnNlEjcKBGRhdGEYASADKAsyIy5wcm90by5NZXNzYWdlc1Jlc3Bvbn'
-    'NlLk1lc3NhZ2VEYXRhUgRkYXRhEh0KCnBhZ2VfaW5kZXgYAiABKAVSCXBhZ2VJbmRleBIbCglw'
-    'YWdlX2xhc3QYAyABKAVSCHBhZ2VMYXN0GpMCCgtNZXNzYWdlRGF0YRIaCghzZW5kZXJJZBgBIA'
-    'EoDVIIc2VuZGVySWQSHAoJbWVzc2FnZUlkGAIgASgNUgltZXNzYWdlSWQSGAoHY29udGVudBgD'
-    'IAEoCVIHY29udGVudBJGCgxhdHRhY2hlbWVudHMYBCADKAsyIi5wcm90by5NZXNzYWdlc1Jlc3'
-    'BvbnNlLkF0dGFjaG1lbnRSDGF0dGFjaGVtZW50cxJQCg9yZXBsaWVkTWVzc2FnZXMYBSADKAsy'
-    'Ji5wcm90by5NZXNzYWdlc1Jlc3BvbnNlLlJlcGxpZWRNZXNzYWdlUg9yZXBsaWVkTWVzc2FnZX'
-    'MSFgoGc2VuZEF0GAYgASgDUgZzZW5kQXQaVAoKQXR0YWNobWVudBIgCgtwbGFjZWhvbGRlchgB'
-    'IAEoCVILcGxhY2Vob2xkZXISEgoEdHlwZRgCIAEoCVIEdHlwZRIQCgN1cmwYAyABKAlSA3VybB'
-    'poCg5SZXBsaWVkTWVzc2FnZRIcCgltZXNzYWdlSWQYASABKA1SCW1lc3NhZ2VJZBIYCgdjb250'
-    'ZW50GAIgASgJUgdjb250ZW50Eh4KCnRodW1ibmFpbHMYAyADKAlSCnRodW1ibmFpbHM=');
+/// Descriptor for `RepliedMessage`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List repliedMessageDescriptor = $convert.base64Decode(
+    'Cg5SZXBsaWVkTWVzc2FnZRIcCgltZXNzYWdlSWQYASABKA1SCW1lc3NhZ2VJZBIYCgdjb250ZW'
+    '50GAIgASgJUgdjb250ZW50Eh4KCnRodW1ibmFpbHMYAyADKAlSCnRodW1ibmFpbHM=');
 
 @$core.Deprecated('Use getChatsRequestDescriptor instead')
 const GetChatsRequest$json = {

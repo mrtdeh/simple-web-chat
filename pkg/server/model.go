@@ -34,7 +34,7 @@ type SessionManger struct {
 	sessions map[string]*Session
 }
 type Session struct {
-	stream       proto.ChatService_MessageChannelServer
+	stream       proto.ChatService_NotificationChannelServer
 	token        *TokenData
 	receive      chan struct{}
 	close        chan struct{}

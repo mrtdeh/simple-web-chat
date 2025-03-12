@@ -8,27 +8,23 @@ import (
 	"gorm.io/gorm"
 )
 
-func getPageNumber(recordIndex, pageSize int) int {
-	return (recordIndex-1)/pageSize + 1
-}
-
-func (db *ChatDatabase) GetLastMessageID(chatId int) int {
-	var lastID int
-	db.gormDB.Model(&models.Message{}).
-		Select("id").
-		Where("chat_id = ?", chatId).
-		Order("id DESC").
-		Limit(1).
-		Scan(&lastID)
-	return lastID
-}
-
 const (
 	DirectionPrev int32 = iota
 	DirectionNext
 	DirectionLast
 	DirectionNone
 )
+
+func (db *ChatDatabase) GetLastMessageID(chatId uint32) (uint32, error) {
+	var lastID uint32
+	err := db.gormDB.Model(&models.Message{}).
+		Select("id").
+		Where("chat_id = ?", chatId).
+		Order("id DESC").
+		Limit(1).
+		Scan(&lastID).Error
+	return lastID, err
+}
 
 func (db *ChatDatabase) GetMessages(chatID, fromMsgID uint32, direction int32, count int32) ([]models.Message, error) {
 	var result []models.Message

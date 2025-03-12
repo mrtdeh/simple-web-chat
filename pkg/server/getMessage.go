@@ -12,15 +12,26 @@ func (s *Server) GetMessages(req *proto.GetMessagesRequest, stream proto.ChatSer
 		return err
 	}
 
-	var data []*proto.MessagesResponse_MessageData
+	lastID, err := s.db.GetLastMessageID(req.ChatId)
+	if err != nil {
+		return err
+	}
+
+	var res = &proto.MessagesResponse{}
+
+	if messages[len(messages)-1].ID == lastID {
+		res.Follow = true
+	}
+
+	var data []*proto.MessageData
 	for _, m := range messages {
 
 		// Fetch message attachment's placeholder
-		var attachs []*proto.MessagesResponse_Attachment
+		var attachs []*proto.Attachment
 		for _, att := range m.Attachments {
 			for _, t := range att.Thumbnails {
 				if t.Type == "placeholder" {
-					attachs = append(attachs, &proto.MessagesResponse_Attachment{
+					attachs = append(attachs, &proto.Attachment{
 						Placeholder: t.Base64,     // Base64 of the attachment placeholder
 						Type:        att.FileType, // NOTE: most be image|video|audio|other...
 						Url:         att.FilePath, // TODO: replace with http URL
@@ -31,13 +42,13 @@ func (s *Server) GetMessages(req *proto.GetMessagesRequest, stream proto.ChatSer
 		}
 
 		// Fetch replied messages with thumbnails
-		var repliedMessages []*proto.MessagesResponse_RepliedMessage
+		var repliedMessages []*proto.RepliedMessage
 		for _, r := range m.Replies {
 			var thumbnails []string
 			for _, t := range r.Thumbnails {
 				thumbnails = append(thumbnails, t.Thumbnail.Base64)
 			}
-			repliedMessages = append(repliedMessages, &proto.MessagesResponse_RepliedMessage{
+			repliedMessages = append(repliedMessages, &proto.RepliedMessage{
 				MessageId:  uint32(r.ReplyMessageId),
 				Content:    r.ReplyMessage.Content,
 				Thumbnails: thumbnails,
@@ -45,7 +56,7 @@ func (s *Server) GetMessages(req *proto.GetMessagesRequest, stream proto.ChatSer
 		}
 
 		// Collect message data
-		data = append(data, &proto.MessagesResponse_MessageData{
+		data = append(data, &proto.MessageData{
 			SenderId:        uint32(m.Sender.ID),
 			MessageId:       uint32(m.ID),
 			Content:         m.Content,
@@ -56,9 +67,8 @@ func (s *Server) GetMessages(req *proto.GetMessagesRequest, stream proto.ChatSer
 
 	}
 
-	err = stream.Send(&proto.MessagesResponse{
-		Data: data,
-	})
+	res.Data = data
+	err = stream.Send(res)
 	if err != nil {
 		return err
 	}
