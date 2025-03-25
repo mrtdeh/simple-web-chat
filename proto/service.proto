@@ -145,12 +145,19 @@ message NotificationResponse{
   }
 }
 
+
 message GetMessagesRequest{
   uint32 chat_id = 1;
   uint32 readed_msg_id = 2;
   int32 direction = 3; // next , previous
   int32 count = 4;
 }
+
+message FollowChatRequest{
+  uint32 chat_id = 1;
+  uint32 last_msg_id = 2;
+}
+
 message MessagesResponse{
   repeated MessageData data = 1;
   bool follow = 2;
@@ -242,6 +249,7 @@ message SelectChatRequest{
 service ChatService {
   rpc NotificationChannel(NotificationRequest) returns (stream NotificationResponse);
   rpc GetMessages(GetMessagesRequest) returns (stream MessagesResponse);
+  rpc FollowChat(FollowChatRequest) returns (stream MessagesResponse);
 
   rpc AddUser(AddUserRequest) returns (AddUserResponse);
   rpc AddMember(AddMemberRequest) returns (AddMemberResponse);

@@ -1726,6 +1726,70 @@ class GetMessagesRequest extends $pb.GeneratedMessage {
   void clearCount() => clearField(4);
 }
 
+class FollowChatRequest extends $pb.GeneratedMessage {
+  factory FollowChatRequest({
+    $core.int? chatId,
+    $core.int? lastMsgId,
+  }) {
+    final $result = create();
+    if (chatId != null) {
+      $result.chatId = chatId;
+    }
+    if (lastMsgId != null) {
+      $result.lastMsgId = lastMsgId;
+    }
+    return $result;
+  }
+  FollowChatRequest._() : super();
+  factory FollowChatRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory FollowChatRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'FollowChatRequest', package: const $pb.PackageName(_omitMessageNames ? '' : 'proto'), createEmptyInstance: create)
+    ..a<$core.int>(1, _omitFieldNames ? '' : 'chatId', $pb.PbFieldType.OU3)
+    ..a<$core.int>(2, _omitFieldNames ? '' : 'lastMsgId', $pb.PbFieldType.OU3)
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  FollowChatRequest clone() => FollowChatRequest()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  FollowChatRequest copyWith(void Function(FollowChatRequest) updates) => super.copyWith((message) => updates(message as FollowChatRequest)) as FollowChatRequest;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static FollowChatRequest create() => FollowChatRequest._();
+  FollowChatRequest createEmptyInstance() => create();
+  static $pb.PbList<FollowChatRequest> createRepeated() => $pb.PbList<FollowChatRequest>();
+  @$core.pragma('dart2js:noInline')
+  static FollowChatRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<FollowChatRequest>(create);
+  static FollowChatRequest? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.int get chatId => $_getIZ(0);
+  @$pb.TagNumber(1)
+  set chatId($core.int v) { $_setUnsignedInt32(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasChatId() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearChatId() => clearField(1);
+
+  @$pb.TagNumber(2)
+  $core.int get lastMsgId => $_getIZ(1);
+  @$pb.TagNumber(2)
+  set lastMsgId($core.int v) { $_setUnsignedInt32(1, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasLastMsgId() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearLastMsgId() => clearField(2);
+}
+
 class MessagesResponse extends $pb.GeneratedMessage {
   factory MessagesResponse({
     $core.Iterable<MessageData>? data,

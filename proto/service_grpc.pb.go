@@ -21,6 +21,7 @@ const _ = grpc.SupportPackageIsVersion9
 const (
 	ChatService_NotificationChannel_FullMethodName = "/proto.ChatService/NotificationChannel"
 	ChatService_GetMessages_FullMethodName         = "/proto.ChatService/GetMessages"
+	ChatService_FollowChat_FullMethodName          = "/proto.ChatService/FollowChat"
 	ChatService_AddUser_FullMethodName             = "/proto.ChatService/AddUser"
 	ChatService_AddMember_FullMethodName           = "/proto.ChatService/AddMember"
 	ChatService_Login_FullMethodName               = "/proto.ChatService/Login"
@@ -40,6 +41,7 @@ const (
 type ChatServiceClient interface {
 	NotificationChannel(ctx context.Context, in *NotificationRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[NotificationResponse], error)
 	GetMessages(ctx context.Context, in *GetMessagesRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[MessagesResponse], error)
+	FollowChat(ctx context.Context, in *FollowChatRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[MessagesResponse], error)
 	AddUser(ctx context.Context, in *AddUserRequest, opts ...grpc.CallOption) (*AddUserResponse, error)
 	AddMember(ctx context.Context, in *AddMemberRequest, opts ...grpc.CallOption) (*AddMemberResponse, error)
 	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponse, error)
@@ -99,6 +101,25 @@ func (c *chatServiceClient) GetMessages(ctx context.Context, in *GetMessagesRequ
 
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
 type ChatService_GetMessagesClient = grpc.ServerStreamingClient[MessagesResponse]
+
+func (c *chatServiceClient) FollowChat(ctx context.Context, in *FollowChatRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[MessagesResponse], error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	stream, err := c.cc.NewStream(ctx, &ChatService_ServiceDesc.Streams[2], ChatService_FollowChat_FullMethodName, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &grpc.GenericClientStream[FollowChatRequest, MessagesResponse]{ClientStream: stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type ChatService_FollowChatClient = grpc.ServerStreamingClient[MessagesResponse]
 
 func (c *chatServiceClient) AddUser(ctx context.Context, in *AddUserRequest, opts ...grpc.CallOption) (*AddUserResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
@@ -216,6 +237,7 @@ func (c *chatServiceClient) GetChats(ctx context.Context, in *GetChatsRequest, o
 type ChatServiceServer interface {
 	NotificationChannel(*NotificationRequest, grpc.ServerStreamingServer[NotificationResponse]) error
 	GetMessages(*GetMessagesRequest, grpc.ServerStreamingServer[MessagesResponse]) error
+	FollowChat(*FollowChatRequest, grpc.ServerStreamingServer[MessagesResponse]) error
 	AddUser(context.Context, *AddUserRequest) (*AddUserResponse, error)
 	AddMember(context.Context, *AddMemberRequest) (*AddMemberResponse, error)
 	Login(context.Context, *LoginRequest) (*LoginResponse, error)
@@ -242,6 +264,9 @@ func (UnimplementedChatServiceServer) NotificationChannel(*NotificationRequest, 
 }
 func (UnimplementedChatServiceServer) GetMessages(*GetMessagesRequest, grpc.ServerStreamingServer[MessagesResponse]) error {
 	return status.Errorf(codes.Unimplemented, "method GetMessages not implemented")
+}
+func (UnimplementedChatServiceServer) FollowChat(*FollowChatRequest, grpc.ServerStreamingServer[MessagesResponse]) error {
+	return status.Errorf(codes.Unimplemented, "method FollowChat not implemented")
 }
 func (UnimplementedChatServiceServer) AddUser(context.Context, *AddUserRequest) (*AddUserResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddUser not implemented")
@@ -317,6 +342,17 @@ func _ChatService_GetMessages_Handler(srv interface{}, stream grpc.ServerStream)
 
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
 type ChatService_GetMessagesServer = grpc.ServerStreamingServer[MessagesResponse]
+
+func _ChatService_FollowChat_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(FollowChatRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(ChatServiceServer).FollowChat(m, &grpc.GenericServerStream[FollowChatRequest, MessagesResponse]{ServerStream: stream})
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type ChatService_FollowChatServer = grpc.ServerStreamingServer[MessagesResponse]
 
 func _ChatService_AddUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(AddUserRequest)
@@ -577,6 +613,11 @@ var ChatService_ServiceDesc = grpc.ServiceDesc{
 		{
 			StreamName:    "GetMessages",
 			Handler:       _ChatService_GetMessages_Handler,
+			ServerStreams: true,
+		},
+		{
+			StreamName:    "FollowChat",
+			Handler:       _ChatService_FollowChat_Handler,
 			ServerStreams: true,
 		},
 	},

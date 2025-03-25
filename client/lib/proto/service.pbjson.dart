@@ -360,6 +360,20 @@ final $typed_data.Uint8List getMessagesRequestDescriptor = $convert.base64Decode
     '9tc2dfaWQYAiABKA1SC3JlYWRlZE1zZ0lkEhwKCWRpcmVjdGlvbhgDIAEoBVIJZGlyZWN0aW9u'
     'EhQKBWNvdW50GAQgASgFUgVjb3VudA==');
 
+@$core.Deprecated('Use followChatRequestDescriptor instead')
+const FollowChatRequest$json = {
+  '1': 'FollowChatRequest',
+  '2': [
+    {'1': 'chat_id', '3': 1, '4': 1, '5': 13, '10': 'chatId'},
+    {'1': 'last_msg_id', '3': 2, '4': 1, '5': 13, '10': 'lastMsgId'},
+  ],
+};
+
+/// Descriptor for `FollowChatRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List followChatRequestDescriptor = $convert.base64Decode(
+    'ChFGb2xsb3dDaGF0UmVxdWVzdBIXCgdjaGF0X2lkGAEgASgNUgZjaGF0SWQSHgoLbGFzdF9tc2'
+    'dfaWQYAiABKA1SCWxhc3RNc2dJZA==');
+
 @$core.Deprecated('Use messagesResponseDescriptor instead')
 const MessagesResponse$json = {
   '1': 'MessagesResponse',
