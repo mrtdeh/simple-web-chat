@@ -86,7 +86,7 @@ class ChatListItem extends StatelessWidget {
           onTap!();
         }
         wc.setChat(index);
-        wc.getMessages(RecordDirection.none, 50, context);
+        wc.getMessages(GetMessagesRequest_Direction.None, 50, context);
       },
     );
   }

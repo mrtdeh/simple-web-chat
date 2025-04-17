@@ -36,13 +36,6 @@ enum MessageStatus {
   failed
 }
 
-enum RecordDirection {
-  previous,
-  next,
-  last,
-  none
-}
-
 class WebChat {
   WebChat._privateConstructor();
   static final WebChat instance = WebChat._privateConstructor();
@@ -131,11 +124,11 @@ class WebChat {
     }
   }
 
-  final double pageSize = 150;
+  final double pageMax = 150;
   final locker = Locker<String>();
 
   void getMessages(
-    RecordDirection direction,
+    GetMessagesRequest_Direction direction,
     int count,
     BuildContext context, {
     Function(int)? onComplete,
@@ -145,37 +138,39 @@ class WebChat {
       return;
     }
 
-    var readedMsgId = 0;
+    var fromMsgId = 0;
 
     switch (direction) {
-      case RecordDirection.next || RecordDirection.last:
+      case GetMessagesRequest_Direction.NextPage || GetMessagesRequest_Direction.LastPage:
         // Set parameters for get next page
-        readedMsgId = messages[messages.length - 1].data.messageId;
-        if (readedMsgId == 0) {
+        fromMsgId = messages.last.data.messageId;
+        if (fromMsgId == 0) {
           return;
         }
       // break;
-      case RecordDirection.previous:
+      case GetMessagesRequest_Direction.PrevPage:
         // Set parameters for get previous page
-        readedMsgId = messages[0].data.messageId;
+        fromMsgId = messages.first.data.messageId;
       // break;
       default:
     }
 
-    print("readedMsgId : $readedMsgId");
-
-    // _lock = true;
     locker.lock("getMessage");
 
-    print("get message : $direction $count from $readedMsgId");
+    print("get message : $direction $count from $fromMsgId");
 
     var chatId = chats[_selectedChatIndex].chatId;
+    var lastMsgId = messages.last.data.messageId;
+    var currentPageSize = messages.length;
 
     final request = GetMessagesRequest(
       chatId: chatId,
-      direction: direction.index,
+      direction: direction,
       count: count,
-      readedMsgId: readedMsgId,
+      fromMsgId: fromMsgId,
+      lastMsgId: lastMsgId,
+      pageSize: currentPageSize,
+      pageMax: pageMax.toInt(),
     );
     // double totalHeight = 0;
     List<Message> msgs = [];
@@ -198,14 +193,14 @@ class WebChat {
           return;
         }
         switch (direction) {
-          case RecordDirection.next:
+          case GetMessagesRequest_Direction.NextPage:
             // If do lazy-loading next message
             // Add messages to end of list
             messages.insertAll(messages.length, msgs);
             // Check if total messages reached maximum page size
-            if (messages.length > pageSize) {
+            if (messages.length > pageMax) {
               // Calculate total height of messages from top of list
-              var count = messages.length - pageSize;
+              var count = messages.length - pageMax;
               // for (var i = 0; i <= count - 1; i++) {
               //   totalHeight += messages[i].boxHeight!;
               // }
@@ -213,19 +208,19 @@ class WebChat {
               messages.removeRange(0, count.toInt());
             }
           // break;
-          case RecordDirection.previous:
+          case GetMessagesRequest_Direction.PrevPage:
             // If do lazy-loading previous message
             // Add messages to the top of list
             messages.insertAll(0, msgs);
             // Check if total messages reached maximum page size
-            if (messages.length > pageSize) {
+            if (messages.length > pageMax) {
               // Removing the messages from the down of list
               var len = messages.length;
-              var rmCounts = (messages.length - pageSize).toInt();
+              var rmCounts = (messages.length - pageMax).toInt();
               messages.removeRange(len - rmCounts, len);
             }
           // break;
-          case RecordDirection.last:
+          case GetMessagesRequest_Direction.LastPage:
             messages = msgs;
           // break;
           default:

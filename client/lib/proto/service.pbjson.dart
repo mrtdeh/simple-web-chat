@@ -348,17 +348,36 @@ const GetMessagesRequest$json = {
   '1': 'GetMessagesRequest',
   '2': [
     {'1': 'chat_id', '3': 1, '4': 1, '5': 13, '10': 'chatId'},
-    {'1': 'readed_msg_id', '3': 2, '4': 1, '5': 13, '10': 'readedMsgId'},
-    {'1': 'direction', '3': 3, '4': 1, '5': 5, '10': 'direction'},
-    {'1': 'count', '3': 4, '4': 1, '5': 5, '10': 'count'},
+    {'1': 'from_msg_id', '3': 2, '4': 1, '5': 13, '10': 'fromMsgId'},
+    {'1': 'last_msg_id', '3': 3, '4': 1, '5': 13, '10': 'lastMsgId'},
+    {'1': 'direction', '3': 4, '4': 1, '5': 14, '6': '.proto.GetMessagesRequest.Direction', '10': 'direction'},
+    {'1': 'count', '3': 5, '4': 1, '5': 5, '10': 'count'},
+    {'1': 'page_size', '3': 6, '4': 1, '5': 5, '10': 'pageSize'},
+    {'1': 'page_max', '3': 7, '4': 1, '5': 5, '10': 'pageMax'},
+  ],
+  '4': [GetMessagesRequest_Direction$json],
+};
+
+@$core.Deprecated('Use getMessagesRequestDescriptor instead')
+const GetMessagesRequest_Direction$json = {
+  '1': 'Direction',
+  '2': [
+    {'1': 'None', '2': 0},
+    {'1': 'NextPage', '2': 1},
+    {'1': 'PrevPage', '2': 2},
+    {'1': 'BothPage', '2': 3},
+    {'1': 'LastPage', '2': 4},
   ],
 };
 
 /// Descriptor for `GetMessagesRequest`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List getMessagesRequestDescriptor = $convert.base64Decode(
-    'ChJHZXRNZXNzYWdlc1JlcXVlc3QSFwoHY2hhdF9pZBgBIAEoDVIGY2hhdElkEiIKDXJlYWRlZF'
-    '9tc2dfaWQYAiABKA1SC3JlYWRlZE1zZ0lkEhwKCWRpcmVjdGlvbhgDIAEoBVIJZGlyZWN0aW9u'
-    'EhQKBWNvdW50GAQgASgFUgVjb3VudA==');
+    'ChJHZXRNZXNzYWdlc1JlcXVlc3QSFwoHY2hhdF9pZBgBIAEoDVIGY2hhdElkEh4KC2Zyb21fbX'
+    'NnX2lkGAIgASgNUglmcm9tTXNnSWQSHgoLbGFzdF9tc2dfaWQYAyABKA1SCWxhc3RNc2dJZBJB'
+    'CglkaXJlY3Rpb24YBCABKA4yIy5wcm90by5HZXRNZXNzYWdlc1JlcXVlc3QuRGlyZWN0aW9uUg'
+    'lkaXJlY3Rpb24SFAoFY291bnQYBSABKAVSBWNvdW50EhsKCXBhZ2Vfc2l6ZRgGIAEoBVIIcGFn'
+    'ZVNpemUSGQoIcGFnZV9tYXgYByABKAVSB3BhZ2VNYXgiTQoJRGlyZWN0aW9uEggKBE5vbmUQAB'
+    'IMCghOZXh0UGFnZRABEgwKCFByZXZQYWdlEAISDAoIQm90aFBhZ2UQAxIMCghMYXN0UGFnZRAE');
 
 @$core.Deprecated('Use messagesResponseDescriptor instead')
 const MessagesResponse$json = {

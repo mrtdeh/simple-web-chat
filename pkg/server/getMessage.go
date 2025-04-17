@@ -2,25 +2,79 @@ package server
 
 import (
 	"api-channel/proto"
+	"fmt"
 	"time"
 )
 
 func (s *Server) GetMessages(req *proto.GetMessagesRequest, stream proto.ChatService_GetMessagesServer) error {
-	time.Sleep(time.Second * 1)
-	messages, err := s.db.GetMessages(req.ChatId, req.ReadedMsgId, req.Direction, req.Count)
-	if err != nil {
-		return err
+	if req.PageMax == 0 {
+		return fmt.Errorf("page_max must be exist")
 	}
+
+	time.Sleep(time.Second * 1)
+	var res = &proto.MessagesResponse{}
 
 	lastID, err := s.db.GetLastMessageID(req.ChatId)
 	if err != nil {
 		return err
 	}
 
-	var res = &proto.MessagesResponse{}
+	if req.Direction == proto.GetMessagesRequest_None {
 
-	if messages[len(messages)-1].ID == lastID {
-		res.Follow = true
+		if req.LastMsgId > 0 { // If lastMsgId is exist then check with real last message id from db
+			if req.LastMsgId == lastID {
+				res.Follow = true
+			}
+			err = stream.Send(res)
+			if err != nil {
+				return err
+			}
+			return nil
+
+		} else { // else, change direction of none to next for getting messages of begening from db
+			req.Direction = proto.GetMessagesRequest_NextPage
+			req.FromMsgId = 0
+			if req.Count == 0 {
+				req.Count = req.PageMax
+			}
+		}
+
+	}
+
+	messages, err := s.db.GetMessages(req.ChatId, req.FromMsgId, req.Direction, req.Count)
+	if err != nil {
+		return err
+	}
+
+	if len(messages) == 0 {
+		// if not message available in next/last/both direction enable follow
+
+		if req.Direction == proto.GetMessagesRequest_LastPage ||
+			req.Direction == proto.GetMessagesRequest_NextPage ||
+			req.Direction == proto.GetMessagesRequest_BothPage {
+			res.Follow = true
+		}
+		if req.Direction == proto.GetMessagesRequest_PrevPage {
+			if req.LastMsgId == lastID {
+				res.Follow = true
+			}
+		}
+
+	} else {
+		// else if messages available then in prev calculate page size to determine is last page or not
+		// and in other direction check last message id.
+
+		if req.Direction == proto.GetMessagesRequest_PrevPage {
+			msgsLen := len(messages)
+			a := req.PageSize + int32(msgsLen)
+			if a < req.PageMax {
+				res.Follow = true
+			}
+		} else {
+			if messages[len(messages)-1].ID == lastID {
+				res.Follow = true
+			}
+		}
 	}
 
 	var data []*proto.MessageData

@@ -14,6 +14,10 @@ import 'dart:core' as $core;
 import 'package:fixnum/fixnum.dart' as $fixnum;
 import 'package:protobuf/protobuf.dart' as $pb;
 
+import 'service.pbenum.dart';
+
+export 'service.pbenum.dart';
+
 /// close response
 class Close extends $pb.GeneratedMessage {
   factory Close() => create();
@@ -1637,22 +1641,34 @@ class NotificationResponse extends $pb.GeneratedMessage {
 class GetMessagesRequest extends $pb.GeneratedMessage {
   factory GetMessagesRequest({
     $core.int? chatId,
-    $core.int? readedMsgId,
-    $core.int? direction,
+    $core.int? fromMsgId,
+    $core.int? lastMsgId,
+    GetMessagesRequest_Direction? direction,
     $core.int? count,
+    $core.int? pageSize,
+    $core.int? pageMax,
   }) {
     final $result = create();
     if (chatId != null) {
       $result.chatId = chatId;
     }
-    if (readedMsgId != null) {
-      $result.readedMsgId = readedMsgId;
+    if (fromMsgId != null) {
+      $result.fromMsgId = fromMsgId;
+    }
+    if (lastMsgId != null) {
+      $result.lastMsgId = lastMsgId;
     }
     if (direction != null) {
       $result.direction = direction;
     }
     if (count != null) {
       $result.count = count;
+    }
+    if (pageSize != null) {
+      $result.pageSize = pageSize;
+    }
+    if (pageMax != null) {
+      $result.pageMax = pageMax;
     }
     return $result;
   }
@@ -1662,9 +1678,12 @@ class GetMessagesRequest extends $pb.GeneratedMessage {
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'GetMessagesRequest', package: const $pb.PackageName(_omitMessageNames ? '' : 'proto'), createEmptyInstance: create)
     ..a<$core.int>(1, _omitFieldNames ? '' : 'chatId', $pb.PbFieldType.OU3)
-    ..a<$core.int>(2, _omitFieldNames ? '' : 'readedMsgId', $pb.PbFieldType.OU3)
-    ..a<$core.int>(3, _omitFieldNames ? '' : 'direction', $pb.PbFieldType.O3)
-    ..a<$core.int>(4, _omitFieldNames ? '' : 'count', $pb.PbFieldType.O3)
+    ..a<$core.int>(2, _omitFieldNames ? '' : 'fromMsgId', $pb.PbFieldType.OU3)
+    ..a<$core.int>(3, _omitFieldNames ? '' : 'lastMsgId', $pb.PbFieldType.OU3)
+    ..e<GetMessagesRequest_Direction>(4, _omitFieldNames ? '' : 'direction', $pb.PbFieldType.OE, defaultOrMaker: GetMessagesRequest_Direction.None, valueOf: GetMessagesRequest_Direction.valueOf, enumValues: GetMessagesRequest_Direction.values)
+    ..a<$core.int>(5, _omitFieldNames ? '' : 'count', $pb.PbFieldType.O3)
+    ..a<$core.int>(6, _omitFieldNames ? '' : 'pageSize', $pb.PbFieldType.O3)
+    ..a<$core.int>(7, _omitFieldNames ? '' : 'pageMax', $pb.PbFieldType.O3)
     ..hasRequiredFields = false
   ;
 
@@ -1699,31 +1718,58 @@ class GetMessagesRequest extends $pb.GeneratedMessage {
   void clearChatId() => clearField(1);
 
   @$pb.TagNumber(2)
-  $core.int get readedMsgId => $_getIZ(1);
+  $core.int get fromMsgId => $_getIZ(1);
   @$pb.TagNumber(2)
-  set readedMsgId($core.int v) { $_setUnsignedInt32(1, v); }
+  set fromMsgId($core.int v) { $_setUnsignedInt32(1, v); }
   @$pb.TagNumber(2)
-  $core.bool hasReadedMsgId() => $_has(1);
+  $core.bool hasFromMsgId() => $_has(1);
   @$pb.TagNumber(2)
-  void clearReadedMsgId() => clearField(2);
+  void clearFromMsgId() => clearField(2);
 
   @$pb.TagNumber(3)
-  $core.int get direction => $_getIZ(2);
+  $core.int get lastMsgId => $_getIZ(2);
   @$pb.TagNumber(3)
-  set direction($core.int v) { $_setSignedInt32(2, v); }
+  set lastMsgId($core.int v) { $_setUnsignedInt32(2, v); }
   @$pb.TagNumber(3)
-  $core.bool hasDirection() => $_has(2);
+  $core.bool hasLastMsgId() => $_has(2);
   @$pb.TagNumber(3)
-  void clearDirection() => clearField(3);
+  void clearLastMsgId() => clearField(3);
 
   @$pb.TagNumber(4)
-  $core.int get count => $_getIZ(3);
+  GetMessagesRequest_Direction get direction => $_getN(3);
   @$pb.TagNumber(4)
-  set count($core.int v) { $_setSignedInt32(3, v); }
+  set direction(GetMessagesRequest_Direction v) { setField(4, v); }
   @$pb.TagNumber(4)
-  $core.bool hasCount() => $_has(3);
+  $core.bool hasDirection() => $_has(3);
   @$pb.TagNumber(4)
-  void clearCount() => clearField(4);
+  void clearDirection() => clearField(4);
+
+  @$pb.TagNumber(5)
+  $core.int get count => $_getIZ(4);
+  @$pb.TagNumber(5)
+  set count($core.int v) { $_setSignedInt32(4, v); }
+  @$pb.TagNumber(5)
+  $core.bool hasCount() => $_has(4);
+  @$pb.TagNumber(5)
+  void clearCount() => clearField(5);
+
+  @$pb.TagNumber(6)
+  $core.int get pageSize => $_getIZ(5);
+  @$pb.TagNumber(6)
+  set pageSize($core.int v) { $_setSignedInt32(5, v); }
+  @$pb.TagNumber(6)
+  $core.bool hasPageSize() => $_has(5);
+  @$pb.TagNumber(6)
+  void clearPageSize() => clearField(6);
+
+  @$pb.TagNumber(7)
+  $core.int get pageMax => $_getIZ(6);
+  @$pb.TagNumber(7)
+  set pageMax($core.int v) { $_setSignedInt32(6, v); }
+  @$pb.TagNumber(7)
+  $core.bool hasPageMax() => $_has(6);
+  @$pb.TagNumber(7)
+  void clearPageMax() => clearField(7);
 }
 
 class MessagesResponse extends $pb.GeneratedMessage {

@@ -3,6 +3,7 @@ import 'package:dashboard/pages/messages.dart';
 import 'package:dashboard/pages/sidebar.dart';
 import 'package:flutter/material.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
+import '../proto/service.pbgrpc.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
@@ -49,7 +50,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
   void _onScroll() {
     if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
-      wc.getMessages(RecordDirection.next, 50, context, onComplete: (x) {
+      wc.getMessages(GetMessagesRequest_Direction.NextPage, 50, context, onComplete: (x) {
         if (wc.messages.length > 50 && x > 0) {
           var t = wc.messages.length - 50;
 
@@ -74,7 +75,7 @@ class _ChatScreenState extends State<ChatScreen> {
     }
 
     if (_scrollController.position.pixels == _scrollController.position.minScrollExtent) {
-      wc.getMessages(RecordDirection.previous, 50, context, onComplete: (x) {
+      wc.getMessages(GetMessagesRequest_Direction.PrevPage, 50, context, onComplete: (x) {
         _listController.jumpToItem(
           index: 50,
           scrollController: _scrollController,
@@ -134,7 +135,7 @@ class _ChatScreenState extends State<ChatScreen> {
                             // Create new message object
                             var msg = wc.newMessage(content: _textController.text, senderId: wc.userID);
                             // Check page position
-                            wc.getMessages(RecordDirection.last, 50, context, onComplete: (x) {
+                            wc.getMessages(GetMessagesRequest_Direction.LastPage, 50, context, onComplete: (x) {
                               _textController.text = "";
                               // Add new message bubble to messages list with sending status
                               wc.addMessage(msg);

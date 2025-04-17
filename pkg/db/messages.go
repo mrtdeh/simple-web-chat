@@ -2,18 +2,18 @@ package database
 
 import (
 	"api-channel/pkg/models"
+	"api-channel/proto"
 	"fmt"
 	"sort"
 
 	"gorm.io/gorm"
 )
 
-const (
-	DirectionPrev int32 = iota
-	DirectionNext
-	DirectionLast
-	DirectionNone
-)
+func isLastPage(id, pageSize, total int) bool {
+	lastPage := (total-1)/pageSize + 1
+	currentPage := (id-1)/pageSize + 1
+	return currentPage == lastPage
+}
 
 func (db *ChatDatabase) GetLastMessageID(chatId uint32) (uint32, error) {
 	var lastID uint32
@@ -26,33 +26,33 @@ func (db *ChatDatabase) GetLastMessageID(chatId uint32) (uint32, error) {
 	return lastID, err
 }
 
-func (db *ChatDatabase) GetMessages(chatID, fromMsgID uint32, direction int32, count int32) ([]models.Message, error) {
+func (db *ChatDatabase) GetMessages(chatID, fromMsgID uint32, direction proto.GetMessagesRequest_Direction, count int32) ([]models.Message, error) {
 	var result []models.Message
 	var finalQuery *gorm.DB
 
 	switch direction {
-	case DirectionPrev:
+	case proto.GetMessagesRequest_PrevPage:
 		// Only previous query
 		finalQuery = db.gormDB.Table("messages").Select("*").
 			Where("chat_id = ? AND id < ?", chatID, fromMsgID).
 			Order("id DESC").
 			Limit(int(count))
 
-	case DirectionNext:
+	case proto.GetMessagesRequest_NextPage:
 		// Only next query
 		finalQuery = db.gormDB.Table("messages").Select("*").
 			Where("chat_id = ? AND id > ?", chatID, fromMsgID).
 			Order("id ASC").
 			Limit(int(count))
 
-	case DirectionLast:
+	case proto.GetMessagesRequest_LastPage:
 		// Last messages
 		finalQuery = db.gormDB.Debug().Table("messages").Select("*").
 			Where("chat_id = ? AND id > ?", chatID, fromMsgID).
 			Order("id DESC").
 			Limit(int(count))
 
-	case DirectionNone:
+	case proto.GetMessagesRequest_BothPage:
 		// Combine both with UNION
 		// finalQuery = db.gormDB.Raw(fmt.Sprintf("(%s) UNION (%s)", previousQuery, nextQuery))
 		finalQuery = db.gormDB.Raw(`
