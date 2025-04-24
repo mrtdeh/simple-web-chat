@@ -1505,8 +1505,8 @@ class CreateChatResponse extends $pb.GeneratedMessage {
   void clearChatId() => clearField(1);
 }
 
-class NotificationRequest extends $pb.GeneratedMessage {
-  factory NotificationRequest({
+class StreamRequest extends $pb.GeneratedMessage {
+  factory StreamRequest({
     $core.String? token,
   }) {
     final $result = create();
@@ -1515,11 +1515,11 @@ class NotificationRequest extends $pb.GeneratedMessage {
     }
     return $result;
   }
-  NotificationRequest._() : super();
-  factory NotificationRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
-  factory NotificationRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  StreamRequest._() : super();
+  factory StreamRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory StreamRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
 
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'NotificationRequest', package: const $pb.PackageName(_omitMessageNames ? '' : 'proto'), createEmptyInstance: create)
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'StreamRequest', package: const $pb.PackageName(_omitMessageNames ? '' : 'proto'), createEmptyInstance: create)
     ..aOS(1, _omitFieldNames ? '' : 'token')
     ..hasRequiredFields = false
   ;
@@ -1528,22 +1528,22 @@ class NotificationRequest extends $pb.GeneratedMessage {
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
   'Will be removed in next major version')
-  NotificationRequest clone() => NotificationRequest()..mergeFromMessage(this);
+  StreamRequest clone() => StreamRequest()..mergeFromMessage(this);
   @$core.Deprecated(
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
   'Will be removed in next major version')
-  NotificationRequest copyWith(void Function(NotificationRequest) updates) => super.copyWith((message) => updates(message as NotificationRequest)) as NotificationRequest;
+  StreamRequest copyWith(void Function(StreamRequest) updates) => super.copyWith((message) => updates(message as StreamRequest)) as StreamRequest;
 
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
-  static NotificationRequest create() => NotificationRequest._();
-  NotificationRequest createEmptyInstance() => create();
-  static $pb.PbList<NotificationRequest> createRepeated() => $pb.PbList<NotificationRequest>();
+  static StreamRequest create() => StreamRequest._();
+  StreamRequest createEmptyInstance() => create();
+  static $pb.PbList<StreamRequest> createRepeated() => $pb.PbList<StreamRequest>();
   @$core.pragma('dart2js:noInline')
-  static NotificationRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<NotificationRequest>(create);
-  static NotificationRequest? _defaultInstance;
+  static StreamRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<StreamRequest>(create);
+  static StreamRequest? _defaultInstance;
 
   @$pb.TagNumber(1)
   $core.String get token => $_getSZ(0);
@@ -1555,16 +1555,16 @@ class NotificationRequest extends $pb.GeneratedMessage {
   void clearToken() => clearField(1);
 }
 
-enum NotificationResponse_Data {
+enum StreamResponse_Data {
   messages, 
   chats, 
   notSet
 }
 
-class NotificationResponse extends $pb.GeneratedMessage {
-  factory NotificationResponse({
-    MessagesResponse? messages,
-    ChatsResponse? chats,
+class StreamResponse extends $pb.GeneratedMessage {
+  factory StreamResponse({
+    Messages? messages,
+    Chats? chats,
   }) {
     final $result = create();
     if (messages != null) {
@@ -1575,19 +1575,19 @@ class NotificationResponse extends $pb.GeneratedMessage {
     }
     return $result;
   }
-  NotificationResponse._() : super();
-  factory NotificationResponse.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
-  factory NotificationResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  StreamResponse._() : super();
+  factory StreamResponse.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory StreamResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
 
-  static const $core.Map<$core.int, NotificationResponse_Data> _NotificationResponse_DataByTag = {
-    1 : NotificationResponse_Data.messages,
-    2 : NotificationResponse_Data.chats,
-    0 : NotificationResponse_Data.notSet
+  static const $core.Map<$core.int, StreamResponse_Data> _StreamResponse_DataByTag = {
+    1 : StreamResponse_Data.messages,
+    2 : StreamResponse_Data.chats,
+    0 : StreamResponse_Data.notSet
   };
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'NotificationResponse', package: const $pb.PackageName(_omitMessageNames ? '' : 'proto'), createEmptyInstance: create)
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'StreamResponse', package: const $pb.PackageName(_omitMessageNames ? '' : 'proto'), createEmptyInstance: create)
     ..oo(0, [1, 2])
-    ..aOM<MessagesResponse>(1, _omitFieldNames ? '' : 'messages', subBuilder: MessagesResponse.create)
-    ..aOM<ChatsResponse>(2, _omitFieldNames ? '' : 'chats', subBuilder: ChatsResponse.create)
+    ..aOM<Messages>(1, _omitFieldNames ? '' : 'messages', subBuilder: Messages.create)
+    ..aOM<Chats>(2, _omitFieldNames ? '' : 'chats', subBuilder: Chats.create)
     ..hasRequiredFields = false
   ;
 
@@ -1595,47 +1595,91 @@ class NotificationResponse extends $pb.GeneratedMessage {
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
   'Will be removed in next major version')
-  NotificationResponse clone() => NotificationResponse()..mergeFromMessage(this);
+  StreamResponse clone() => StreamResponse()..mergeFromMessage(this);
   @$core.Deprecated(
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
   'Will be removed in next major version')
-  NotificationResponse copyWith(void Function(NotificationResponse) updates) => super.copyWith((message) => updates(message as NotificationResponse)) as NotificationResponse;
+  StreamResponse copyWith(void Function(StreamResponse) updates) => super.copyWith((message) => updates(message as StreamResponse)) as StreamResponse;
 
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
-  static NotificationResponse create() => NotificationResponse._();
-  NotificationResponse createEmptyInstance() => create();
-  static $pb.PbList<NotificationResponse> createRepeated() => $pb.PbList<NotificationResponse>();
+  static StreamResponse create() => StreamResponse._();
+  StreamResponse createEmptyInstance() => create();
+  static $pb.PbList<StreamResponse> createRepeated() => $pb.PbList<StreamResponse>();
   @$core.pragma('dart2js:noInline')
-  static NotificationResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<NotificationResponse>(create);
-  static NotificationResponse? _defaultInstance;
+  static StreamResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<StreamResponse>(create);
+  static StreamResponse? _defaultInstance;
 
-  NotificationResponse_Data whichData() => _NotificationResponse_DataByTag[$_whichOneof(0)]!;
+  StreamResponse_Data whichData() => _StreamResponse_DataByTag[$_whichOneof(0)]!;
   void clearData() => clearField($_whichOneof(0));
 
   @$pb.TagNumber(1)
-  MessagesResponse get messages => $_getN(0);
+  Messages get messages => $_getN(0);
   @$pb.TagNumber(1)
-  set messages(MessagesResponse v) { setField(1, v); }
+  set messages(Messages v) { setField(1, v); }
   @$pb.TagNumber(1)
   $core.bool hasMessages() => $_has(0);
   @$pb.TagNumber(1)
   void clearMessages() => clearField(1);
   @$pb.TagNumber(1)
-  MessagesResponse ensureMessages() => $_ensure(0);
+  Messages ensureMessages() => $_ensure(0);
 
   @$pb.TagNumber(2)
-  ChatsResponse get chats => $_getN(1);
+  Chats get chats => $_getN(1);
   @$pb.TagNumber(2)
-  set chats(ChatsResponse v) { setField(2, v); }
+  set chats(Chats v) { setField(2, v); }
   @$pb.TagNumber(2)
   $core.bool hasChats() => $_has(1);
   @$pb.TagNumber(2)
   void clearChats() => clearField(2);
   @$pb.TagNumber(2)
-  ChatsResponse ensureChats() => $_ensure(1);
+  Chats ensureChats() => $_ensure(1);
+}
+
+class Messages extends $pb.GeneratedMessage {
+  factory Messages({
+    $core.Iterable<MessageData>? data,
+  }) {
+    final $result = create();
+    if (data != null) {
+      $result.data.addAll(data);
+    }
+    return $result;
+  }
+  Messages._() : super();
+  factory Messages.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory Messages.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'Messages', package: const $pb.PackageName(_omitMessageNames ? '' : 'proto'), createEmptyInstance: create)
+    ..pc<MessageData>(1, _omitFieldNames ? '' : 'data', $pb.PbFieldType.PM, subBuilder: MessageData.create)
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  Messages clone() => Messages()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  Messages copyWith(void Function(Messages) updates) => super.copyWith((message) => updates(message as Messages)) as Messages;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static Messages create() => Messages._();
+  Messages createEmptyInstance() => create();
+  static $pb.PbList<Messages> createRepeated() => $pb.PbList<Messages>();
+  @$core.pragma('dart2js:noInline')
+  static Messages getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<Messages>(create);
+  static Messages? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.List<MessageData> get data => $_getList(0);
 }
 
 class GetMessagesRequest extends $pb.GeneratedMessage {
@@ -1647,6 +1691,7 @@ class GetMessagesRequest extends $pb.GeneratedMessage {
     $core.int? count,
     $core.int? pageSize,
     $core.int? pageMax,
+    $core.String? token,
   }) {
     final $result = create();
     if (chatId != null) {
@@ -1670,6 +1715,9 @@ class GetMessagesRequest extends $pb.GeneratedMessage {
     if (pageMax != null) {
       $result.pageMax = pageMax;
     }
+    if (token != null) {
+      $result.token = token;
+    }
     return $result;
   }
   GetMessagesRequest._() : super();
@@ -1684,6 +1732,7 @@ class GetMessagesRequest extends $pb.GeneratedMessage {
     ..a<$core.int>(5, _omitFieldNames ? '' : 'count', $pb.PbFieldType.O3)
     ..a<$core.int>(6, _omitFieldNames ? '' : 'pageSize', $pb.PbFieldType.O3)
     ..a<$core.int>(7, _omitFieldNames ? '' : 'pageMax', $pb.PbFieldType.O3)
+    ..aOS(8, _omitFieldNames ? '' : 'token')
     ..hasRequiredFields = false
   ;
 
@@ -1753,6 +1802,8 @@ class GetMessagesRequest extends $pb.GeneratedMessage {
   @$pb.TagNumber(5)
   void clearCount() => clearField(5);
 
+  /// Only use this options for set "Follow" state on "previous" direction include messages
+  /// if  (len(comming_messages) + page_size) < page_max then Follow = true
   @$pb.TagNumber(6)
   $core.int get pageSize => $_getIZ(5);
   @$pb.TagNumber(6)
@@ -1770,29 +1821,24 @@ class GetMessagesRequest extends $pb.GeneratedMessage {
   $core.bool hasPageMax() => $_has(6);
   @$pb.TagNumber(7)
   void clearPageMax() => clearField(7);
+
+  @$pb.TagNumber(8)
+  $core.String get token => $_getSZ(7);
+  @$pb.TagNumber(8)
+  set token($core.String v) { $_setString(7, v); }
+  @$pb.TagNumber(8)
+  $core.bool hasToken() => $_has(7);
+  @$pb.TagNumber(8)
+  void clearToken() => clearField(8);
 }
 
-class MessagesResponse extends $pb.GeneratedMessage {
-  factory MessagesResponse({
-    $core.Iterable<MessageData>? data,
-    $core.bool? follow,
-  }) {
-    final $result = create();
-    if (data != null) {
-      $result.data.addAll(data);
-    }
-    if (follow != null) {
-      $result.follow = follow;
-    }
-    return $result;
-  }
-  MessagesResponse._() : super();
-  factory MessagesResponse.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
-  factory MessagesResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+class GetMessagesResponse extends $pb.GeneratedMessage {
+  factory GetMessagesResponse() => create();
+  GetMessagesResponse._() : super();
+  factory GetMessagesResponse.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory GetMessagesResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
 
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'MessagesResponse', package: const $pb.PackageName(_omitMessageNames ? '' : 'proto'), createEmptyInstance: create)
-    ..pc<MessageData>(1, _omitFieldNames ? '' : 'data', $pb.PbFieldType.PM, subBuilder: MessageData.create)
-    ..aOB(2, _omitFieldNames ? '' : 'follow')
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'GetMessagesResponse', package: const $pb.PackageName(_omitMessageNames ? '' : 'proto'), createEmptyInstance: create)
     ..hasRequiredFields = false
   ;
 
@@ -1800,34 +1846,22 @@ class MessagesResponse extends $pb.GeneratedMessage {
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
   'Will be removed in next major version')
-  MessagesResponse clone() => MessagesResponse()..mergeFromMessage(this);
+  GetMessagesResponse clone() => GetMessagesResponse()..mergeFromMessage(this);
   @$core.Deprecated(
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
   'Will be removed in next major version')
-  MessagesResponse copyWith(void Function(MessagesResponse) updates) => super.copyWith((message) => updates(message as MessagesResponse)) as MessagesResponse;
+  GetMessagesResponse copyWith(void Function(GetMessagesResponse) updates) => super.copyWith((message) => updates(message as GetMessagesResponse)) as GetMessagesResponse;
 
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
-  static MessagesResponse create() => MessagesResponse._();
-  MessagesResponse createEmptyInstance() => create();
-  static $pb.PbList<MessagesResponse> createRepeated() => $pb.PbList<MessagesResponse>();
+  static GetMessagesResponse create() => GetMessagesResponse._();
+  GetMessagesResponse createEmptyInstance() => create();
+  static $pb.PbList<GetMessagesResponse> createRepeated() => $pb.PbList<GetMessagesResponse>();
   @$core.pragma('dart2js:noInline')
-  static MessagesResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<MessagesResponse>(create);
-  static MessagesResponse? _defaultInstance;
-
-  @$pb.TagNumber(1)
-  $core.List<MessageData> get data => $_getList(0);
-
-  @$pb.TagNumber(2)
-  $core.bool get follow => $_getBF(1);
-  @$pb.TagNumber(2)
-  set follow($core.bool v) { $_setBool(1, v); }
-  @$pb.TagNumber(2)
-  $core.bool hasFollow() => $_has(1);
-  @$pb.TagNumber(2)
-  void clearFollow() => clearField(2);
+  static GetMessagesResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<GetMessagesResponse>(create);
+  static GetMessagesResponse? _defaultInstance;
 }
 
 class MessageData extends $pb.GeneratedMessage {
@@ -2138,8 +2172,52 @@ class GetChatsRequest extends $pb.GeneratedMessage {
   void clearToken() => clearField(1);
 }
 
-class ChatsResponse_ChatData extends $pb.GeneratedMessage {
-  factory ChatsResponse_ChatData({
+class Chats extends $pb.GeneratedMessage {
+  factory Chats({
+    $core.Iterable<ChatData>? data,
+  }) {
+    final $result = create();
+    if (data != null) {
+      $result.data.addAll(data);
+    }
+    return $result;
+  }
+  Chats._() : super();
+  factory Chats.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory Chats.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'Chats', package: const $pb.PackageName(_omitMessageNames ? '' : 'proto'), createEmptyInstance: create)
+    ..pc<ChatData>(1, _omitFieldNames ? '' : 'data', $pb.PbFieldType.PM, subBuilder: ChatData.create)
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  Chats clone() => Chats()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  Chats copyWith(void Function(Chats) updates) => super.copyWith((message) => updates(message as Chats)) as Chats;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static Chats create() => Chats._();
+  Chats createEmptyInstance() => create();
+  static $pb.PbList<Chats> createRepeated() => $pb.PbList<Chats>();
+  @$core.pragma('dart2js:noInline')
+  static Chats getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<Chats>(create);
+  static Chats? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.List<ChatData> get data => $_getList(0);
+}
+
+class ChatData extends $pb.GeneratedMessage {
+  factory ChatData({
     $core.int? chatId,
     $core.String? chatTitle,
     $core.String? type,
@@ -2176,11 +2254,11 @@ class ChatsResponse_ChatData extends $pb.GeneratedMessage {
     }
     return $result;
   }
-  ChatsResponse_ChatData._() : super();
-  factory ChatsResponse_ChatData.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
-  factory ChatsResponse_ChatData.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  ChatData._() : super();
+  factory ChatData.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory ChatData.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
 
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'ChatsResponse.ChatData', package: const $pb.PackageName(_omitMessageNames ? '' : 'proto'), createEmptyInstance: create)
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'ChatData', package: const $pb.PackageName(_omitMessageNames ? '' : 'proto'), createEmptyInstance: create)
     ..a<$core.int>(1, _omitFieldNames ? '' : 'chatId', $pb.PbFieldType.OU3)
     ..aOS(2, _omitFieldNames ? '' : 'chatTitle', protoName: 'chatTitle')
     ..aOS(3, _omitFieldNames ? '' : 'type')
@@ -2196,22 +2274,22 @@ class ChatsResponse_ChatData extends $pb.GeneratedMessage {
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
   'Will be removed in next major version')
-  ChatsResponse_ChatData clone() => ChatsResponse_ChatData()..mergeFromMessage(this);
+  ChatData clone() => ChatData()..mergeFromMessage(this);
   @$core.Deprecated(
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
   'Will be removed in next major version')
-  ChatsResponse_ChatData copyWith(void Function(ChatsResponse_ChatData) updates) => super.copyWith((message) => updates(message as ChatsResponse_ChatData)) as ChatsResponse_ChatData;
+  ChatData copyWith(void Function(ChatData) updates) => super.copyWith((message) => updates(message as ChatData)) as ChatData;
 
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
-  static ChatsResponse_ChatData create() => ChatsResponse_ChatData._();
-  ChatsResponse_ChatData createEmptyInstance() => create();
-  static $pb.PbList<ChatsResponse_ChatData> createRepeated() => $pb.PbList<ChatsResponse_ChatData>();
+  static ChatData create() => ChatData._();
+  ChatData createEmptyInstance() => create();
+  static $pb.PbList<ChatData> createRepeated() => $pb.PbList<ChatData>();
   @$core.pragma('dart2js:noInline')
-  static ChatsResponse_ChatData getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<ChatsResponse_ChatData>(create);
-  static ChatsResponse_ChatData? _defaultInstance;
+  static ChatData getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<ChatData>(create);
+  static ChatData? _defaultInstance;
 
   @$pb.TagNumber(1)
   $core.int get chatId => $_getIZ(0);
@@ -2284,50 +2362,6 @@ class ChatsResponse_ChatData extends $pb.GeneratedMessage {
   $core.bool hasLastReadedMessageId() => $_has(7);
   @$pb.TagNumber(8)
   void clearLastReadedMessageId() => clearField(8);
-}
-
-class ChatsResponse extends $pb.GeneratedMessage {
-  factory ChatsResponse({
-    $core.Iterable<ChatsResponse_ChatData>? data,
-  }) {
-    final $result = create();
-    if (data != null) {
-      $result.data.addAll(data);
-    }
-    return $result;
-  }
-  ChatsResponse._() : super();
-  factory ChatsResponse.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
-  factory ChatsResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
-
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'ChatsResponse', package: const $pb.PackageName(_omitMessageNames ? '' : 'proto'), createEmptyInstance: create)
-    ..pc<ChatsResponse_ChatData>(1, _omitFieldNames ? '' : 'data', $pb.PbFieldType.PM, subBuilder: ChatsResponse_ChatData.create)
-    ..hasRequiredFields = false
-  ;
-
-  @$core.Deprecated(
-  'Using this can add significant overhead to your binary. '
-  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
-  'Will be removed in next major version')
-  ChatsResponse clone() => ChatsResponse()..mergeFromMessage(this);
-  @$core.Deprecated(
-  'Using this can add significant overhead to your binary. '
-  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
-  'Will be removed in next major version')
-  ChatsResponse copyWith(void Function(ChatsResponse) updates) => super.copyWith((message) => updates(message as ChatsResponse)) as ChatsResponse;
-
-  $pb.BuilderInfo get info_ => _i;
-
-  @$core.pragma('dart2js:noInline')
-  static ChatsResponse create() => ChatsResponse._();
-  ChatsResponse createEmptyInstance() => create();
-  static $pb.PbList<ChatsResponse> createRepeated() => $pb.PbList<ChatsResponse>();
-  @$core.pragma('dart2js:noInline')
-  static ChatsResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<ChatsResponse>(create);
-  static ChatsResponse? _defaultInstance;
-
-  @$pb.TagNumber(1)
-  $core.List<ChatsResponse_ChatData> get data => $_getList(0);
 }
 
 class CreateGroupRequest extends $pb.GeneratedMessage {

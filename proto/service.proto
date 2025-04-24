@@ -135,14 +135,17 @@ message CreateChatResponse{
 
 // =================================================================
 
-message NotificationRequest {
+message StreamRequest {
   string token = 1;
 }
-message NotificationResponse{
+message StreamResponse{
   oneof data{
-    MessagesResponse messages = 1;
-    ChatsResponse chats = 2;
+    Messages messages = 1;
+    Chats chats = 2;
   }
+}
+message Messages{
+  repeated MessageData data = 1;
 }
 
 message GetMessagesRequest{
@@ -152,12 +155,14 @@ message GetMessagesRequest{
   uint32 last_msg_id = 3;
   Direction direction = 4; // next , previous
   int32 count = 5;
-
+  
   // Only use this options for set "Follow" state on "previous" direction include messages
   // if  (len(comming_messages) + page_size) < page_max then Follow = true
   int32 page_size = 6; // current page size
   int32 page_max = 7; // maximum page size
-
+  
+  string token = 8;
+  
   enum Direction{
     None = 0;
     NextPage = 1;
@@ -166,10 +171,8 @@ message GetMessagesRequest{
     LastPage = 4;
   }
 }
-message MessagesResponse{
-  repeated MessageData data = 1;
-  bool follow = 2;
-}
+message GetMessagesResponse{}
+
 
 message MessageData{
   uint32 senderId = 1; // Sender user id
@@ -194,19 +197,18 @@ message RepliedMessage{
 message GetChatsRequest{
   string token = 1;
 }
-message ChatsResponse{
-  repeated ChatData data = 1;
-  
-  message ChatData{
-    uint32 chat_id = 1; // Chat id
-    string chatTitle = 2; // Title of Chat
-    string type = 3; // Type of Chat : group|channel|private
-    bool mute = 4; // Whether to mute
-    string avatarUrl = 5; // URL of avatar
-    string lastMessage = 6; // Last message
-    string unreadedMessagesCount = 7; // Unreaded messages count
-    uint32 lastReadedMessageId = 8; // Last message id
-  }
+message Chats{
+  repeated ChatData data = 1;  
+}
+message ChatData{
+  uint32 chat_id = 1; // Chat id
+  string chatTitle = 2; // Title of Chat
+  string type = 3; // Type of Chat : group|channel|private
+  bool mute = 4; // Whether to mute
+  string avatarUrl = 5; // URL of avatar
+  string lastMessage = 6; // Last message
+  string unreadedMessagesCount = 7; // Unreaded messages count
+  uint32 lastReadedMessageId = 8; // Last message id
 }
 
 
@@ -255,8 +257,8 @@ message SelectChatRequest{
 }
 
 service ChatService {
-  rpc NotificationChannel(NotificationRequest) returns (stream NotificationResponse);
-  rpc GetMessages(GetMessagesRequest) returns (stream MessagesResponse);
+  rpc StreamChannel(StreamRequest) returns (stream StreamResponse);
+  rpc GetMessages(GetMessagesRequest) returns (stream Messages);
 
   rpc AddUser(AddUserRequest) returns (AddUserResponse);
   rpc AddMember(AddMemberRequest) returns (AddMemberResponse);
@@ -271,6 +273,6 @@ service ChatService {
   rpc UploadFile(FileRequest) returns (FileResponse);
 
   // Just for test
-  rpc GetChats(GetChatsRequest) returns (ChatsResponse);
+  rpc GetChats(GetChatsRequest) returns (Chats);
   
 }

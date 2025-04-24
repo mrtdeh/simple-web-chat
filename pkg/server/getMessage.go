@@ -7,12 +7,26 @@ import (
 )
 
 func (s *Server) GetMessages(req *proto.GetMessagesRequest, stream proto.ChatService_GetMessagesServer) error {
+	time.Sleep(time.Second * 1)
+
+	t, err := checkToken(req.Token)
+	if err != nil {
+		return err
+	}
+
+	sess := s.Sessions.Get(t.Username)
+	if sess == nil {
+		return fmt.Errorf("session for '%s' is expired or not found", t.Username)
+	}
+	// sess.sl.Lock()
+	// defer sess.sl.Unlock()
+
+	sess.activeChat(req.ChatId)
+	sess.unfollow()
+
 	if req.PageMax == 0 {
 		return fmt.Errorf("page_max must be exist")
 	}
-
-	time.Sleep(time.Second * 1)
-	var res = &proto.MessagesResponse{}
 
 	lastID, err := s.db.GetLastMessageID(req.ChatId)
 	if err != nil {
@@ -23,12 +37,9 @@ func (s *Server) GetMessages(req *proto.GetMessagesRequest, stream proto.ChatSer
 
 		if req.LastMsgId > 0 { // If lastMsgId is exist then check with real last message id from db
 			if req.LastMsgId == lastID {
-				res.Follow = true
+				sess.follow()
 			}
-			err = stream.Send(res)
-			if err != nil {
-				return err
-			}
+			// TODO : may need to send some think
 			return nil
 
 		} else { // else, change direction of none to next for getting messages of begening from db
@@ -52,11 +63,11 @@ func (s *Server) GetMessages(req *proto.GetMessagesRequest, stream proto.ChatSer
 		if req.Direction == proto.GetMessagesRequest_LastPage ||
 			req.Direction == proto.GetMessagesRequest_NextPage ||
 			req.Direction == proto.GetMessagesRequest_BothPage {
-			res.Follow = true
+			sess.follow()
 		}
 		if req.Direction == proto.GetMessagesRequest_PrevPage {
 			if req.LastMsgId == lastID {
-				res.Follow = true
+				sess.follow()
 			}
 		}
 
@@ -68,61 +79,17 @@ func (s *Server) GetMessages(req *proto.GetMessagesRequest, stream proto.ChatSer
 			msgsLen := len(messages)
 			a := req.PageSize + int32(msgsLen)
 			if a < req.PageMax {
-				res.Follow = true
+				sess.follow()
 			}
 		} else {
 			if messages[len(messages)-1].ID == lastID {
-				res.Follow = true
+				sess.follow()
 			}
 		}
 	}
 
-	var data []*proto.MessageData
-	for _, m := range messages {
-
-		// Fetch message attachment's placeholder
-		var attachs []*proto.Attachment
-		for _, att := range m.Attachments {
-			for _, t := range att.Thumbnails {
-				if t.Type == "placeholder" {
-					attachs = append(attachs, &proto.Attachment{
-						Placeholder: t.Base64,     // Base64 of the attachment placeholder
-						Type:        att.FileType, // NOTE: most be image|video|audio|other...
-						Url:         att.FilePath, // TODO: replace with http URL
-					})
-					break
-				}
-			}
-		}
-
-		// Fetch replied messages with thumbnails
-		var repliedMessages []*proto.RepliedMessage
-		for _, r := range m.Replies {
-			var thumbnails []string
-			for _, t := range r.Thumbnails {
-				thumbnails = append(thumbnails, t.Thumbnail.Base64)
-			}
-			repliedMessages = append(repliedMessages, &proto.RepliedMessage{
-				MessageId:  uint32(r.ReplyMessageId),
-				Content:    r.ReplyMessage.Content,
-				Thumbnails: thumbnails,
-			})
-		}
-
-		// Collect message data
-		data = append(data, &proto.MessageData{
-			SenderId:        uint32(m.Sender.ID),
-			MessageId:       uint32(m.ID),
-			Content:         m.Content,
-			SendAt:          m.CreatedAt.Unix(),
-			Attachements:    attachs,
-			RepliedMessages: repliedMessages,
-		})
-
-	}
-
-	res.Data = data
-	err = stream.Send(res)
+	protoMessages := convertMessagesToProto(messages)
+	err = stream.Send(protoMessages)
 	if err != nil {
 		return err
 	}

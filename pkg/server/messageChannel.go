@@ -13,7 +13,7 @@ var tm = &TokenManager{
 	l:      sync.RWMutex{},
 }
 
-func (s *Server) NotificationChannel(pc *proto.NotificationRequest, stream proto.ChatService_NotificationChannelServer) error {
+func (s *Server) StreamChannel(pc *proto.StreamRequest, stream proto.ChatService_StreamChannelServer) error {
 	// Check authorize user
 	token := pc.Token
 	ctx := stream.Context()
@@ -28,9 +28,10 @@ func (s *Server) NotificationChannel(pc *proto.NotificationRequest, stream proto
 
 	// Prepare new connection info
 	session := &Session{
+		sl:      &sync.Mutex{},
 		stream:  stream,
 		token:   tokenData,
-		receive: make(chan struct{}),
+		receive: make(chan *proto.StreamResponse, 1),
 		close:   make(chan struct{}),
 		error:   make(chan error),
 	}
@@ -73,46 +74,29 @@ func (s *Server) sendChats(username string) error {
 	if err != nil {
 		return err
 	}
-	return session.stream.Send(&proto.NotificationResponse{
-		Data: &proto.NotificationResponse_Chats{
-			Chats: &proto.ChatsResponse{
+	return session.stream.Send(&proto.StreamResponse{
+		Data: &proto.StreamResponse_Chats{
+			Chats: &proto.Chats{
 				Data: chats,
 			},
 		},
 	})
 }
 
-// func (s *Server) sendMessages(username string) error {
-// 	session := s.Sessions.Get(username)
-// 	res, err := s.GetMessages(context.Background(), &proto.GetMessagesRequest{
-// 		ChatId: session.activeChatId,
-// 	})
-// 	if err != nil {
-// 		return err
-// 	}
-// 	return session.stream.Send(&proto.NotificationResponse{
-// 		Data: &proto.NotificationResponse_Messages{
-// 			Messages: &proto.MessagesResponse{
-// 				Data: res.Data,
-// 			},
-// 		},
-// 	})
-// }
-
 func (s *Server) receiveService(username string) {
-	fmt.Println("xxxxxxxxxxxxxxxxxxxxxx")
 	session := s.Sessions.Get(username)
 
-	t := time.NewTimer(time.Second * 10)
+	t := time.NewTicker(time.Second * 10)
 	for {
 		select {
 		case <-session.close:
 			fmt.Println("session killed: receive channel closed")
 			return
-		case <-session.OnReceive():
-			// if err := s.sendMessages(session.token.Username); err != nil {
-			// 	fmt.Println("error in send messages from channel : ", err.Error())
-			// }
+		case m, ok := <-session.onReceive():
+			if ok {
+				session.send(m)
+			}
+
 		case <-t.C:
 			// check for received messages from db
 

@@ -1,7 +1,9 @@
 import 'dart:async';
+// import 'package:dashboard/utils/locker.dart';
 import 'package:dashboard/utils/locker.dart';
 import 'package:flutter/material.dart';
 import 'package:grpc/grpc_web.dart';
+import 'package:synchronized/synchronized.dart';
 
 import '../proto/service.pbgrpc.dart';
 
@@ -36,6 +38,12 @@ enum MessageStatus {
   failed
 }
 
+const dirNext = GetMessagesRequest_Direction.NextPage;
+const dirPrev = GetMessagesRequest_Direction.PrevPage;
+const dirBoth = GetMessagesRequest_Direction.BothPage;
+const dirLast = GetMessagesRequest_Direction.LastPage;
+const dirNone = GetMessagesRequest_Direction.None;
+
 class WebChat {
   WebChat._privateConstructor();
   static final WebChat instance = WebChat._privateConstructor();
@@ -46,8 +54,8 @@ class WebChat {
   int userID = 0;
   String token = "";
   List<Message> messages = [];
-  List<ChatsResponse_ChatData> chats = [];
-  // ChatsResponse_ChatData? chat;
+  List<ChatData> chats = [];
+  // ChatData? chat;
   int getActiveChatID() {
     return chats[_selectedChatIndex].chatId;
   }
@@ -83,8 +91,8 @@ class WebChat {
     return msg;
   }
 
-  final StreamController<List<ChatsResponse_ChatData>> _chatStream = StreamController<List<ChatsResponse_ChatData>>.broadcast();
-  Stream<List<ChatsResponse_ChatData>> get chatStream => _chatStream.stream;
+  final StreamController<List<ChatData>> _chatStream = StreamController<List<ChatData>>.broadcast();
+  Stream<List<ChatData>> get chatStream => _chatStream.stream;
 
   StreamController<List<Message>> _messageStream = StreamController<List<Message>>.broadcast();
   Stream<List<Message>> get messageStream => _messageStream.stream;
@@ -125,6 +133,7 @@ class WebChat {
   }
 
   final double pageMax = 150;
+  var msglock = new Lock();
   final locker = Locker<String>();
 
   void getMessages(
@@ -137,30 +146,32 @@ class WebChat {
       print("Task is locked!");
       return;
     }
+    locker.lock("getMessage");
 
     var fromMsgId = 0;
 
     switch (direction) {
-      case GetMessagesRequest_Direction.NextPage || GetMessagesRequest_Direction.LastPage:
+      case dirNext || dirLast:
         // Set parameters for get next page
         fromMsgId = messages.last.data.messageId;
         if (fromMsgId == 0) {
           return;
         }
       // break;
-      case GetMessagesRequest_Direction.PrevPage:
+      case dirPrev:
         // Set parameters for get previous page
         fromMsgId = messages.first.data.messageId;
       // break;
       default:
     }
 
-    locker.lock("getMessage");
-
     print("get message : $direction $count from $fromMsgId");
 
     var chatId = chats[_selectedChatIndex].chatId;
-    var lastMsgId = messages.last.data.messageId;
+    int? lastMsgId;
+    if (messages.length > 0) {
+      lastMsgId = messages.last.data.messageId;
+    }
     var currentPageSize = messages.length;
 
     final request = GetMessagesRequest(
@@ -171,77 +182,26 @@ class WebChat {
       lastMsgId: lastMsgId,
       pageSize: currentPageSize,
       pageMax: pageMax.toInt(),
+      token: token,
     );
-    // double totalHeight = 0;
+
     List<Message> msgs = [];
 
     _service.getMessages(request).listen((response) {
       for (var msg in response.data) {
         // Create new Message class with calculate the box height
-        var newMsg = newBoxMessage(msg, context);
+        var newMsg = newBoxMessage(msg);
         // Add message to temprary list
         msgs.add(newMsg);
       }
     }, onDone: () {
-      try {
-        if (msgs.isEmpty) {
-          // call done callback if defined
-          if (onComplete != null) {
-            onComplete(msgs.length);
-          }
-          // Return on empty messages received
-          return;
-        }
-        switch (direction) {
-          case GetMessagesRequest_Direction.NextPage:
-            // If do lazy-loading next message
-            // Add messages to end of list
-            messages.insertAll(messages.length, msgs);
-            // Check if total messages reached maximum page size
-            if (messages.length > pageMax) {
-              // Calculate total height of messages from top of list
-              var count = messages.length - pageMax;
-              // for (var i = 0; i <= count - 1; i++) {
-              //   totalHeight += messages[i].boxHeight!;
-              // }
-              // Removing messages from the top of list
-              messages.removeRange(0, count.toInt());
-            }
-          // break;
-          case GetMessagesRequest_Direction.PrevPage:
-            // If do lazy-loading previous message
-            // Add messages to the top of list
-            messages.insertAll(0, msgs);
-            // Check if total messages reached maximum page size
-            if (messages.length > pageMax) {
-              // Removing the messages from the down of list
-              var len = messages.length;
-              var rmCounts = (messages.length - pageMax).toInt();
-              messages.removeRange(len - rmCounts, len);
-            }
-          // break;
-          case GetMessagesRequest_Direction.LastPage:
-            messages = msgs;
-          // break;
-          default:
-            // If do not lazy-loading messages
-            messages.insertAll(0, msgs);
-        }
-        // Update stream sink to update Listview of messages
-        _messageStream.sink.add(messages);
-
-        // call done callback if defined
-        if (onComplete != null) {
-          onComplete(msgs.length);
-        }
-      } finally {
-        // reset incomming list
-        msgs = [];
-        // _lock = false;
-        locker.unlock("getMessage");
+      // Process recieved messages and put to listview
+      processReceivedMessages(msgs, direction);
+      if (onComplete != null) {
+        onComplete(msgs.length);
       }
+      locker.unlock("getMessage");
     }, onError: (error) {
-      // _lock = false;
       locker.unlock("getMessage");
       print("Error in get messages: $error");
     });
@@ -270,13 +230,25 @@ class WebChat {
 
   void startMessageChannel() {
     print("start listening...");
-    final request = NotificationRequest()..token = token;
-    _service.notificationChannel(request).listen((response) {
+    final request = StreamRequest()..token = token;
+    _service.streamChannel(request).listen((response) {
       if (response.hasChats()) {
         for (var chat in response.chats.data) {
           chats.add(chat);
         }
         _chatStream.sink.add(chats);
+      }
+
+      if (response.hasMessages()) {
+        List<Message> msgs = [];
+        for (var msg in response.messages.data) {
+          // Create new Message class with calculate the box height
+          var newMsg = newBoxMessage(msg);
+          // Add message to temprary list
+          msgs.add(newMsg);
+        }
+
+        processReceivedMessages(msgs, dirNext);
       }
     }, onError: (error) {
       print("Error in message channel: $error");
@@ -286,46 +258,106 @@ class WebChat {
     });
   }
 
-  Message newBoxMessage(MessageData msg, BuildContext context) {
-    var text = msg.content;
-    var attLen = msg.attachements.length;
-    double textHeight = 0.0;
+  void processReceivedMessages(
+    List<Message> msgs,
+    GetMessagesRequest_Direction direction, {
+    Function(int)? onComplete,
+  }) {
+    msglock.synchronized(() async {
+      try {
+        if (msgs.isEmpty) {
+          // call done callback if defined
+          if (onComplete != null) {
+            onComplete(0);
+          }
+          // Return on empty messages received
+          return;
+        }
+        switch (direction) {
+          case dirNext:
+            // If do lazy-loading next message
+            // Add messages to end of list
+            messages.insertAll(messages.length, msgs);
+            // Check if total messages reached maximum page size
+            if (messages.length > pageMax) {
+              // Calculate total height of messages from top of list
+              var count = messages.length - pageMax;
+              // Removing messages from the top of list
+              messages.removeRange(0, count.toInt());
+            }
+          // break;
+          case dirPrev:
+            // If do lazy-loading previous message
+            // Add messages to the top of list
+            messages.insertAll(0, msgs);
+            // Check if total messages reached maximum page size
+            if (messages.length > pageMax) {
+              // Removing the messages from the down of list
+              var len = messages.length;
+              var rmCounts = (messages.length - pageMax).toInt();
+              messages.removeRange(len - rmCounts, len);
+            }
+          // break;
+          case dirLast:
+            messages = msgs;
+          // break;
+          default:
+            // If do not lazy-loading messages
+            messages.insertAll(0, msgs);
+        }
+        // Update stream sink to update Listview of messages
+        _messageStream.sink.add(messages);
 
-    TextPainter textPainter = TextPainter(
-      text: TextSpan(text: text, style: defaultTextStyle),
-      textDirection: TextDirection.ltr,
-      maxLines: null,
-    );
+        // call done callback if defined
+        if (onComplete != null) {
+          onComplete(msgs.length);
+        }
+      } catch (e) {
+        print("error in process messages :" + e.toString());
+      }
+    });
+  }
 
-    double windowWidth = MediaQuery.of(context).size.width;
-    double maxWidth = windowWidth;
-    double textBoxPadding = 20; // text box (left + right) padding
-    double viewInnerWidth = 600; // without margins
-    double viewOutterWidth = 620; // with margins
-    double avatarWidth = 70; // (radius * 2) + left/right margins
-    double leftPanelWidth = CHATS_WIDTH;
-    // double others = avatarWidth + viewHorizontalPadding + chatsWidth;
-    double messagesViewWidth = windowWidth - leftPanelWidth;
-    if (messagesViewWidth > viewOutterWidth) {
-      maxWidth = viewInnerWidth - (avatarWidth + textBoxPadding);
-    }
+  Message newBoxMessage(MessageData msg) {
+    // var text = msg.content;
+    // var attLen = msg.attachements.length;
+    // double textHeight = 0.0;
 
-    textPainter.layout(maxWidth: maxWidth);
+    // TextPainter textPainter = TextPainter(
+    //   text: TextSpan(text: text, style: defaultTextStyle),
+    //   textDirection: TextDirection.ltr,
+    //   maxLines: null,
+    // );
 
-    var textVerticalPadding = 20;
-    textHeight += textPainter.size.height + textVerticalPadding;
+    // double windowWidth = MediaQuery.of(context).size.width;
+    // double maxWidth = windowWidth;
+    // double textBoxPadding = 20; // text box (left + right) padding
+    // double viewInnerWidth = 600; // without margins
+    // double viewOutterWidth = 620; // with margins
+    // double avatarWidth = 70; // (radius * 2) + left/right margins
+    // double leftPanelWidth = CHATS_WIDTH;
+    // // double others = avatarWidth + viewHorizontalPadding + chatsWidth;
+    // double messagesViewWidth = windowWidth - leftPanelWidth;
+    // if (messagesViewWidth > viewOutterWidth) {
+    //   maxWidth = viewInnerWidth - (avatarWidth + textBoxPadding);
+    // }
 
-    var textVerticalMargin = 20;
-    var atc = (attLen / 3).ceil();
-    var attachHeight = 100;
-    var boxHeight = textHeight + textVerticalMargin + (atc * attachHeight);
+    // textPainter.layout(maxWidth: maxWidth);
+
+    // var textVerticalPadding = 20;
+    // textHeight += textPainter.size.height + textVerticalPadding;
+
+    // var textVerticalMargin = 20;
+    // var atc = (attLen / 3).ceil();
+    // var attachHeight = 100;
+    // var boxHeight = textHeight + textVerticalMargin + (atc * attachHeight);
 
     var chat = chats[_selectedChatIndex];
     return Message(
       data: msg,
       key: GlobalKey(),
-      textHeight: textHeight,
-      boxHeight: boxHeight,
+      // textHeight: textHeight,
+      // boxHeight: boxHeight,
       haveAvatar: chat.type == "public",
       toLeft: msg.senderId != userID,
     );

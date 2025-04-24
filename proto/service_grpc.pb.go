@@ -22,7 +22,7 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ChatServiceClient interface {
-	NotificationChannel(ctx context.Context, in *NotificationRequest, opts ...grpc.CallOption) (ChatService_NotificationChannelClient, error)
+	StreamChannel(ctx context.Context, in *StreamRequest, opts ...grpc.CallOption) (ChatService_StreamChannelClient, error)
 	GetMessages(ctx context.Context, in *GetMessagesRequest, opts ...grpc.CallOption) (ChatService_GetMessagesClient, error)
 	AddUser(ctx context.Context, in *AddUserRequest, opts ...grpc.CallOption) (*AddUserResponse, error)
 	AddMember(ctx context.Context, in *AddMemberRequest, opts ...grpc.CallOption) (*AddMemberResponse, error)
@@ -35,7 +35,7 @@ type ChatServiceClient interface {
 	SendMessage(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*MessageResponse, error)
 	UploadFile(ctx context.Context, in *FileRequest, opts ...grpc.CallOption) (*FileResponse, error)
 	// Just for test
-	GetChats(ctx context.Context, in *GetChatsRequest, opts ...grpc.CallOption) (*ChatsResponse, error)
+	GetChats(ctx context.Context, in *GetChatsRequest, opts ...grpc.CallOption) (*Chats, error)
 }
 
 type chatServiceClient struct {
@@ -46,12 +46,12 @@ func NewChatServiceClient(cc grpc.ClientConnInterface) ChatServiceClient {
 	return &chatServiceClient{cc}
 }
 
-func (c *chatServiceClient) NotificationChannel(ctx context.Context, in *NotificationRequest, opts ...grpc.CallOption) (ChatService_NotificationChannelClient, error) {
-	stream, err := c.cc.NewStream(ctx, &ChatService_ServiceDesc.Streams[0], "/proto.ChatService/NotificationChannel", opts...)
+func (c *chatServiceClient) StreamChannel(ctx context.Context, in *StreamRequest, opts ...grpc.CallOption) (ChatService_StreamChannelClient, error) {
+	stream, err := c.cc.NewStream(ctx, &ChatService_ServiceDesc.Streams[0], "/proto.ChatService/StreamChannel", opts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &chatServiceNotificationChannelClient{stream}
+	x := &chatServiceStreamChannelClient{stream}
 	if err := x.ClientStream.SendMsg(in); err != nil {
 		return nil, err
 	}
@@ -61,17 +61,17 @@ func (c *chatServiceClient) NotificationChannel(ctx context.Context, in *Notific
 	return x, nil
 }
 
-type ChatService_NotificationChannelClient interface {
-	Recv() (*NotificationResponse, error)
+type ChatService_StreamChannelClient interface {
+	Recv() (*StreamResponse, error)
 	grpc.ClientStream
 }
 
-type chatServiceNotificationChannelClient struct {
+type chatServiceStreamChannelClient struct {
 	grpc.ClientStream
 }
 
-func (x *chatServiceNotificationChannelClient) Recv() (*NotificationResponse, error) {
-	m := new(NotificationResponse)
+func (x *chatServiceStreamChannelClient) Recv() (*StreamResponse, error) {
+	m := new(StreamResponse)
 	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
 	}
@@ -94,7 +94,7 @@ func (c *chatServiceClient) GetMessages(ctx context.Context, in *GetMessagesRequ
 }
 
 type ChatService_GetMessagesClient interface {
-	Recv() (*MessagesResponse, error)
+	Recv() (*Messages, error)
 	grpc.ClientStream
 }
 
@@ -102,8 +102,8 @@ type chatServiceGetMessagesClient struct {
 	grpc.ClientStream
 }
 
-func (x *chatServiceGetMessagesClient) Recv() (*MessagesResponse, error) {
-	m := new(MessagesResponse)
+func (x *chatServiceGetMessagesClient) Recv() (*Messages, error) {
+	m := new(Messages)
 	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
 	}
@@ -200,8 +200,8 @@ func (c *chatServiceClient) UploadFile(ctx context.Context, in *FileRequest, opt
 	return out, nil
 }
 
-func (c *chatServiceClient) GetChats(ctx context.Context, in *GetChatsRequest, opts ...grpc.CallOption) (*ChatsResponse, error) {
-	out := new(ChatsResponse)
+func (c *chatServiceClient) GetChats(ctx context.Context, in *GetChatsRequest, opts ...grpc.CallOption) (*Chats, error) {
+	out := new(Chats)
 	err := c.cc.Invoke(ctx, "/proto.ChatService/GetChats", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -213,7 +213,7 @@ func (c *chatServiceClient) GetChats(ctx context.Context, in *GetChatsRequest, o
 // All implementations should embed UnimplementedChatServiceServer
 // for forward compatibility
 type ChatServiceServer interface {
-	NotificationChannel(*NotificationRequest, ChatService_NotificationChannelServer) error
+	StreamChannel(*StreamRequest, ChatService_StreamChannelServer) error
 	GetMessages(*GetMessagesRequest, ChatService_GetMessagesServer) error
 	AddUser(context.Context, *AddUserRequest) (*AddUserResponse, error)
 	AddMember(context.Context, *AddMemberRequest) (*AddMemberResponse, error)
@@ -226,15 +226,15 @@ type ChatServiceServer interface {
 	SendMessage(context.Context, *MessageRequest) (*MessageResponse, error)
 	UploadFile(context.Context, *FileRequest) (*FileResponse, error)
 	// Just for test
-	GetChats(context.Context, *GetChatsRequest) (*ChatsResponse, error)
+	GetChats(context.Context, *GetChatsRequest) (*Chats, error)
 }
 
 // UnimplementedChatServiceServer should be embedded to have forward compatible implementations.
 type UnimplementedChatServiceServer struct {
 }
 
-func (UnimplementedChatServiceServer) NotificationChannel(*NotificationRequest, ChatService_NotificationChannelServer) error {
-	return status.Errorf(codes.Unimplemented, "method NotificationChannel not implemented")
+func (UnimplementedChatServiceServer) StreamChannel(*StreamRequest, ChatService_StreamChannelServer) error {
+	return status.Errorf(codes.Unimplemented, "method StreamChannel not implemented")
 }
 func (UnimplementedChatServiceServer) GetMessages(*GetMessagesRequest, ChatService_GetMessagesServer) error {
 	return status.Errorf(codes.Unimplemented, "method GetMessages not implemented")
@@ -269,7 +269,7 @@ func (UnimplementedChatServiceServer) SendMessage(context.Context, *MessageReque
 func (UnimplementedChatServiceServer) UploadFile(context.Context, *FileRequest) (*FileResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UploadFile not implemented")
 }
-func (UnimplementedChatServiceServer) GetChats(context.Context, *GetChatsRequest) (*ChatsResponse, error) {
+func (UnimplementedChatServiceServer) GetChats(context.Context, *GetChatsRequest) (*Chats, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetChats not implemented")
 }
 
@@ -284,24 +284,24 @@ func RegisterChatServiceServer(s grpc.ServiceRegistrar, srv ChatServiceServer) {
 	s.RegisterService(&ChatService_ServiceDesc, srv)
 }
 
-func _ChatService_NotificationChannel_Handler(srv interface{}, stream grpc.ServerStream) error {
-	m := new(NotificationRequest)
+func _ChatService_StreamChannel_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(StreamRequest)
 	if err := stream.RecvMsg(m); err != nil {
 		return err
 	}
-	return srv.(ChatServiceServer).NotificationChannel(m, &chatServiceNotificationChannelServer{stream})
+	return srv.(ChatServiceServer).StreamChannel(m, &chatServiceStreamChannelServer{stream})
 }
 
-type ChatService_NotificationChannelServer interface {
-	Send(*NotificationResponse) error
+type ChatService_StreamChannelServer interface {
+	Send(*StreamResponse) error
 	grpc.ServerStream
 }
 
-type chatServiceNotificationChannelServer struct {
+type chatServiceStreamChannelServer struct {
 	grpc.ServerStream
 }
 
-func (x *chatServiceNotificationChannelServer) Send(m *NotificationResponse) error {
+func (x *chatServiceStreamChannelServer) Send(m *StreamResponse) error {
 	return x.ServerStream.SendMsg(m)
 }
 
@@ -314,7 +314,7 @@ func _ChatService_GetMessages_Handler(srv interface{}, stream grpc.ServerStream)
 }
 
 type ChatService_GetMessagesServer interface {
-	Send(*MessagesResponse) error
+	Send(*Messages) error
 	grpc.ServerStream
 }
 
@@ -322,7 +322,7 @@ type chatServiceGetMessagesServer struct {
 	grpc.ServerStream
 }
 
-func (x *chatServiceGetMessagesServer) Send(m *MessagesResponse) error {
+func (x *chatServiceGetMessagesServer) Send(m *Messages) error {
 	return x.ServerStream.SendMsg(m)
 }
 
@@ -578,8 +578,8 @@ var ChatService_ServiceDesc = grpc.ServiceDesc{
 	},
 	Streams: []grpc.StreamDesc{
 		{
-			StreamName:    "NotificationChannel",
-			Handler:       _ChatService_NotificationChannel_Handler,
+			StreamName:    "StreamChannel",
+			Handler:       _ChatService_StreamChannel_Handler,
 			ServerStreams: true,
 		},
 		{

@@ -27,7 +27,7 @@ class ChatSidebar extends StatelessWidget {
             ),
           ),
           Expanded(
-            child: StreamBuilder<List<ChatsResponse_ChatData>>(
+            child: StreamBuilder<List<ChatData>>(
               stream: wc.chatStream,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
@@ -62,7 +62,7 @@ class ChatSidebar extends StatelessWidget {
 }
 
 class ChatListItem extends StatelessWidget {
-  final ChatsResponse_ChatData chat;
+  final ChatData chat;
   final int index;
   final VoidCallback? onTap;
 
@@ -86,7 +86,7 @@ class ChatListItem extends StatelessWidget {
           onTap!();
         }
         wc.setChat(index);
-        wc.getMessages(GetMessagesRequest_Direction.None, 50, context);
+        wc.getMessages(dirBoth, 50, context);
       },
     );
   }

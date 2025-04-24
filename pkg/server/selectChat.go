@@ -15,7 +15,7 @@ func (s *Server) SelectChat(ctx context.Context, req *proto.SelectChatRequest) (
 	}
 
 	session := s.Sessions.Get(t.Username)
-	session.ActiveChat(req.ChatId)
+	session.activeChat(req.ChatId)
 
 	return &proto.EmptyRequest{}, nil
 }
