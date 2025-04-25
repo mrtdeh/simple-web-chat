@@ -76,12 +76,13 @@ class _ChatScreenState extends State<ChatScreen> {
 
     if (_scrollController.position.pixels == _scrollController.position.minScrollExtent) {
       wc.getMessages(GetMessagesRequest_Direction.PrevPage, 50, context, onComplete: (x) {
-        _listController.jumpToItem(
-          index: 50,
-          scrollController: _scrollController,
-          alignment: 0,
-        );
-
+        if (x > 0) {
+          _listController.jumpToItem(
+            index: x + 1,
+            scrollController: _scrollController,
+            alignment: 0,
+          );
+        }
         // WidgetsBinding.instance.addPostFrameCallback((_) {
         //   double targetAlignment = 1 + 0.5;
         //   _listController.animateToItem(
