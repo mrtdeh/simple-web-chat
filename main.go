@@ -5,7 +5,6 @@ import (
 	server "api-channel/pkg/server"
 	"api-channel/seeds"
 	"flag"
-	"fmt"
 	"log"
 	"time"
 )
@@ -30,7 +29,7 @@ func main() {
 
 	seeds.SeedDatabase(db.GORM())
 
-	fmt.Println("start listening...")
+	log.Println("start listening...")
 	if err := s.Serve(); err != nil {
 		log.Fatal(err)
 	}

@@ -2,7 +2,6 @@ package server
 
 import (
 	"api-channel/proto"
-	"fmt"
 	"log"
 	"sync"
 	"time"
@@ -51,16 +50,16 @@ func (s *Server) StreamChannel(pc *proto.StreamRequest, stream proto.ChatService
 	// This blocking select wait for interrupt signals (kill,error,context done) and close session
 	select {
 	case <-session.close:
-		fmt.Println("session killed")
+		log.Println("session killed")
 		return nil
 
 	case err := <-session.error:
-		fmt.Println("session error : ", err.Error())
+		log.Println("session error : ", err.Error())
 		closeChannel(session.close)
 		return err
 
 	case <-ctx.Done():
-		fmt.Println("session context done")
+		log.Println("session context done")
 		closeChannel(session.close)
 		return nil
 	}
@@ -90,7 +89,7 @@ func (s *Server) receiveService(username string) {
 	for {
 		select {
 		case <-session.close:
-			fmt.Println("session killed: receive channel closed")
+			log.Println("session killed: receive channel closed")
 			return
 		case m, ok := <-session.onReceive():
 			if ok {
