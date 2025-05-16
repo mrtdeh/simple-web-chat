@@ -2260,13 +2260,13 @@ class ChatData extends $pb.GeneratedMessage {
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'ChatData', package: const $pb.PackageName(_omitMessageNames ? '' : 'proto'), createEmptyInstance: create)
     ..a<$core.int>(1, _omitFieldNames ? '' : 'chatId', $pb.PbFieldType.OU3)
-    ..aOS(2, _omitFieldNames ? '' : 'chatTitle', protoName: 'chatTitle')
+    ..aOS(2, _omitFieldNames ? '' : 'chatTitle')
     ..aOS(3, _omitFieldNames ? '' : 'type')
     ..aOB(4, _omitFieldNames ? '' : 'mute')
-    ..aOS(5, _omitFieldNames ? '' : 'avatarUrl', protoName: 'avatarUrl')
-    ..aOS(6, _omitFieldNames ? '' : 'lastMessage', protoName: 'lastMessage')
-    ..aOS(7, _omitFieldNames ? '' : 'unreadedMessagesCount', protoName: 'unreadedMessagesCount')
-    ..a<$core.int>(8, _omitFieldNames ? '' : 'lastReadedMessageId', $pb.PbFieldType.OU3, protoName: 'lastReadedMessageId')
+    ..aOS(5, _omitFieldNames ? '' : 'avatarUrl')
+    ..aOS(6, _omitFieldNames ? '' : 'lastMessage')
+    ..aOS(7, _omitFieldNames ? '' : 'unreadedMessagesCount')
+    ..a<$core.int>(8, _omitFieldNames ? '' : 'lastReadedMessageId', $pb.PbFieldType.OU3)
     ..hasRequiredFields = false
   ;
 

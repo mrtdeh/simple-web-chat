@@ -481,23 +481,24 @@ const ChatData$json = {
   '1': 'ChatData',
   '2': [
     {'1': 'chat_id', '3': 1, '4': 1, '5': 13, '10': 'chatId'},
-    {'1': 'chatTitle', '3': 2, '4': 1, '5': 9, '10': 'chatTitle'},
+    {'1': 'chat_title', '3': 2, '4': 1, '5': 9, '10': 'chatTitle'},
     {'1': 'type', '3': 3, '4': 1, '5': 9, '10': 'type'},
     {'1': 'mute', '3': 4, '4': 1, '5': 8, '10': 'mute'},
-    {'1': 'avatarUrl', '3': 5, '4': 1, '5': 9, '10': 'avatarUrl'},
-    {'1': 'lastMessage', '3': 6, '4': 1, '5': 9, '10': 'lastMessage'},
-    {'1': 'unreadedMessagesCount', '3': 7, '4': 1, '5': 9, '10': 'unreadedMessagesCount'},
-    {'1': 'lastReadedMessageId', '3': 8, '4': 1, '5': 13, '10': 'lastReadedMessageId'},
+    {'1': 'avatar_url', '3': 5, '4': 1, '5': 9, '10': 'avatarUrl'},
+    {'1': 'last_message', '3': 6, '4': 1, '5': 9, '10': 'lastMessage'},
+    {'1': 'unreaded_messages_count', '3': 7, '4': 1, '5': 9, '10': 'unreadedMessagesCount'},
+    {'1': 'last_readed_message_id', '3': 8, '4': 1, '5': 13, '10': 'lastReadedMessageId'},
   ],
 };
 
 /// Descriptor for `ChatData`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List chatDataDescriptor = $convert.base64Decode(
-    'CghDaGF0RGF0YRIXCgdjaGF0X2lkGAEgASgNUgZjaGF0SWQSHAoJY2hhdFRpdGxlGAIgASgJUg'
-    'ljaGF0VGl0bGUSEgoEdHlwZRgDIAEoCVIEdHlwZRISCgRtdXRlGAQgASgIUgRtdXRlEhwKCWF2'
-    'YXRhclVybBgFIAEoCVIJYXZhdGFyVXJsEiAKC2xhc3RNZXNzYWdlGAYgASgJUgtsYXN0TWVzc2'
-    'FnZRI0ChV1bnJlYWRlZE1lc3NhZ2VzQ291bnQYByABKAlSFXVucmVhZGVkTWVzc2FnZXNDb3Vu'
-    'dBIwChNsYXN0UmVhZGVkTWVzc2FnZUlkGAggASgNUhNsYXN0UmVhZGVkTWVzc2FnZUlk');
+    'CghDaGF0RGF0YRIXCgdjaGF0X2lkGAEgASgNUgZjaGF0SWQSHQoKY2hhdF90aXRsZRgCIAEoCV'
+    'IJY2hhdFRpdGxlEhIKBHR5cGUYAyABKAlSBHR5cGUSEgoEbXV0ZRgEIAEoCFIEbXV0ZRIdCgph'
+    'dmF0YXJfdXJsGAUgASgJUglhdmF0YXJVcmwSIQoMbGFzdF9tZXNzYWdlGAYgASgJUgtsYXN0TW'
+    'Vzc2FnZRI2Chd1bnJlYWRlZF9tZXNzYWdlc19jb3VudBgHIAEoCVIVdW5yZWFkZWRNZXNzYWdl'
+    'c0NvdW50EjMKFmxhc3RfcmVhZGVkX21lc3NhZ2VfaWQYCCABKA1SE2xhc3RSZWFkZWRNZXNzYW'
+    'dlSWQ=');
 
 @$core.Deprecated('Use createGroupRequestDescriptor instead')
 const CreateGroupRequest$json = {

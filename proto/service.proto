@@ -202,13 +202,13 @@ message Chats{
 }
 message ChatData{
   uint32 chat_id = 1; // Chat id
-  string chatTitle = 2; // Title of Chat
+  string chat_title = 2; // Title of Chat
   string type = 3; // Type of Chat : group|channel|private
   bool mute = 4; // Whether to mute
-  string avatarUrl = 5; // URL of avatar
-  string lastMessage = 6; // Last message
-  string unreadedMessagesCount = 7; // Unreaded messages count
-  uint32 lastReadedMessageId = 8; // Last message id
+  string avatar_url = 5; // URL of avatar
+  string last_message = 6; // Last message
+  string unreaded_messages_count = 7; // Unreaded messages count
+  uint32 last_readed_message_id = 8; // Last message id
 }
 
 
