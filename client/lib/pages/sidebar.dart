@@ -1,5 +1,6 @@
+import 'package:dashboard/grpc/chat.dart';
 import 'package:dashboard/grpc/grpc.dart';
-import 'package:dashboard/proto/service.pb.dart';
+// import 'package:dashboard/proto/service.pb.dart';
 import 'package:flutter/material.dart';
 
 class ChatSidebar extends StatelessWidget {
@@ -27,7 +28,7 @@ class ChatSidebar extends StatelessWidget {
             ),
           ),
           Expanded(
-            child: StreamBuilder<List<ChatData>>(
+            child: StreamBuilder<List<Chat>>(
               stream: wc.chatStream,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
@@ -62,7 +63,7 @@ class ChatSidebar extends StatelessWidget {
 }
 
 class ChatListItem extends StatelessWidget {
-  final ChatData chat;
+  final Chat chat;
   final int index;
   final VoidCallback? onTap;
 
@@ -74,13 +75,13 @@ class ChatListItem extends StatelessWidget {
       trailing: Badge(
         backgroundColor: Colors.red,
         textColor: Colors.white,
-        label: Text(chat.unreadedMessagesCount),
+        label: Text(chat.data.unreadedMessagesCount),
       ),
       leading: CircleAvatar(
         child: Icon(Icons.person),
       ),
-      title: Text(chat.chatTitle),
-      subtitle: Text(chat.lastMessage, style: TextStyle(color: Colors.white)),
+      title: Text(chat.data.chatTitle),
+      subtitle: Text(chat.data.lastMessage, style: TextStyle(color: Colors.white)),
       onTap: () async {
         if (onTap != null) {
           onTap!();

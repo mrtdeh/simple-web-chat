@@ -620,3 +620,18 @@ final $typed_data.Uint8List selectChatRequestDescriptor = $convert.base64Decode(
     'ChFTZWxlY3RDaGF0UmVxdWVzdBIUCgV0b2tlbhgBIAEoCVIFdG9rZW4SFwoHY2hhdF9pZBgCIA'
     'EoDVIGY2hhdElk');
 
+@$core.Deprecated('Use chatNoticeRequestDescriptor instead')
+const ChatNoticeRequest$json = {
+  '1': 'ChatNoticeRequest',
+  '2': [
+    {'1': 'token', '3': 1, '4': 1, '5': 9, '10': 'token'},
+    {'1': 'chat_id', '3': 2, '4': 1, '5': 13, '10': 'chatId'},
+    {'1': 'readed_msg_id', '3': 3, '4': 1, '5': 13, '10': 'readedMsgId'},
+  ],
+};
+
+/// Descriptor for `ChatNoticeRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List chatNoticeRequestDescriptor = $convert.base64Decode(
+    'ChFDaGF0Tm90aWNlUmVxdWVzdBIUCgV0b2tlbhgBIAEoCVIFdG9rZW4SFwoHY2hhdF9pZBgCIA'
+    'EoDVIGY2hhdElkEiIKDXJlYWRlZF9tc2dfaWQYAyABKA1SC3JlYWRlZE1zZ0lk');
+

@@ -29,6 +29,10 @@ class ChatServiceClient extends $grpc.Client {
       '/proto.ChatService/GetMessages',
       ($0.GetMessagesRequest value) => value.writeToBuffer(),
       ($core.List<$core.int> value) => $0.Messages.fromBuffer(value));
+  static final _$chatNotice = $grpc.ClientMethod<$0.ChatNoticeRequest, $0.Close>(
+      '/proto.ChatService/ChatNotice',
+      ($0.ChatNoticeRequest value) => value.writeToBuffer(),
+      ($core.List<$core.int> value) => $0.Close.fromBuffer(value));
   static final _$addUser = $grpc.ClientMethod<$0.AddUserRequest, $0.AddUserResponse>(
       '/proto.ChatService/AddUser',
       ($0.AddUserRequest value) => value.writeToBuffer(),
@@ -86,6 +90,10 @@ class ChatServiceClient extends $grpc.Client {
 
   $grpc.ResponseStream<$0.Messages> getMessages($0.GetMessagesRequest request, {$grpc.CallOptions? options}) {
     return $createStreamingCall(_$getMessages, $async.Stream.fromIterable([request]), options: options);
+  }
+
+  $grpc.ResponseFuture<$0.Close> chatNotice($0.ChatNoticeRequest request, {$grpc.CallOptions? options}) {
+    return $createUnaryCall(_$chatNotice, request, options: options);
   }
 
   $grpc.ResponseFuture<$0.AddUserResponse> addUser($0.AddUserRequest request, {$grpc.CallOptions? options}) {
@@ -152,6 +160,13 @@ abstract class ChatServiceBase extends $grpc.Service {
         true,
         ($core.List<$core.int> value) => $0.GetMessagesRequest.fromBuffer(value),
         ($0.Messages value) => value.writeToBuffer()));
+    $addMethod($grpc.ServiceMethod<$0.ChatNoticeRequest, $0.Close>(
+        'ChatNotice',
+        chatNotice_Pre,
+        false,
+        false,
+        ($core.List<$core.int> value) => $0.ChatNoticeRequest.fromBuffer(value),
+        ($0.Close value) => value.writeToBuffer()));
     $addMethod($grpc.ServiceMethod<$0.AddUserRequest, $0.AddUserResponse>(
         'AddUser',
         addUser_Pre,
@@ -239,6 +254,10 @@ abstract class ChatServiceBase extends $grpc.Service {
     yield* getMessages(call, await request);
   }
 
+  $async.Future<$0.Close> chatNotice_Pre($grpc.ServiceCall call, $async.Future<$0.ChatNoticeRequest> request) async {
+    return chatNotice(call, await request);
+  }
+
   $async.Future<$0.AddUserResponse> addUser_Pre($grpc.ServiceCall call, $async.Future<$0.AddUserRequest> request) async {
     return addUser(call, await request);
   }
@@ -285,6 +304,7 @@ abstract class ChatServiceBase extends $grpc.Service {
 
   $async.Stream<$0.StreamResponse> streamChannel($grpc.ServiceCall call, $0.StreamRequest request);
   $async.Stream<$0.Messages> getMessages($grpc.ServiceCall call, $0.GetMessagesRequest request);
+  $async.Future<$0.Close> chatNotice($grpc.ServiceCall call, $0.ChatNoticeRequest request);
   $async.Future<$0.AddUserResponse> addUser($grpc.ServiceCall call, $0.AddUserRequest request);
   $async.Future<$0.AddMemberResponse> addMember($grpc.ServiceCall call, $0.AddMemberRequest request);
   $async.Future<$0.LoginResponse> login($grpc.ServiceCall call, $0.LoginRequest request);

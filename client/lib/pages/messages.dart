@@ -1,8 +1,10 @@
 import 'dart:convert';
 
 import 'package:dashboard/grpc/grpc.dart';
+import 'package:dashboard/grpc/message.dart';
 import 'package:flutter/material.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 
 class ChatMessages extends StatelessWidget {
   final ScrollController? scrollController;
@@ -82,77 +84,83 @@ class MessageBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Container(
-        // key: message.key,
-        width: 600,
-        margin: EdgeInsets.symmetric(horizontal: 10),
-        child: Directionality(
-          textDirection: message.toLeft! ? TextDirection.ltr : TextDirection.rtl,
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              message.haveAvatar!
-                  ? Container(
-                      margin: EdgeInsets.symmetric(horizontal: 10),
-                      child: CircleAvatar(
-                        backgroundColor: Colors.amber,
-                        radius: 25,
-                      ),
-                    )
-                  : SizedBox(),
-              Flexible(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    message.data.attachements.isNotEmpty
-                        ? SizedBox(
-                            width: 300,
-                            child: GridView.builder(
-                              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 3,
-                                crossAxisSpacing: 5,
-                                mainAxisSpacing: 5,
+    return VisibilityDetector(
+      key: message.key, //GlobalKey(),
+      onVisibilityChanged: (info) {
+        wc.setLastReadedMessageID(this.message.data.messageId);
+      },
+      child: Center(
+        child: Container(
+          // key: message.key,
+          width: 600,
+          margin: EdgeInsets.symmetric(horizontal: 10),
+          child: Directionality(
+            textDirection: message.toLeft! ? TextDirection.ltr : TextDirection.rtl,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                message.haveAvatar!
+                    ? Container(
+                        margin: EdgeInsets.symmetric(horizontal: 10),
+                        child: CircleAvatar(
+                          backgroundColor: Colors.amber,
+                          radius: 25,
+                        ),
+                      )
+                    : SizedBox(),
+                Flexible(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      message.data.attachements.isNotEmpty
+                          ? SizedBox(
+                              width: 300,
+                              child: GridView.builder(
+                                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 3,
+                                  crossAxisSpacing: 5,
+                                  mainAxisSpacing: 5,
+                                ),
+                                controller: ScrollController(keepScrollOffset: false),
+                                shrinkWrap: true,
+                                itemCount: message.data.attachements.length,
+                                itemBuilder: (context, index) {
+                                  // return ExtendedImage.memory(
+                                  //   base64Decode(message.data.attachements[index].placeholder),
+                                  //        gaplessPlayback: true,
+                                  // );
+                                  return Image(
+                                    image: MemoryImage(base64Decode(message.data.attachements[index].placeholder)),
+                                    gaplessPlayback: true,
+                                  );
+                                },
                               ),
-                              controller: ScrollController(keepScrollOffset: false),
-                              shrinkWrap: true,
-                              itemCount: message.data.attachements.length,
-                              itemBuilder: (context, index) {
-                                // return ExtendedImage.memory(
-                                //   base64Decode(message.data.attachements[index].placeholder),
-                                //        gaplessPlayback: true,
-                                // );
-                                return Image(
-                                  image: MemoryImage(base64Decode(message.data.attachements[index].placeholder)),
-                                  gaplessPlayback: true,
-                                );
-                              },
-                            ),
-                          )
-                        : SizedBox(),
-                    Container(
-                      margin: const EdgeInsets.symmetric(vertical: 10),
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        color: const Color.fromARGB(255, 43, 43, 43),
-                        borderRadius: BorderRadius.only(
-                          bottomLeft: message.toLeft! ? Radius.zero : Radius.circular(10),
-                          bottomRight: message.toLeft! ? Radius.circular(10) : Radius.zero,
-                          topLeft: Radius.circular(10),
-                          topRight: Radius.circular(10),
+                            )
+                          : SizedBox(),
+                      Container(
+                        margin: const EdgeInsets.symmetric(vertical: 10),
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: const Color.fromARGB(255, 43, 43, 43),
+                          borderRadius: BorderRadius.only(
+                            bottomLeft: message.toLeft! ? Radius.zero : Radius.circular(10),
+                            bottomRight: message.toLeft! ? Radius.circular(10) : Radius.zero,
+                            topLeft: Radius.circular(10),
+                            topRight: Radius.circular(10),
+                          ),
+                        ),
+                        child: RichText(
+                          text: TextSpan(
+                            text: "${message.data.content} - ${message.status}",
+                            style: defaultTextStyle,
+                          ),
                         ),
                       ),
-                      child: RichText(
-                        text: TextSpan(
-                          text: "${message.data.content} - ${message.status}",
-                          style: defaultTextStyle,
-                        ),
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

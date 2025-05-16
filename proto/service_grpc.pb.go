@@ -24,6 +24,7 @@ const _ = grpc.SupportPackageIsVersion7
 type ChatServiceClient interface {
 	StreamChannel(ctx context.Context, in *StreamRequest, opts ...grpc.CallOption) (ChatService_StreamChannelClient, error)
 	GetMessages(ctx context.Context, in *GetMessagesRequest, opts ...grpc.CallOption) (ChatService_GetMessagesClient, error)
+	ChatNotice(ctx context.Context, in *ChatNoticeRequest, opts ...grpc.CallOption) (*Close, error)
 	AddUser(ctx context.Context, in *AddUserRequest, opts ...grpc.CallOption) (*AddUserResponse, error)
 	AddMember(ctx context.Context, in *AddMemberRequest, opts ...grpc.CallOption) (*AddMemberResponse, error)
 	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponse, error)
@@ -108,6 +109,15 @@ func (x *chatServiceGetMessagesClient) Recv() (*Messages, error) {
 		return nil, err
 	}
 	return m, nil
+}
+
+func (c *chatServiceClient) ChatNotice(ctx context.Context, in *ChatNoticeRequest, opts ...grpc.CallOption) (*Close, error) {
+	out := new(Close)
+	err := c.cc.Invoke(ctx, "/proto.ChatService/ChatNotice", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *chatServiceClient) AddUser(ctx context.Context, in *AddUserRequest, opts ...grpc.CallOption) (*AddUserResponse, error) {
@@ -215,6 +225,7 @@ func (c *chatServiceClient) GetChats(ctx context.Context, in *GetChatsRequest, o
 type ChatServiceServer interface {
 	StreamChannel(*StreamRequest, ChatService_StreamChannelServer) error
 	GetMessages(*GetMessagesRequest, ChatService_GetMessagesServer) error
+	ChatNotice(context.Context, *ChatNoticeRequest) (*Close, error)
 	AddUser(context.Context, *AddUserRequest) (*AddUserResponse, error)
 	AddMember(context.Context, *AddMemberRequest) (*AddMemberResponse, error)
 	Login(context.Context, *LoginRequest) (*LoginResponse, error)
@@ -238,6 +249,9 @@ func (UnimplementedChatServiceServer) StreamChannel(*StreamRequest, ChatService_
 }
 func (UnimplementedChatServiceServer) GetMessages(*GetMessagesRequest, ChatService_GetMessagesServer) error {
 	return status.Errorf(codes.Unimplemented, "method GetMessages not implemented")
+}
+func (UnimplementedChatServiceServer) ChatNotice(context.Context, *ChatNoticeRequest) (*Close, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ChatNotice not implemented")
 }
 func (UnimplementedChatServiceServer) AddUser(context.Context, *AddUserRequest) (*AddUserResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddUser not implemented")
@@ -324,6 +338,24 @@ type chatServiceGetMessagesServer struct {
 
 func (x *chatServiceGetMessagesServer) Send(m *Messages) error {
 	return x.ServerStream.SendMsg(m)
+}
+
+func _ChatService_ChatNotice_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ChatNoticeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ChatServiceServer).ChatNotice(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.ChatService/ChatNotice",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ChatServiceServer).ChatNotice(ctx, req.(*ChatNoticeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _ChatService_AddUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -531,6 +563,10 @@ var ChatService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "proto.ChatService",
 	HandlerType: (*ChatServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "ChatNotice",
+			Handler:    _ChatService_ChatNotice_Handler,
+		},
 		{
 			MethodName: "AddUser",
 			Handler:    _ChatService_AddUser_Handler,

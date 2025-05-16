@@ -104,6 +104,15 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {},
+        child: ValueListenableBuilder<int>(
+          valueListenable: wc.unreadedMessagesCount,
+          builder: (BuildContext context, int count, child) {
+            return Text(count.toString());
+          },
+        ),
+      ),
       body: Row(
         children: [
           ChatSidebar(

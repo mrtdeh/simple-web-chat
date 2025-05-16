@@ -1,5 +1,8 @@
 import 'dart:async';
+// import 'dart:ffi';
 // import 'package:dashboard/utils/locker.dart';
+import 'package:dashboard/grpc/chat.dart';
+import 'package:dashboard/grpc/message.dart';
 import 'package:dashboard/utils/locker.dart';
 import 'package:flutter/material.dart';
 import 'package:grpc/grpc_web.dart';
@@ -8,26 +11,6 @@ import 'package:synchronized/synchronized.dart';
 import '../proto/service.pbgrpc.dart';
 
 TextStyle defaultTextStyle = const TextStyle(color: Colors.white, fontSize: 16, height: 2);
-
-class Message {
-  final MessageData data;
-  final GlobalKey key;
-  double? textHeight;
-  double? boxHeight;
-  bool? haveAvatar;
-  bool? toLeft;
-  MessageStatus? status;
-
-  Message({required this.data, required this.key, this.textHeight, this.boxHeight, this.haveAvatar, this.toLeft, this.status});
-
-  void setStatus(MessageStatus s) {
-    status = s;
-  }
-
-  void setID(int id) {
-    data.messageId = id;
-  }
-}
 
 const double CHATS_WIDTH = 400;
 
@@ -54,19 +37,65 @@ class WebChat {
   int userID = 0;
   String token = "";
   List<Message> messages = [];
-  List<ChatData> chats = [];
+  List<Chat> chats = [];
+
+  final ValueNotifier<int> unreadedMessagesCount = ValueNotifier<int>(0);
+
   // ChatData? chat;
   int getActiveChatID() {
-    return chats[_selectedChatIndex].chatId;
+    return chats[_selectedChatIndex].data.chatId;
+  }
+
+  Chat getActiveChat() {
+    return chats[_selectedChatIndex];
+  }
+
+  int getActiveChatIndex() {
+    return _selectedChatIndex;
   }
 
   void setChat(int index) {
     _selectedChatIndex = index;
   }
 
+  void setLastReadedMessageID(int id) {
+    print("set last readed id :${id}");
+    chats[_selectedChatIndex].data.lastReadedMessageId = id;
+
+    // Calculate Unreaded messages count
+    var i = 0;
+    messages.forEach((m) {
+      if (m.data.messageId > chats[_selectedChatIndex].data.lastReadedMessageId) {
+        i++;
+      }
+    });
+    chats[_selectedChatIndex].unreadedMessagesCount = i;
+    unreadedMessagesCount.value = i;
+
+    if (locker.isLocked("setLastReadedMessageID")) {
+      return;
+    }
+    locker.lock("setLastReadedMessageID");
+
+    Future.delayed(Duration(seconds: 1), () {
+      wc.UpdateLastReadedMessageID();
+      locker.unlock("setLastReadedMessageID");
+    });
+  }
+
   void addMessage(Message msg) {
     messages.add(msg);
     _messageStream.add(messages);
+  }
+
+  int getUnreadedMessagesCount() {
+    var i = 0;
+    messages.forEach((m) {
+      if (m.data.messageId > chats[_selectedChatIndex].data.lastReadedMessageId) {
+        i++;
+      }
+    });
+    return i;
   }
 
   void updateMessage(Message msg) {
@@ -85,14 +114,14 @@ class WebChat {
           senderId: senderId,
         ),
         key: GlobalKey(),
-        haveAvatar: chat.type == "public",
+        haveAvatar: chat.data.type == "public",
         toLeft: false);
 
     return msg;
   }
 
-  final StreamController<List<ChatData>> _chatStream = StreamController<List<ChatData>>.broadcast();
-  Stream<List<ChatData>> get chatStream => _chatStream.stream;
+  final StreamController<List<Chat>> _chatStream = StreamController<List<Chat>>.broadcast();
+  Stream<List<Chat>> get chatStream => _chatStream.stream;
 
   StreamController<List<Message>> _messageStream = StreamController<List<Message>>.broadcast();
   Stream<List<Message>> get messageStream => _messageStream.stream;
@@ -114,6 +143,16 @@ class WebChat {
       _service = ChatServiceClient(channel);
     } catch (err) {
       print("connect to server failed : " + err.toString());
+    }
+  }
+
+  void UpdateLastReadedMessageID() {
+    var readedID = chats[_selectedChatIndex].data.lastReadedMessageId;
+    try {
+      _service.chatNotice(ChatNoticeRequest(token: token, chatId: getActiveChatID(), readedMsgId: readedID));
+      print("update last readed id :${readedID}");
+    } catch (error) {
+      print("SetLastReadedMessageID failed: $error");
     }
   }
 
@@ -167,7 +206,7 @@ class WebChat {
 
     print("get message : $direction $count from $fromMsgId");
 
-    var chatId = chats[_selectedChatIndex].chatId;
+    var chatId = chats[_selectedChatIndex].data.chatId;
     int? lastMsgId;
     if (messages.length > 0) {
       lastMsgId = messages.last.data.messageId;
@@ -234,7 +273,7 @@ class WebChat {
     _service.streamChannel(request).listen((response) {
       if (response.hasChats()) {
         for (var chat in response.chats.data) {
-          chats.add(chat);
+          chats.add(new Chat(data: chat, unreadedMessagesCount: 0));
         }
         _chatStream.sink.add(chats);
       }
@@ -358,7 +397,7 @@ class WebChat {
       key: GlobalKey(),
       // textHeight: textHeight,
       // boxHeight: boxHeight,
-      haveAvatar: chat.type == "public",
+      haveAvatar: chat.data.type == "public",
       toLeft: msg.senderId != userID,
     );
   }

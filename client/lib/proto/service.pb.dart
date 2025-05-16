@@ -2913,6 +2913,84 @@ class SelectChatRequest extends $pb.GeneratedMessage {
   void clearChatId() => clearField(2);
 }
 
+class ChatNoticeRequest extends $pb.GeneratedMessage {
+  factory ChatNoticeRequest({
+    $core.String? token,
+    $core.int? chatId,
+    $core.int? readedMsgId,
+  }) {
+    final $result = create();
+    if (token != null) {
+      $result.token = token;
+    }
+    if (chatId != null) {
+      $result.chatId = chatId;
+    }
+    if (readedMsgId != null) {
+      $result.readedMsgId = readedMsgId;
+    }
+    return $result;
+  }
+  ChatNoticeRequest._() : super();
+  factory ChatNoticeRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory ChatNoticeRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'ChatNoticeRequest', package: const $pb.PackageName(_omitMessageNames ? '' : 'proto'), createEmptyInstance: create)
+    ..aOS(1, _omitFieldNames ? '' : 'token')
+    ..a<$core.int>(2, _omitFieldNames ? '' : 'chatId', $pb.PbFieldType.OU3)
+    ..a<$core.int>(3, _omitFieldNames ? '' : 'readedMsgId', $pb.PbFieldType.OU3)
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  ChatNoticeRequest clone() => ChatNoticeRequest()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  ChatNoticeRequest copyWith(void Function(ChatNoticeRequest) updates) => super.copyWith((message) => updates(message as ChatNoticeRequest)) as ChatNoticeRequest;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static ChatNoticeRequest create() => ChatNoticeRequest._();
+  ChatNoticeRequest createEmptyInstance() => create();
+  static $pb.PbList<ChatNoticeRequest> createRepeated() => $pb.PbList<ChatNoticeRequest>();
+  @$core.pragma('dart2js:noInline')
+  static ChatNoticeRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<ChatNoticeRequest>(create);
+  static ChatNoticeRequest? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.String get token => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set token($core.String v) { $_setString(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasToken() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearToken() => clearField(1);
+
+  @$pb.TagNumber(2)
+  $core.int get chatId => $_getIZ(1);
+  @$pb.TagNumber(2)
+  set chatId($core.int v) { $_setUnsignedInt32(1, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasChatId() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearChatId() => clearField(2);
+
+  @$pb.TagNumber(3)
+  $core.int get readedMsgId => $_getIZ(2);
+  @$pb.TagNumber(3)
+  set readedMsgId($core.int v) { $_setUnsignedInt32(2, v); }
+  @$pb.TagNumber(3)
+  $core.bool hasReadedMsgId() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearReadedMsgId() => clearField(3);
+}
+
 
 const _omitFieldNames = $core.bool.fromEnvironment('protobuf.omit_field_names');
 const _omitMessageNames = $core.bool.fromEnvironment('protobuf.omit_message_names');
