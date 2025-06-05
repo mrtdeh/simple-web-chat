@@ -3,7 +3,7 @@ import 'package:dashboard/proto/service.pb.dart';
 // import 'package:flutter/material.dart';
 
 class Chat {
-  final ChatData data;
+  ChatData data;
   int unreadedMessagesCount;
 
   Chat({required this.data, this.unreadedMessagesCount = 0});

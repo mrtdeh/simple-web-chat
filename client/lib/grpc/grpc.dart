@@ -267,13 +267,48 @@ class WebChat {
     //  res.messageId
   }
 
+  bool updateMessages(List<Message> messages, MessageData recv) {
+    for (var curr in messages) {
+      if (curr.data.messageId == recv.messageId) {
+        // Check updated date
+        // if (recv.updatedAt < curr.data.updatedAt) {
+        //   return false;
+        // }
+        // Successfully update chat data
+        curr.data = recv;
+        return true;
+      }
+    }
+    // Append a new chat
+    messages.add(newBoxMessage(recv));
+    return true;
+  }
+
+  bool updateChats(List<Chat> mychats, ChatData recv) {
+    for (var curr in mychats) {
+      if (curr.data.chatId == recv.chatId) {
+        // Check last reader id
+        if (recv.lastReadedMessageId < curr.data.lastReadedMessageId) {
+          return false;
+        }
+        // Successfully update chat data
+        curr.data = recv;
+        return true;
+      }
+    }
+    // Append a new chat
+    mychats.add(new Chat(data: recv, unreadedMessagesCount: 0));
+    return true;
+  }
+
   void startMessageChannel() {
     print("start listening...");
     final request = StreamRequest()..token = token;
     _service.streamChannel(request).listen((response) {
       if (response.hasChats()) {
         for (var chat in response.chats.data) {
-          chats.add(new Chat(data: chat, unreadedMessagesCount: 0));
+          // Check and add/update new chat to chats list
+          updateChats(chats, chat);
         }
         _chatStream.sink.add(chats);
       }
@@ -281,12 +316,9 @@ class WebChat {
       if (response.hasMessages()) {
         List<Message> msgs = [];
         for (var msg in response.messages.data) {
-          // Create new Message class with calculate the box height
-          var newMsg = newBoxMessage(msg);
-          // Add message to temprary list
-          msgs.add(newMsg);
+          // Check and add/update new message to messages list
+          updateMessages(msgs, msg);
         }
-
         processReceivedMessages(msgs, dirNext);
       }
     }, onError: (error) {

@@ -3,7 +3,7 @@ import 'package:dashboard/proto/service.pb.dart';
 import 'package:flutter/material.dart';
 
 class Message {
-  final MessageData data;
+  MessageData data;
   final GlobalKey key;
   double? textHeight;
   double? boxHeight;
