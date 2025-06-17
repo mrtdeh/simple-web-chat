@@ -10,16 +10,12 @@ import 'package:synchronized/synchronized.dart';
 
 import '../proto/service.pbgrpc.dart';
 
-TextStyle defaultTextStyle = const TextStyle(color: Colors.white, fontSize: 16, height: 2);
+TextStyle defaultTextStyle =
+    const TextStyle(color: Colors.white, fontSize: 16, height: 2);
 
 const double CHATS_WIDTH = 400;
 
-enum MessageStatus {
-  sending,
-  sended,
-  received,
-  failed
-}
+enum MessageStatus { sending, sended, received, failed }
 
 const dirNext = GetMessagesRequest_Direction.NextPage;
 const dirPrev = GetMessagesRequest_Direction.PrevPage;
@@ -32,7 +28,7 @@ class WebChat {
   static final WebChat instance = WebChat._privateConstructor();
 
   late ChatServiceClient _service;
-  int _selectedChatIndex = 0;
+  int _selectedChatIndex = -1;
   double jumpHeight = 0;
   int userID = 0;
   String token = "";
@@ -59,16 +55,17 @@ class WebChat {
   }
 
   void setLastReadedMessageID(int id) {
-    print("set last readed id :${id}");
+    print("set last readed id :$id");
     chats[_selectedChatIndex].data.lastReadedMessageId = id;
 
     // Calculate Unreaded messages count
     var i = 0;
-    messages.forEach((m) {
-      if (m.data.messageId > chats[_selectedChatIndex].data.lastReadedMessageId) {
+    for (var m in messages) {
+      if (m.data.messageId >
+          chats[_selectedChatIndex].data.lastReadedMessageId) {
         i++;
       }
-    });
+    }
     chats[_selectedChatIndex].unreadedMessagesCount = i;
     unreadedMessagesCount.value = i;
 
@@ -78,7 +75,10 @@ class WebChat {
     locker.lock("setLastReadedMessageID");
 
     Future.delayed(Duration(seconds: 1), () {
-      wc.UpdateLastReadedMessageID();
+      // wc.updateLastReadedMessageID();
+      var readedID = chats[_selectedChatIndex].data.lastReadedMessageId;
+      _service.updateLastReadedMessageID(LrmRequest(
+          token: token, chatId: getActiveChatID(), readedMsgId: readedID));
       locker.unlock("setLastReadedMessageID");
     });
   }
@@ -90,11 +90,12 @@ class WebChat {
 
   int getUnreadedMessagesCount() {
     var i = 0;
-    messages.forEach((m) {
-      if (m.data.messageId > chats[_selectedChatIndex].data.lastReadedMessageId) {
+    for (var m in messages) {
+      if (m.data.messageId >
+          chats[_selectedChatIndex].data.lastReadedMessageId) {
         i++;
       }
-    });
+    }
     return i;
   }
 
@@ -120,10 +121,12 @@ class WebChat {
     return msg;
   }
 
-  final StreamController<List<Chat>> _chatStream = StreamController<List<Chat>>.broadcast();
+  final StreamController<List<Chat>> _chatStream =
+      StreamController<List<Chat>>.broadcast();
   Stream<List<Chat>> get chatStream => _chatStream.stream;
 
-  StreamController<List<Message>> _messageStream = StreamController<List<Message>>.broadcast();
+  StreamController<List<Message>> _messageStream =
+      StreamController<List<Message>>.broadcast();
   Stream<List<Message>> get messageStream => _messageStream.stream;
 
   void init() {
@@ -139,22 +142,22 @@ class WebChat {
 
   Future<void> start() async {
     try {
-      final channel = GrpcWebClientChannel.xhr(Uri.parse('http://localhost:8081'));
+      final channel =
+          GrpcWebClientChannel.xhr(Uri.parse('http://localhost:8081'));
       _service = ChatServiceClient(channel);
     } catch (err) {
       print("connect to server failed : " + err.toString());
     }
   }
 
-  void UpdateLastReadedMessageID() {
-    var readedID = chats[_selectedChatIndex].data.lastReadedMessageId;
-    try {
-      _service.chatNotice(ChatNoticeRequest(token: token, chatId: getActiveChatID(), readedMsgId: readedID));
-      print("update last readed id :${readedID}");
-    } catch (error) {
-      print("SetLastReadedMessageID failed: $error");
-    }
-  }
+  // void updateLastReadedMessageID() {
+  //   try {
+
+  //     print("update last readed id :$readedID");
+  //   } catch (error) {
+  //     print("SetLastReadedMessageID failed: $error");
+  //   }
+  // }
 
   Future<bool> login(String username, String password) async {
     try {
@@ -172,7 +175,7 @@ class WebChat {
   }
 
   final double pageMax = 150;
-  var msglock = new Lock();
+  var msglock = Lock();
   final locker = Locker<String>();
 
   void getMessages(
@@ -208,7 +211,7 @@ class WebChat {
 
     var chatId = chats[_selectedChatIndex].data.chatId;
     int? lastMsgId;
-    if (messages.length > 0) {
+    if (messages.isNotEmpty) {
       lastMsgId = messages.last.data.messageId;
     }
     var currentPageSize = messages.length;
@@ -246,7 +249,8 @@ class WebChat {
     });
   }
 
-  void sendMessage({Message? message, int? chatId, Function()? onComplete}) async {
+  void sendMessage(
+      {Message? message, int? chatId, Function()? onComplete}) async {
     final request = MessageRequest(
       chatId: chatId,
       content: message!.data.content,
@@ -297,7 +301,7 @@ class WebChat {
       }
     }
     // Append a new chat
-    mychats.add(new Chat(data: recv, unreadedMessagesCount: 0));
+    mychats.add(Chat(data: recv));
     return true;
   }
 

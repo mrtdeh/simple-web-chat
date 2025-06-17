@@ -5,7 +5,7 @@ import (
 	"context"
 )
 
-func (s *Server) ChatNotice(ctx context.Context, req *proto.ChatNoticeRequest) (*proto.Close, error) {
+func (s *Server) UpdateLastReadedMessageID(ctx context.Context, req *proto.LrmRequest) (*proto.Close, error) {
 	t, err := checkToken(req.Token)
 	if err != nil {
 		return nil, err
@@ -16,5 +16,6 @@ func (s *Server) ChatNotice(ctx context.Context, req *proto.ChatNoticeRequest) (
 		return nil, err
 	}
 
+	s.noticeUser(t.Username)
 	return &proto.Close{}, nil
 }

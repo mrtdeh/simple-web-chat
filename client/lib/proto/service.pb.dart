@@ -2913,8 +2913,9 @@ class SelectChatRequest extends $pb.GeneratedMessage {
   void clearChatId() => clearField(2);
 }
 
-class ChatNoticeRequest extends $pb.GeneratedMessage {
-  factory ChatNoticeRequest({
+/// Update Last Readed Message ID Request
+class LrmRequest extends $pb.GeneratedMessage {
+  factory LrmRequest({
     $core.String? token,
     $core.int? chatId,
     $core.int? readedMsgId,
@@ -2931,11 +2932,11 @@ class ChatNoticeRequest extends $pb.GeneratedMessage {
     }
     return $result;
   }
-  ChatNoticeRequest._() : super();
-  factory ChatNoticeRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
-  factory ChatNoticeRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  LrmRequest._() : super();
+  factory LrmRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory LrmRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
 
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'ChatNoticeRequest', package: const $pb.PackageName(_omitMessageNames ? '' : 'proto'), createEmptyInstance: create)
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'LrmRequest', package: const $pb.PackageName(_omitMessageNames ? '' : 'proto'), createEmptyInstance: create)
     ..aOS(1, _omitFieldNames ? '' : 'token')
     ..a<$core.int>(2, _omitFieldNames ? '' : 'chatId', $pb.PbFieldType.OU3)
     ..a<$core.int>(3, _omitFieldNames ? '' : 'readedMsgId', $pb.PbFieldType.OU3)
@@ -2946,22 +2947,22 @@ class ChatNoticeRequest extends $pb.GeneratedMessage {
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
   'Will be removed in next major version')
-  ChatNoticeRequest clone() => ChatNoticeRequest()..mergeFromMessage(this);
+  LrmRequest clone() => LrmRequest()..mergeFromMessage(this);
   @$core.Deprecated(
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
   'Will be removed in next major version')
-  ChatNoticeRequest copyWith(void Function(ChatNoticeRequest) updates) => super.copyWith((message) => updates(message as ChatNoticeRequest)) as ChatNoticeRequest;
+  LrmRequest copyWith(void Function(LrmRequest) updates) => super.copyWith((message) => updates(message as LrmRequest)) as LrmRequest;
 
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
-  static ChatNoticeRequest create() => ChatNoticeRequest._();
-  ChatNoticeRequest createEmptyInstance() => create();
-  static $pb.PbList<ChatNoticeRequest> createRepeated() => $pb.PbList<ChatNoticeRequest>();
+  static LrmRequest create() => LrmRequest._();
+  LrmRequest createEmptyInstance() => create();
+  static $pb.PbList<LrmRequest> createRepeated() => $pb.PbList<LrmRequest>();
   @$core.pragma('dart2js:noInline')
-  static ChatNoticeRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<ChatNoticeRequest>(create);
-  static ChatNoticeRequest? _defaultInstance;
+  static LrmRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<LrmRequest>(create);
+  static LrmRequest? _defaultInstance;
 
   @$pb.TagNumber(1)
   $core.String get token => $_getSZ(0);

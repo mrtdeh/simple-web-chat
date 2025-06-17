@@ -256,16 +256,19 @@ message SelectChatRequest{
   uint32 chat_id = 2;
 }
 
-message ChatNoticeRequest{
+// Update Last Readed Message ID Request
+message LrmRequest{
   string token = 1;
-    uint32 chat_id = 2;
-    uint32 readed_msg_id  = 3;
+  uint32 chat_id = 2;
+  uint32 readed_msg_id  = 3;
 }
+
 
 service ChatService {
   rpc StreamChannel(StreamRequest) returns (stream StreamResponse);
   rpc GetMessages(GetMessagesRequest) returns (stream Messages);
-  rpc ChatNotice(ChatNoticeRequest) returns (Close);
+  // Update Last Readed Message ID Method
+  rpc UpdateLastReadedMessageID(LrmRequest) returns (Close);
 
   rpc AddUser(AddUserRequest) returns (AddUserResponse);
   rpc AddMember(AddMemberRequest) returns (AddMemberResponse);

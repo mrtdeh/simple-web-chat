@@ -2,6 +2,7 @@ package server
 
 import (
 	"api-channel/proto"
+	"fmt"
 	"log"
 	"sync"
 	"time"
@@ -80,6 +81,14 @@ func (s *Server) sendChats(username string) error {
 			},
 		},
 	})
+}
+
+func (s *Server) noticeUser(username string) error {
+	if err := s.sendChats(username); err != nil {
+		return fmt.Errorf("error in sendChats: %s", err)
+	}
+	return nil
+
 }
 
 func (s *Server) receiveService(username string) {

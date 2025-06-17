@@ -621,9 +621,9 @@ final $typed_data.Uint8List selectChatRequestDescriptor = $convert.base64Decode(
     'ChFTZWxlY3RDaGF0UmVxdWVzdBIUCgV0b2tlbhgBIAEoCVIFdG9rZW4SFwoHY2hhdF9pZBgCIA'
     'EoDVIGY2hhdElk');
 
-@$core.Deprecated('Use chatNoticeRequestDescriptor instead')
-const ChatNoticeRequest$json = {
-  '1': 'ChatNoticeRequest',
+@$core.Deprecated('Use lrmRequestDescriptor instead')
+const LrmRequest$json = {
+  '1': 'LrmRequest',
   '2': [
     {'1': 'token', '3': 1, '4': 1, '5': 9, '10': 'token'},
     {'1': 'chat_id', '3': 2, '4': 1, '5': 13, '10': 'chatId'},
@@ -631,8 +631,8 @@ const ChatNoticeRequest$json = {
   ],
 };
 
-/// Descriptor for `ChatNoticeRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List chatNoticeRequestDescriptor = $convert.base64Decode(
-    'ChFDaGF0Tm90aWNlUmVxdWVzdBIUCgV0b2tlbhgBIAEoCVIFdG9rZW4SFwoHY2hhdF9pZBgCIA'
-    'EoDVIGY2hhdElkEiIKDXJlYWRlZF9tc2dfaWQYAyABKA1SC3JlYWRlZE1zZ0lk');
+/// Descriptor for `LrmRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List lrmRequestDescriptor = $convert.base64Decode(
+    'CgpMcm1SZXF1ZXN0EhQKBXRva2VuGAEgASgJUgV0b2tlbhIXCgdjaGF0X2lkGAIgASgNUgZjaG'
+    'F0SWQSIgoNcmVhZGVkX21zZ19pZBgDIAEoDVILcmVhZGVkTXNnSWQ=');
 

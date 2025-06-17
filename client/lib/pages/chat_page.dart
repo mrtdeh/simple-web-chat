@@ -99,7 +99,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
   final _scrollController = ScrollController();
   final _listController = ListController();
-  TextEditingController _textController = TextEditingController();
+  final TextEditingController _textController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {

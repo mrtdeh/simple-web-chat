@@ -9,11 +9,11 @@ import (
 	"gorm.io/gorm"
 )
 
-func isLastPage(id, pageSize, total int) bool {
-	lastPage := (total-1)/pageSize + 1
-	currentPage := (id-1)/pageSize + 1
-	return currentPage == lastPage
-}
+// func isLastPage(id, pageSize, total int) bool {
+// 	lastPage := (total-1)/pageSize + 1
+// 	currentPage := (id-1)/pageSize + 1
+// 	return currentPage == lastPage
+// }
 
 func (db *ChatDatabase) GetLastMessageID(chatId uint32) (uint32, error) {
 	var lastID uint32
