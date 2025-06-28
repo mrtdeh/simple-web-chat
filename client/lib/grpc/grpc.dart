@@ -34,6 +34,10 @@ class WebChat {
   String token = "";
   List<Message> messages = [];
   List<Chat> chats = [];
+  
+  final double pageMax = 150;
+  var msglock = Lock();
+  final locker = Locker<String>();
 
   final ValueNotifier<int> unreadedMessagesCount = ValueNotifier<int>(0);
 
@@ -45,6 +49,7 @@ class WebChat {
   StreamController<List<Message>> _messageStream =
       StreamController<List<Message>>.broadcast();
   Stream<List<Message>> get messageStream => _messageStream.stream;
+
 
 
   // int getUnreadedMessagesCount() {
@@ -166,10 +171,6 @@ class WebChat {
       return false;
     }
   }
-
-  final double pageMax = 150;
-  var msglock = Lock();
-  final locker = Locker<String>();
 
   void getMessages(
     GetMessagesRequest_Direction direction,
