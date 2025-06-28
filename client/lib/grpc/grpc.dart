@@ -37,7 +37,28 @@ class WebChat {
 
   final ValueNotifier<int> unreadedMessagesCount = ValueNotifier<int>(0);
 
-  // ChatData? chat;
+
+  final StreamController<List<Chat>> _chatStream =
+      StreamController<List<Chat>>.broadcast();
+  Stream<List<Chat>> get chatStream => _chatStream.stream;
+
+  StreamController<List<Message>> _messageStream =
+      StreamController<List<Message>>.broadcast();
+  Stream<List<Message>> get messageStream => _messageStream.stream;
+
+
+  // int getUnreadedMessagesCount() {
+  //   var i = 0;
+  //   for (var m in messages) {
+  //     if (m.data.messageId >
+  //         chats[_selectedChatIndex].data.lastReadedMessageId) {
+  //       i++;
+  //     }
+  //   }
+  //   return i;
+  // }
+
+
   int getActiveChatID() {
     return chats[_selectedChatIndex].data.chatId;
   }
@@ -88,17 +109,6 @@ class WebChat {
     _messageStream.add(messages);
   }
 
-  int getUnreadedMessagesCount() {
-    var i = 0;
-    for (var m in messages) {
-      if (m.data.messageId >
-          chats[_selectedChatIndex].data.lastReadedMessageId) {
-        i++;
-      }
-    }
-    return i;
-  }
-
   void updateMessage(Message msg) {
     final updatedMessages = messages.map((m) {
       return m.data.messageId == msg.data.messageId ? msg : m;
@@ -121,14 +131,6 @@ class WebChat {
     return msg;
   }
 
-  final StreamController<List<Chat>> _chatStream =
-      StreamController<List<Chat>>.broadcast();
-  Stream<List<Chat>> get chatStream => _chatStream.stream;
-
-  StreamController<List<Message>> _messageStream =
-      StreamController<List<Message>>.broadcast();
-  Stream<List<Message>> get messageStream => _messageStream.stream;
-
   void init() {
     Future.delayed(Duration(microseconds: 1), () {
       _messageStream.sink.add([]);
@@ -140,7 +142,7 @@ class WebChat {
     _messageStream = StreamController<List<Message>>.broadcast();
   }
 
-  Future<void> start() async {
+  Future<void> connectToServer() async {
     try {
       final channel =
           GrpcWebClientChannel.xhr(Uri.parse('http://localhost:8081'));
@@ -149,15 +151,6 @@ class WebChat {
       print("connect to server failed : " + err.toString());
     }
   }
-
-  // void updateLastReadedMessageID() {
-  //   try {
-
-  //     print("update last readed id :$readedID");
-  //   } catch (error) {
-  //     print("SetLastReadedMessageID failed: $error");
-  //   }
-  // }
 
   Future<bool> login(String username, String password) async {
     try {
@@ -329,7 +322,10 @@ class WebChat {
       print("Error in message channel: $error");
     }, onDone: () {
       print('Closed connection to server.');
-      _retryStream();
+      print("Retrying the stream...");
+      Future.delayed(Duration(seconds: 5), () {
+        startMessageChannel();
+      });
     });
   }
 
@@ -394,56 +390,16 @@ class WebChat {
   }
 
   Message newBoxMessage(MessageData msg) {
-    // var text = msg.content;
-    // var attLen = msg.attachements.length;
-    // double textHeight = 0.0;
-
-    // TextPainter textPainter = TextPainter(
-    //   text: TextSpan(text: text, style: defaultTextStyle),
-    //   textDirection: TextDirection.ltr,
-    //   maxLines: null,
-    // );
-
-    // double windowWidth = MediaQuery.of(context).size.width;
-    // double maxWidth = windowWidth;
-    // double textBoxPadding = 20; // text box (left + right) padding
-    // double viewInnerWidth = 600; // without margins
-    // double viewOutterWidth = 620; // with margins
-    // double avatarWidth = 70; // (radius * 2) + left/right margins
-    // double leftPanelWidth = CHATS_WIDTH;
-    // // double others = avatarWidth + viewHorizontalPadding + chatsWidth;
-    // double messagesViewWidth = windowWidth - leftPanelWidth;
-    // if (messagesViewWidth > viewOutterWidth) {
-    //   maxWidth = viewInnerWidth - (avatarWidth + textBoxPadding);
-    // }
-
-    // textPainter.layout(maxWidth: maxWidth);
-
-    // var textVerticalPadding = 20;
-    // textHeight += textPainter.size.height + textVerticalPadding;
-
-    // var textVerticalMargin = 20;
-    // var atc = (attLen / 3).ceil();
-    // var attachHeight = 100;
-    // var boxHeight = textHeight + textVerticalMargin + (atc * attachHeight);
-
     var chat = chats[_selectedChatIndex];
     return Message(
       data: msg,
       key: GlobalKey(),
-      // textHeight: textHeight,
-      // boxHeight: boxHeight,
       haveAvatar: chat.data.type == "public",
       toLeft: msg.senderId != userID,
     );
   }
 
-  void _retryStream() {
-    print("Retrying the stream...");
-    Future.delayed(Duration(seconds: 5), () {
-      startMessageChannel();
-    });
-  }
+
 }
 
 final wc = WebChat.instance;

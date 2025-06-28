@@ -27,7 +27,7 @@ class LoginPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: Text("Login")),
       body: FutureBuilder<void>(
-        future: WebChat.instance.start(),
+        future: WebChat.instance.connectToServer(),
         builder: (context, snapshot) {
           // حالت در حال بارگذاری
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -43,7 +43,7 @@ class LoginPage extends StatelessWidget {
                   Text("Error: ${snapshot.error}"),
                   ElevatedButton(
                     onPressed: () {
-                      wc.start();
+                      wc.connectToServer();
                     },
                     child: Text("Retry"),
                   ),
