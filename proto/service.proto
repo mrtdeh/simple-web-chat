@@ -207,7 +207,7 @@ message ChatData{
   bool mute = 4; // Whether to mute
   string avatar_url = 5; // URL of avatar
   string last_message = 6; // Last message
-  string unreaded_messages_count = 7; // Unreaded messages count
+  uint32 unreaded_messages_count = 7; // Unreaded messages count
   uint32 last_readed_message_id = 8; // Last message id
 }
 

@@ -49,8 +49,10 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   void _onScroll() {
-    if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
-      wc.getMessages(GetMessagesRequest_Direction.NextPage, 50, context, onComplete: (x) {
+    if (_scrollController.position.pixels ==
+        _scrollController.position.maxScrollExtent) {
+      wc.getMessages(GetMessagesRequest_Direction.NextPage, 50, context,
+          onComplete: (x) {
         if (wc.messages.length > 50 && x > 0) {
           var t = wc.messages.length - 50;
 
@@ -74,8 +76,10 @@ class _ChatScreenState extends State<ChatScreen> {
       });
     }
 
-    if (_scrollController.position.pixels == _scrollController.position.minScrollExtent) {
-      wc.getMessages(GetMessagesRequest_Direction.PrevPage, 50, context, onComplete: (x) {
+    if (_scrollController.position.pixels ==
+        _scrollController.position.minScrollExtent) {
+      wc.getMessages(GetMessagesRequest_Direction.PrevPage, 50, context,
+          onComplete: (x) {
         if (x > 0) {
           _listController.jumpToItem(
             index: x + 1,
@@ -104,14 +108,22 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {},
-        child: ValueListenableBuilder<int>(
-          valueListenable: wc.unreadedMessagesCount,
-          builder: (BuildContext context, int count, child) {
-            return Text(count.toString());
-          },
-        ),
+      floatingActionButton: ValueListenableBuilder<int>(
+        valueListenable:
+            wc.getActiveChat()?.unreadedMessagesCount ?? ValueNotifier(0),
+        builder: (BuildContext context, int count, child) {
+          var chat = wc.getActiveChat();
+          if (chat == null) {
+            return SizedBox();
+          }
+          if (chat.unreadedMessagesCount.value == 0) {
+            return SizedBox();
+          }
+          return FloatingActionButton(
+            onPressed: () {},
+            child: Text(count.toString()),
+          );
+        },
       ),
       body: Row(
         children: [
@@ -143,9 +155,14 @@ class _ChatScreenState extends State<ChatScreen> {
                         onPressed: () async {
                           try {
                             // Create new message object
-                            var msg = wc.newMessage(content: _textController.text, senderId: wc.userID);
+                            var msg = wc.newMessage(
+                                content: _textController.text,
+                                senderId: wc.userID);
                             // Check page position
-                            wc.getMessages(GetMessagesRequest_Direction.LastPage, 50, context, onComplete: (x) {
+                            wc.getMessages(
+                                GetMessagesRequest_Direction.LastPage,
+                                50,
+                                context, onComplete: (x) {
                               _textController.text = "";
                               // Add new message bubble to messages list with sending status
                               wc.addMessage(msg);

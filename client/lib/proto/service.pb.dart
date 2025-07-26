@@ -2224,7 +2224,7 @@ class ChatData extends $pb.GeneratedMessage {
     $core.bool? mute,
     $core.String? avatarUrl,
     $core.String? lastMessage,
-    $core.String? unreadedMessagesCount,
+    $core.int? unreadedMessagesCount,
     $core.int? lastReadedMessageId,
   }) {
     final $result = create();
@@ -2265,7 +2265,7 @@ class ChatData extends $pb.GeneratedMessage {
     ..aOB(4, _omitFieldNames ? '' : 'mute')
     ..aOS(5, _omitFieldNames ? '' : 'avatarUrl')
     ..aOS(6, _omitFieldNames ? '' : 'lastMessage')
-    ..aOS(7, _omitFieldNames ? '' : 'unreadedMessagesCount')
+    ..a<$core.int>(7, _omitFieldNames ? '' : 'unreadedMessagesCount', $pb.PbFieldType.OU3)
     ..a<$core.int>(8, _omitFieldNames ? '' : 'lastReadedMessageId', $pb.PbFieldType.OU3)
     ..hasRequiredFields = false
   ;
@@ -2346,9 +2346,9 @@ class ChatData extends $pb.GeneratedMessage {
   void clearLastMessage() => clearField(6);
 
   @$pb.TagNumber(7)
-  $core.String get unreadedMessagesCount => $_getSZ(6);
+  $core.int get unreadedMessagesCount => $_getIZ(6);
   @$pb.TagNumber(7)
-  set unreadedMessagesCount($core.String v) { $_setString(6, v); }
+  set unreadedMessagesCount($core.int v) { $_setUnsignedInt32(6, v); }
   @$pb.TagNumber(7)
   $core.bool hasUnreadedMessagesCount() => $_has(6);
   @$pb.TagNumber(7)

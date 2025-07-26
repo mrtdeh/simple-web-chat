@@ -87,7 +87,7 @@ class MessageBubble extends StatelessWidget {
     return VisibilityDetector(
       key: message.key, //GlobalKey(),
       onVisibilityChanged: (info) {
-        wc.setLastReadedMessageID(message.data.messageId);
+        wc.updateLRM(message.data.messageId);
       },
       child: Center(
         child: Container(

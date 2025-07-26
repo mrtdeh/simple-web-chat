@@ -16,6 +16,6 @@ func (s *Server) UpdateLastReadedMessageID(ctx context.Context, req *proto.LrmRe
 		return nil, err
 	}
 
-	s.noticeUser(t.Username)
+	// s.noticeUser(t.Username)
 	return &proto.Close{}, nil
 }

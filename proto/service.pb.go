@@ -1709,14 +1709,14 @@ type ChatData struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	ChatId                uint32 `protobuf:"varint,1,opt,name=chat_id,json=chatId,proto3" json:"chat_id,omitempty"`                                               // Chat id
-	ChatTitle             string `protobuf:"bytes,2,opt,name=chat_title,json=chatTitle,proto3" json:"chat_title,omitempty"`                                       // Title of Chat
-	Type                  string `protobuf:"bytes,3,opt,name=type,proto3" json:"type,omitempty"`                                                                  // Type of Chat : group|channel|private
-	Mute                  bool   `protobuf:"varint,4,opt,name=mute,proto3" json:"mute,omitempty"`                                                                 // Whether to mute
-	AvatarUrl             string `protobuf:"bytes,5,opt,name=avatar_url,json=avatarUrl,proto3" json:"avatar_url,omitempty"`                                       // URL of avatar
-	LastMessage           string `protobuf:"bytes,6,opt,name=last_message,json=lastMessage,proto3" json:"last_message,omitempty"`                                 // Last message
-	UnreadedMessagesCount string `protobuf:"bytes,7,opt,name=unreaded_messages_count,json=unreadedMessagesCount,proto3" json:"unreaded_messages_count,omitempty"` // Unreaded messages count
-	LastReadedMessageId   uint32 `protobuf:"varint,8,opt,name=last_readed_message_id,json=lastReadedMessageId,proto3" json:"last_readed_message_id,omitempty"`    // Last message id
+	ChatId                uint32 `protobuf:"varint,1,opt,name=chat_id,json=chatId,proto3" json:"chat_id,omitempty"`                                                // Chat id
+	ChatTitle             string `protobuf:"bytes,2,opt,name=chat_title,json=chatTitle,proto3" json:"chat_title,omitempty"`                                        // Title of Chat
+	Type                  string `protobuf:"bytes,3,opt,name=type,proto3" json:"type,omitempty"`                                                                   // Type of Chat : group|channel|private
+	Mute                  bool   `protobuf:"varint,4,opt,name=mute,proto3" json:"mute,omitempty"`                                                                  // Whether to mute
+	AvatarUrl             string `protobuf:"bytes,5,opt,name=avatar_url,json=avatarUrl,proto3" json:"avatar_url,omitempty"`                                        // URL of avatar
+	LastMessage           string `protobuf:"bytes,6,opt,name=last_message,json=lastMessage,proto3" json:"last_message,omitempty"`                                  // Last message
+	UnreadedMessagesCount uint32 `protobuf:"varint,7,opt,name=unreaded_messages_count,json=unreadedMessagesCount,proto3" json:"unreaded_messages_count,omitempty"` // Unreaded messages count
+	LastReadedMessageId   uint32 `protobuf:"varint,8,opt,name=last_readed_message_id,json=lastReadedMessageId,proto3" json:"last_readed_message_id,omitempty"`     // Last message id
 }
 
 func (x *ChatData) Reset() {
@@ -1791,11 +1791,11 @@ func (x *ChatData) GetLastMessage() string {
 	return ""
 }
 
-func (x *ChatData) GetUnreadedMessagesCount() string {
+func (x *ChatData) GetUnreadedMessagesCount() uint32 {
 	if x != nil {
 		return x.UnreadedMessagesCount
 	}
-	return ""
+	return 0
 }
 
 func (x *ChatData) GetLastReadedMessageId() uint32 {
@@ -2808,7 +2808,7 @@ var file_proto_service_proto_rawDesc = []byte{
 	0x18, 0x06, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0b, 0x6c, 0x61, 0x73, 0x74, 0x4d, 0x65, 0x73, 0x73,
 	0x61, 0x67, 0x65, 0x12, 0x36, 0x0a, 0x17, 0x75, 0x6e, 0x72, 0x65, 0x61, 0x64, 0x65, 0x64, 0x5f,
 	0x6d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x73, 0x5f, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x18, 0x07,
-	0x20, 0x01, 0x28, 0x09, 0x52, 0x15, 0x75, 0x6e, 0x72, 0x65, 0x61, 0x64, 0x65, 0x64, 0x4d, 0x65,
+	0x20, 0x01, 0x28, 0x0d, 0x52, 0x15, 0x75, 0x6e, 0x72, 0x65, 0x61, 0x64, 0x65, 0x64, 0x4d, 0x65,
 	0x73, 0x73, 0x61, 0x67, 0x65, 0x73, 0x43, 0x6f, 0x75, 0x6e, 0x74, 0x12, 0x33, 0x0a, 0x16, 0x6c,
 	0x61, 0x73, 0x74, 0x5f, 0x72, 0x65, 0x61, 0x64, 0x65, 0x64, 0x5f, 0x6d, 0x65, 0x73, 0x73, 0x61,
 	0x67, 0x65, 0x5f, 0x69, 0x64, 0x18, 0x08, 0x20, 0x01, 0x28, 0x0d, 0x52, 0x13, 0x6c, 0x61, 0x73,

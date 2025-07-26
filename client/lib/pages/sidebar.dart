@@ -75,13 +75,18 @@ class ChatListItem extends StatelessWidget {
       trailing: Badge(
         backgroundColor: Colors.red,
         textColor: Colors.white,
-        label: Text(chat.data.unreadedMessagesCount),
+        label: ValueListenableBuilder<int>(
+          valueListenable: chat.unreadedMessagesCount,
+          builder: (BuildContext context, int count, child) {
+            return Text(count.toString());
+          },
+        ),      
       ),
       leading: CircleAvatar(
         child: Icon(Icons.person),
       ),
-      title: Text(chat.data.chatTitle),
-      subtitle: Text(chat.data.lastMessage, style: TextStyle(color: Colors.white)),
+      title: Text(chat.title),
+      subtitle: Text(chat.lastMessage, style: TextStyle(color: Colors.white)),
       onTap: () async {
         if (onTap != null) {
           onTap!();

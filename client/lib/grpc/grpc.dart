@@ -34,12 +34,10 @@ class WebChat {
   String token = "";
   List<Message> messages = [];
   List<Chat> chats = [];
-  
+
   final double pageMax = 150;
   var msglock = Lock();
   final locker = Locker<String>();
-
-  final ValueNotifier<int> unreadedMessagesCount = ValueNotifier<int>(0);
 
 
   final StreamController<List<Chat>> _chatStream =
@@ -51,24 +49,14 @@ class WebChat {
   Stream<List<Message>> get messageStream => _messageStream.stream;
 
 
-
-  // int getUnreadedMessagesCount() {
-  //   var i = 0;
-  //   for (var m in messages) {
-  //     if (m.data.messageId >
-  //         chats[_selectedChatIndex].data.lastReadedMessageId) {
-  //       i++;
-  //     }
-  //   }
-  //   return i;
-  // }
-
-
   int getActiveChatID() {
-    return chats[_selectedChatIndex].data.chatId;
+    return chats[_selectedChatIndex].id;
   }
 
-  Chat getActiveChat() {
+  Chat? getActiveChat() {
+    if (_selectedChatIndex < 0) {
+      return null;
+    }
     return chats[_selectedChatIndex];
   }
 
@@ -80,20 +68,16 @@ class WebChat {
     _selectedChatIndex = index;
   }
 
-  void setLastReadedMessageID(int id) {
-    print("set last readed id :$id");
-    chats[_selectedChatIndex].data.lastReadedMessageId = id;
-
-    // Calculate Unreaded messages count
-    var i = 0;
-    for (var m in messages) {
-      if (m.data.messageId >
-          chats[_selectedChatIndex].data.lastReadedMessageId) {
-        i++;
-      }
+  void updateLRM(int id) {
+    var chat = wc.getActiveChat();
+    if (chat == null) {
+      return;
     }
-    chats[_selectedChatIndex].unreadedMessagesCount = i;
-    unreadedMessagesCount.value = i;
+
+    var ok = chat.setLastReadedMessageID(id, 1);
+    if (!ok) {
+      return;
+    }
 
     if (locker.isLocked("setLastReadedMessageID")) {
       return;
@@ -102,9 +86,11 @@ class WebChat {
 
     Future.delayed(Duration(seconds: 1), () {
       // wc.updateLastReadedMessageID();
-      var readedID = chats[_selectedChatIndex].data.lastReadedMessageId;
       _service.updateLastReadedMessageID(LrmRequest(
-          token: token, chatId: getActiveChatID(), readedMsgId: readedID));
+        token: token,
+        chatId: chat.id,
+        readedMsgId: chat.lastReadedMessageId.value,
+      ));
       locker.unlock("setLastReadedMessageID");
     });
   }
@@ -130,7 +116,7 @@ class WebChat {
           senderId: senderId,
         ),
         key: GlobalKey(),
-        haveAvatar: chat.data.type == "public",
+        haveAvatar: chat.type == "public",
         toLeft: false);
 
     return msg;
@@ -203,7 +189,11 @@ class WebChat {
 
     print("get message : $direction $count from $fromMsgId");
 
-    var chatId = chats[_selectedChatIndex].data.chatId;
+    var chat = getActiveChat();
+    if (chat == null) {
+      return;
+    }
+    var chatId = chat.id;
     int? lastMsgId;
     if (messages.isNotEmpty) {
       lastMsgId = messages.last.data.messageId;
@@ -284,18 +274,18 @@ class WebChat {
 
   bool updateChats(List<Chat> mychats, ChatData recv) {
     for (var curr in mychats) {
-      if (curr.data.chatId == recv.chatId) {
+      if (curr.id == recv.chatId) {
         // Check last reader id
-        if (recv.lastReadedMessageId < curr.data.lastReadedMessageId) {
+        if (recv.lastReadedMessageId < curr.lastReadedMessageId.value) {
           return false;
         }
         // Successfully update chat data
-        curr.data = recv;
+        curr = Chat(recv);
         return true;
       }
     }
     // Append a new chat
-    mychats.add(Chat(data: recv));
+    mychats.add(Chat(recv));
     return true;
   }
 
@@ -395,12 +385,10 @@ class WebChat {
     return Message(
       data: msg,
       key: GlobalKey(),
-      haveAvatar: chat.data.type == "public",
+      haveAvatar: chat.type == "public",
       toLeft: msg.senderId != userID,
     );
   }
-
-
 }
 
 final wc = WebChat.instance;

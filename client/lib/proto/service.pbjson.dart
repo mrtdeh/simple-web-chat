@@ -486,7 +486,7 @@ const ChatData$json = {
     {'1': 'mute', '3': 4, '4': 1, '5': 8, '10': 'mute'},
     {'1': 'avatar_url', '3': 5, '4': 1, '5': 9, '10': 'avatarUrl'},
     {'1': 'last_message', '3': 6, '4': 1, '5': 9, '10': 'lastMessage'},
-    {'1': 'unreaded_messages_count', '3': 7, '4': 1, '5': 9, '10': 'unreadedMessagesCount'},
+    {'1': 'unreaded_messages_count', '3': 7, '4': 1, '5': 13, '10': 'unreadedMessagesCount'},
     {'1': 'last_readed_message_id', '3': 8, '4': 1, '5': 13, '10': 'lastReadedMessageId'},
   ],
 };
@@ -496,7 +496,7 @@ final $typed_data.Uint8List chatDataDescriptor = $convert.base64Decode(
     'CghDaGF0RGF0YRIXCgdjaGF0X2lkGAEgASgNUgZjaGF0SWQSHQoKY2hhdF90aXRsZRgCIAEoCV'
     'IJY2hhdFRpdGxlEhIKBHR5cGUYAyABKAlSBHR5cGUSEgoEbXV0ZRgEIAEoCFIEbXV0ZRIdCgph'
     'dmF0YXJfdXJsGAUgASgJUglhdmF0YXJVcmwSIQoMbGFzdF9tZXNzYWdlGAYgASgJUgtsYXN0TW'
-    'Vzc2FnZRI2Chd1bnJlYWRlZF9tZXNzYWdlc19jb3VudBgHIAEoCVIVdW5yZWFkZWRNZXNzYWdl'
+    'Vzc2FnZRI2Chd1bnJlYWRlZF9tZXNzYWdlc19jb3VudBgHIAEoDVIVdW5yZWFkZWRNZXNzYWdl'
     'c0NvdW50EjMKFmxhc3RfcmVhZGVkX21lc3NhZ2VfaWQYCCABKA1SE2xhc3RSZWFkZWRNZXNzYW'
     'dlSWQ=');
 
