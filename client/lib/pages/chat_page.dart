@@ -17,7 +17,9 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   void initState() {
     wc.startMessageChannel();
+    // _listController.extentForIndex(index)
     _scrollController.addListener(_onScroll);
+
     wc.init();
 
     super.initState();
@@ -52,27 +54,19 @@ class _ChatScreenState extends State<ChatScreen> {
     if (_scrollController.position.pixels ==
         _scrollController.position.maxScrollExtent) {
       wc.getMessages(GetMessagesRequest_Direction.NextPage, 50, context,
-          onComplete: (x) {
+          onComplete: (x) async{
         if (wc.messages.length > 50 && x > 0) {
           var t = wc.messages.length - 50;
-
+          // await Future.delayed(Duration(seconds: 1));
+          print("messages length : ${wc.messages.length}");
+          print("list length : ${_listController.numberOfItems}");
+          print("jump to(t - 1) : ${t - 1}");
           _listController.jumpToItem(
             index: t - 1,
             scrollController: _scrollController,
             alignment: 1,
           );
         }
-
-        // WidgetsBinding.instance.addPostFrameCallback((_) {
-        //   double targetAlignment = 1 - 0.5;
-        //   _listController.animateToItem(
-        //     index: t,
-        //     scrollController: _scrollController,
-        //     alignment: targetAlignment,
-        //     duration: (estimatedDistance) => Duration(milliseconds: 1000),
-        //     curve: (estimatedDistance) => Curves.easeInOut,
-        //   );
-        // });
       });
     }
 
@@ -80,28 +74,20 @@ class _ChatScreenState extends State<ChatScreen> {
         _scrollController.position.minScrollExtent) {
       wc.getMessages(GetMessagesRequest_Direction.PrevPage, 50, context,
           onComplete: (x) {
+        print("x : $x");
+        // print("_scrollController : ${_listController.}");
         if (x > 0) {
           _listController.jumpToItem(
-            index: x + 1,
+            index: x-1,
             scrollController: _scrollController,
             alignment: 0,
           );
         }
-        // WidgetsBinding.instance.addPostFrameCallback((_) {
-        //   double targetAlignment = 1 + 0.5;
-        //   _listController.animateToItem(
-        //     index: 49,
-        //     scrollController: _scrollController,
-        //     alignment: targetAlignment,
-        //     duration: (estimatedDistance) => Duration(milliseconds: 1000),
-        //     curve: (estimatedDistance) => Curves.easeInOut,
-        //   );
-        // });
       });
     }
   }
 
-  final _scrollController = ScrollController();
+  final _scrollController = ScrollController(keepScrollOffset: false);
   final _listController = ListController();
   final TextEditingController _textController = TextEditingController();
 

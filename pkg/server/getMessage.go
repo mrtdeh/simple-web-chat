@@ -33,6 +33,16 @@ func (s *Server) GetMessages(req *proto.GetMessagesRequest, stream proto.ChatSer
 		return err
 	}
 
+	if req.Direction == proto.GetMessagesRequest_BothPage {
+		if req.FromMsgId == 0 {
+			lastReadedId, err := s.db.GetChatLastReadedMessageID(req.ChatId, t.UserID)
+			if err != nil {
+				return err
+			}
+			req.FromMsgId = lastReadedId
+		}
+	}
+
 	if req.Direction == proto.GetMessagesRequest_None {
 
 		if req.LastMsgId > 0 { // If lastMsgId is exist then check with real last message id from db
@@ -49,7 +59,6 @@ func (s *Server) GetMessages(req *proto.GetMessagesRequest, stream proto.ChatSer
 				req.Count = req.PageMax
 			}
 		}
-
 	}
 
 	messages, err := s.db.GetMessages(req.ChatId, req.FromMsgId, req.Direction, req.Count)

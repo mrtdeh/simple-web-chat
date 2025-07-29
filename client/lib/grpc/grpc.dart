@@ -39,7 +39,6 @@ class WebChat {
   var msglock = Lock();
   final locker = Locker<String>();
 
-
   final StreamController<List<Chat>> _chatStream =
       StreamController<List<Chat>>.broadcast();
   Stream<List<Chat>> get chatStream => _chatStream.stream;
@@ -47,7 +46,6 @@ class WebChat {
   StreamController<List<Message>> _messageStream =
       StreamController<List<Message>>.broadcast();
   Stream<List<Message>> get messageStream => _messageStream.stream;
-
 
   int getActiveChatID() {
     return chats[_selectedChatIndex].id;
@@ -68,13 +66,31 @@ class WebChat {
     _selectedChatIndex = index;
   }
 
+  int countMessagesBetweenIds(List<Message> messages, int startId, int endId) {
+    int count = 0;
+
+    for (int i = 0; i < messages.length; i++) {
+      if (messages[i].data.messageId > startId &&
+          messages[i].data.messageId <= endId) {
+        count++;
+      }
+    }
+
+    return count;
+  }
+
   void updateLRM(int id) {
     var chat = wc.getActiveChat();
     if (chat == null) {
       return;
     }
 
-    var ok = chat.setLastReadedMessageID(id, 1);
+    var lastId = chat.lastReadedMessageId.value;
+    var count = countMessagesBetweenIds(messages, lastId, id);
+    // print("start id : $lastId");
+    // print("end id : $id");
+    // print("count : $count");
+    var ok = chat.setLastReadedMessageID(id, count);
     if (!ok) {
       return;
     }
@@ -222,10 +238,16 @@ class WebChat {
       }
     }, onDone: () {
       // Process recieved messages and put to listview
-      processReceivedMessages(msgs, direction);
-      if (onComplete != null) {
-        onComplete(msgs.length);
-      }
+      processReceivedMessages(
+        msgs,
+        direction,
+        onComplete: (p0) {
+          if (onComplete != null) {
+            onComplete(msgs.length);
+          }
+        },
+      );
+
       locker.unlock("getMessage");
     }, onError: (error) {
       locker.unlock("getMessage");
@@ -349,11 +371,13 @@ class WebChat {
             }
           // break;
           case dirPrev:
+            print("debug prev messages");
             // If do lazy-loading previous message
             // Add messages to the top of list
             messages.insertAll(0, msgs);
             // Check if total messages reached maximum page size
             if (messages.length > pageMax) {
+              print("debug remove old");
               // Removing the messages from the down of list
               var len = messages.length;
               var rmCounts = (messages.length - pageMax).toInt();
@@ -370,10 +394,11 @@ class WebChat {
         // Update stream sink to update Listview of messages
         _messageStream.sink.add(messages);
 
-        // call done callback if defined
         if (onComplete != null) {
           onComplete(msgs.length);
         }
+
+        // call done callback if defined
       } catch (e) {
         print("error in process messages :" + e.toString());
       }

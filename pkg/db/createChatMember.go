@@ -36,3 +36,12 @@ func (db *ChatDatabase) SetChatLastReadedMessageID(chatID, userID, lastReadedMes
 
 	return nil
 }
+
+func (db *ChatDatabase) GetChatLastReadedMessageID(chatID, userID uint32) (uint32, error) {
+	var member models.ChatMember
+	err := db.gormDB.Where("chat_id = ? and user_id = ?", chatID, userID).First(&member).Error
+	if err != nil {
+		return 0, err
+	}
+	return member.LastReadedMessageID, nil
+}
