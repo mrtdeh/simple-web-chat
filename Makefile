@@ -17,7 +17,7 @@ protoc:
 run: build
 	./bin/server 
 asset-up:
-	@docker compose -f ./assets/postgres/docker-compose.yml up -d
+	@sudo docker compose -f ./assets/postgres/docker-compose.yml up -d
 	@envoy -c ./assets/envoy/config.yml --log-path /tmp/envoy.log &
 
 asset-down:

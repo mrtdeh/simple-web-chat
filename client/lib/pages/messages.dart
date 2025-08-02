@@ -39,16 +39,12 @@ class ChatMessages extends StatelessWidget {
                 ),
               );
             }
-            // if (snapshot.connectionState == ConnectionState.done) {
-              final messages = snapshot.data!;
-              print("snapshot len : ${messages.length}");
-              return MessagesList(
-                messages: messages,
-                listController: listController,
-                scrollController: scrollController,
-              );
-            // }
-            // return SizedBox();
+            final messages = snapshot.data!;
+            return MessagesList(
+              messages: messages,
+              listController: listController,
+              scrollController: scrollController,
+            );
           },
         ),
       ),
@@ -73,19 +69,10 @@ class MessagesList extends StatelessWidget {
       behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
       child: SuperListView.builder(
         shrinkWrap: true,
-        // semanticChildCount: 150,
         controller: scrollController,
         listController: listController,
         itemCount: messages.length,
-        // itemCount: 150,
         itemBuilder: (context, index) {
-          // if (index < messages.length) {
-          //   return MessageBubble(message: messages[index], index: index);
-          // } else {
-          //   print("create fake index:$index > msgLen:${messages.length}");
-          //   return const SizedBox.shrink(); // یا Container(height: 0)
-          // }
-
           return MessageBubble(message: messages[index], index: index);
         },
       ),
@@ -103,9 +90,15 @@ class MessageBubble extends StatelessWidget {
   Widget build(BuildContext context) {
     return VisibilityDetector(
       key: message.key, //GlobalKey(),
-      onVisibilityChanged: (info) {
-        wc.updateLRM(message.data.messageId);
+      onVisibilityChanged: (VisibilityInfo info) {
+        double visiblePercentage = info.visibleFraction * 100;
+        print('Widget is $visiblePercentage% visible');
+        if (visiblePercentage > 0) {
+          print("visit msg : ${message.data.messageId}");
+          // wc.updateLRM(message.data.messageId);
+        } 
       },
+
       child: Center(
         child: Container(
           // key: message.key,
@@ -176,7 +169,8 @@ class MessageBubble extends StatelessWidget {
                         ),
                         child: RichText(
                           text: TextSpan(
-                            text: "$index : ${message.data.content} - ${message.status}",
+                            text:
+                                "$index : ${message.data.content} - ${message.status}",
                             style: defaultTextStyle,
                           ),
                         ),
